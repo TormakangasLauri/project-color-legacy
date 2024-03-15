@@ -3,7 +3,7 @@
 
 ## WHAT IT'S ABOUT
 
-Project Color is a 2.5 dimensional beat-em-up about a mentally insane robot who has to maintain control over turf using paint. What originally started as practice work for the University of Jyväskylä has now become it's own standalone project.
+Project Color is a 3 dimensional beat-em-up about a mentally insane robot who has to maintain control over turf using paint. What originally started as practice work for the University of Jyväskylä has now become it's own standalone project.
 
 
 
