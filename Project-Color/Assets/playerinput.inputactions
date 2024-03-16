@@ -16,12 +16,12 @@
                 },
                 {
                     "name": "movement",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "d542ee30-8921-41f4-86b6-e46378c9bcaa",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
