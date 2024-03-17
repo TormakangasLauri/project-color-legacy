@@ -14,11 +14,21 @@ public class playermovement : MonoBehaviour
     public Camera camera;
 
     private Vector2 moveDirection; //moveDirecton
+    [Header("Values")]
     public float speed;
+    public float maxSpeed = 50;
+    public float jumpForce;
+    public float gravity;
     
+    [Header("Camera")]
     public float mouseSensitivity = 2f;
     private float cameraVerticalRotation;
     private float cameraHorizontalRotation;
+    
+    [Header("Checks")]
+    public GameObject groundCheck;
+    public LayerMask groundLayer;
+    public bool grounded;
 
 
     void Start()
@@ -29,6 +39,8 @@ public class playermovement : MonoBehaviour
     
     void Update()
     {
+        GroundCheck();
+        
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
         
@@ -37,9 +49,22 @@ public class playermovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddRelativeForce(new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed));
+        // Adds force to move the player
+        Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        rb.AddRelativeForce(movement);
+        // Normal speed limit
+        if (rb.velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
+
+        // Extra gravity
+        rb.AddRelativeForce(0 , -gravity,0);
     }
 
+    // Call path: player -> Player Input -> Events -> player
+    public void Jump(InputAction.CallbackContext action)
+    {
+        if (action.performed) rb.AddForce(Vector3.up * jumpForce);
+    }
+    
     void CameraRotation()
     {
         // Rotate the Camera around its local X axis
@@ -52,5 +77,14 @@ public class playermovement : MonoBehaviour
         float inputX = Input.GetAxis("Mouse X") * mouseSensitivity;
         cameraHorizontalRotation += inputX;
         transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f); 
+    }
+    
+    void GroundCheck()
+    {
+        if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity).Length > 0)
+            grounded = true;
+        else
+            grounded = false;
+
     }
 }
