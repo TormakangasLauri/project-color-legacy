@@ -19,6 +19,8 @@ public class playermovement : MonoBehaviour
     public float maxSpeed = 50;
     public float jumpForce;
     public float gravity;
+    public float landinggraceperiod = 1f;
+    private float landinggrace;
     
     [Header("Camera")]
     public float mouseSensitivity = 2f;
@@ -29,6 +31,7 @@ public class playermovement : MonoBehaviour
     public GameObject groundCheck;
     public LayerMask groundLayer;
     public bool grounded;
+    private bool hasjumped;
 
 
     void Start()
@@ -40,7 +43,11 @@ public class playermovement : MonoBehaviour
     void Update()
     {
         GroundCheck();
-        
+        if (landinggrace > Time.realtimeSinceStartup && !hasjumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
+        {
+            rb.AddForce(Vector3.up * jumpForce);
+            hasjumped = true;
+        }
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
         
@@ -62,7 +69,7 @@ public class playermovement : MonoBehaviour
     // Call path: player -> Player Input -> Events -> player
     public void Jump(InputAction.CallbackContext action)
     {
-        if (action.performed) rb.AddForce(Vector3.up * jumpForce);
+        if (action.performed) landinggrace = Time.realtimeSinceStartup + landinggraceperiod;
     }
     
     void CameraRotation()
@@ -81,10 +88,12 @@ public class playermovement : MonoBehaviour
     
     void GroundCheck()
     {
-        if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity).Length > 0)
+        if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, groundLayer).Length > 0)
             grounded = true;
         else
+        {
             grounded = false;
-
+            hasjumped = false;
+        }
     }
 }
