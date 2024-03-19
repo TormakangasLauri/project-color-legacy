@@ -45,7 +45,7 @@ public class playermovement : MonoBehaviour
         GroundCheck();
         if (landinggrace > Time.realtimeSinceStartup && !hasjumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
-            rb.AddForce(Vector3.up * jumpForce);
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             hasjumped = true;
         }
         moveDirection = move.action.ReadValue<Vector2>();
@@ -62,6 +62,8 @@ public class playermovement : MonoBehaviour
         // Normal speed limit
         if (rb.velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
 
+        if (movement == Vector3.zero && grounded && rb.velocity.magnitude > 2) rb.velocity = new Vector3(rb.velocity.x * 0.7f, rb.velocity.y, rb.velocity.z * 0.7f);
+        Debug.Log(rb.velocity.magnitude);
         // Extra gravity
         rb.AddRelativeForce(0 , -gravity,0);
     }

@@ -729,7 +729,7 @@ MonoBehaviour:
   camera: {fileID: 963194227}
   speed: 100
   maxSpeed: 10
-  jumpForce: 1000
+  jumpForce: 15
   gravity: 20
   landinggraceperiod: 1
   mouseSensitivity: 2
@@ -814,7 +814,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1144075147}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: af5239ea65b04d54ea53f50961daf9a0, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
