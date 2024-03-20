@@ -1,17 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
-public class playermovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public InputActionReference move;
 
     public Transform player;
     public Rigidbody rb;
-    public Camera camera;
+    new public Camera camera;
 
     private Vector2 moveDirection; //moveDirecton
     [Header("Values")]
@@ -19,8 +22,8 @@ public class playermovement : MonoBehaviour
     public float maxSpeed = 50;
     public float jumpForce;
     public float gravity;
-    public float landinggraceperiod = 1f;
-    private float landinggrace;
+    public float landingGracePeriod = 0.2f;
+    private float landingGrace;
     
     [Header("Camera")]
     public float mouseSensitivity = 2f;
@@ -31,7 +34,8 @@ public class playermovement : MonoBehaviour
     public GameObject groundCheck;
     public LayerMask groundLayer;
     public bool grounded;
-    private bool hasjumped;
+    private bool hasJumped;
+    private float timeSinceJump;
 
 
     void Start()
@@ -43,11 +47,8 @@ public class playermovement : MonoBehaviour
     void Update()
     {
         GroundCheck();
-        if (landinggrace > Time.realtimeSinceStartup && !hasjumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
-        {
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
-            hasjumped = true;
-        }
+        Jump();
+
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
         
@@ -56,22 +57,59 @@ public class playermovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Adds force to move the player
-        Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
-        rb.AddRelativeForce(movement);
-        // Normal speed limit
-        if (rb.velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
-
-        if (movement == Vector3.zero && grounded && rb.velocity.magnitude > 2) rb.velocity = new Vector3(rb.velocity.x * 0.7f, rb.velocity.y, rb.velocity.z * 0.7f);
-        Debug.Log(rb.velocity.magnitude);
+        Movement();
         // Extra gravity
         rb.AddRelativeForce(0 , -gravity,0);
     }
 
-    // Call path: player -> Player Input -> Events -> player
-    public void Jump(InputAction.CallbackContext action)
+    void Movement()
     {
-        if (action.performed) landinggrace = Time.realtimeSinceStartup + landinggraceperiod;
+        // Apparently is more efficient using this var
+        Vector3 velocity = rb.velocity;
+        
+        // Adds force to move the player
+        Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        if (grounded)
+        {
+            rb.AddRelativeForce(movement);
+            // Normal speed limit
+            if (velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
+            // Slows the player when there are no movement inputs
+            if (movement == Vector3.zero && velocity.magnitude > 2) rb.velocity = new Vector3(velocity.x * 0.7f, velocity.y, velocity.z * 0.7f);
+        }
+        else
+        {
+            // Movement and speed limit in air
+            if (velocity.magnitude < 10) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            
+        }
+
+        Debug.Log(velocity.magnitude);
+    }
+    
+    // Call path: player -> Player Input -> Events -> player
+    public void JumpInput(InputAction.CallbackContext action)
+    {
+        // Sets landingGrace to determine wheter to jump in Jump()
+        if (action.performed) landingGrace = Time.realtimeSinceStartup + landingGracePeriod;
+    }
+    void Jump()
+    {
+        Vector3 velocity = rb.velocity;
+        Quaternion localRotation = transform.localRotation;
+        float velX = moveDirection.x * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad);
+        float velZ = -moveDirection.x * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad);
+        
+        if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
+        {
+            if ((moveDirection.x == 0 && moveDirection.y != 0) || (moveDirection.x != 0 && moveDirection.y == 0) || (moveDirection.x == 0 && moveDirection.y == 0))
+                rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
+            if (moveDirection.x != 0 && moveDirection.y != 0)
+                rb.velocity = new Vector3(velX, jumpForce, velZ);
+            hasJumped = true;
+            timeSinceJump = Time.time;
+        }
+        if (timeSinceJump + 0.2 < Time.time) hasJumped = false;
     }
     
     void CameraRotation()
@@ -95,7 +133,7 @@ public class playermovement : MonoBehaviour
         else
         {
             grounded = false;
-            hasjumped = false;
+            hasJumped = false;
         }
     }
 }
