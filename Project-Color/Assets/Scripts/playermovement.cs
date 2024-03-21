@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -97,15 +98,21 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 velocity = rb.velocity;
         Quaternion localRotation = transform.localRotation;
+        // Calculates the x and z components of the velocity added to the player when jumping
         float velX = moveDirection.x * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad);
         float velZ = -moveDirection.x * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        
+
+        Vector2 velocity2 = new Vector2(velocity.x, velocity.z);
+        Vector2 direction2 = new Vector2(velX, velZ);
+        float velAngle = Mathf.Rad2Deg * Mathf.Acos((velocity.x * velX + velocity.z * velZ) / (velocity2.magnitude * direction2.magnitude));
+        float scale = -((velAngle / 180f) * (1f + 0.2f) - 0.2f) + 0.8f;
+
         if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
-            if ((moveDirection.x == 0 && moveDirection.y != 0) || (moveDirection.x != 0 && moveDirection.y == 0) || (moveDirection.x == 0 && moveDirection.y == 0))
-                rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
-            if (moveDirection.x != 0 && moveDirection.y != 0)
-                rb.velocity = new Vector3(velX, jumpForce, velZ);
+            if (moveDirection.x == 0 && moveDirection.y == 0)
+                rb.velocity = new Vector3(0, jumpForce, 0);
+            else
+                rb.velocity = new Vector3(velX * scale, jumpForce, velZ * scale);
             hasJumped = true;
             timeSinceJump = Time.time;
         }
