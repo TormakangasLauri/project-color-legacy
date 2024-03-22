@@ -12,8 +12,7 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     public InputActionReference move;
-
-    public Transform player;
+    
     public Rigidbody rb;
     new public Camera camera;
 
