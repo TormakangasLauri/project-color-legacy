@@ -34,6 +34,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject groundCheck;
     public LayerMask groundLayer;
     public bool grounded;
+    public GameObject wallCheck;
+    public LayerMask wallLayer;
+    public bool walled;
+    public List<Collider> wallColList = new List<Collider>();
+    private Vector3 dirFromWall;
+    
     private bool hasJumped;
     private float timeSinceJump;
 
@@ -47,6 +53,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         GroundCheck();
+        Walled();
         Jump();
 
         moveDirection = move.action.ReadValue<Vector2>();
@@ -66,12 +73,24 @@ public class PlayerMovement : MonoBehaviour
     {
         // Apparently is more efficient using this var
         Vector3 velocity = rb.velocity;
+
+        Quaternion localRotation = transform.localRotation;
+        float dirX = moveDirection.x * moveDirection.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * moveDirection.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad);
+        float dirZ = -moveDirection.x * moveDirection.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * moveDirection.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad);
         
-        // Adds force to move the player
+        // Angle between the direction of where the player is going and a wall
+        Vector2 dirFromWall2 = new Vector2(dirFromWall.x, dirFromWall.z);
+        Vector2 direction2 = new Vector2(dirX, dirZ);
+        float angle = Mathf.Rad2Deg * Mathf.Acos((dirX * dirFromWall.x + dirZ * dirFromWall.z) / (dirFromWall2.magnitude * direction2.magnitude));
+        
+        // Calculates the movement force
         Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
         if (grounded)
         {
-            rb.AddRelativeForce(movement);
+            if (walled && Mathf.Abs(angle) <= 90)
+                rb.AddForce(Quaternion.Euler(0f, 90f, 0f) * movement);
+            else
+                rb.AddRelativeForce(movement);
             // Normal speed limit
             if (velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
             // Slows the player when there are no movement inputs
@@ -84,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
             
         }
 
-        Debug.Log(velocity.magnitude);
+        //Debug.Log(velocity.magnitude);
     }
     
     // Call path: player -> Player Input -> Events -> player
@@ -140,6 +159,15 @@ public class PlayerMovement : MonoBehaviour
         {
             grounded = false;
             hasJumped = false;
+        }
+    }
+
+    void Walled()
+    {
+        foreach (Collider col in wallColList)
+        {
+            dirFromWall = col.ClosestPoint(transform.position) - transform.position;
+            Debug.Log(dirFromWall);
         }
     }
 }
