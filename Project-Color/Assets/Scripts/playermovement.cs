@@ -40,6 +40,9 @@ public class PlayerMovement : MonoBehaviour
     public List<Collider> wallColList = new List<Collider>();
     private Vector3 dirToWall;
 
+    [Header("Bools")] 
+    public bool wallRiding;
+    public bool pressingJump;
     private bool hasJumped;
     private float timeSinceJump;
 
@@ -59,15 +62,44 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
         
+        if (wallRiding) rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        
         CameraRotation();
     }
 
     private void FixedUpdate()
     {
-        Movement();
+        if (!wallRiding) Movement(); // If wallrunning, disable base movement
+        else WallRide();
+        
         // Extra gravity
-        rb.AddRelativeForce(0 , -gravity,0);
+        if (!wallRiding) rb.AddRelativeForce(0 , -gravity,0);
     }
+
+    void WallRide()
+    {
+        Vector2 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
+        Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        Vector3 worldMovement = transform.rotation * movement;
+        Vector2 direction2 = new Vector2(worldMovement.x, worldMovement.z);
+        float angle2 = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall90.x + worldMovement.z * dirToWall90.y) / (dirToWall90.magnitude * direction2.magnitude));
+        Vector2 dirToWall2 = new Vector2(dirToWall.x, dirToWall.z);
+        float angle = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall.x + worldMovement.z * dirToWall.z) / (dirToWall2.magnitude * direction2.magnitude)); // K uopion Y liopistollinen S airaala
+
+        // Apply force to ride the wall
+        rb.AddForce(Quaternion.Euler(0, Mathf.Sign(angle) * 90, 0) * dirToWall.normalized * (movement.magnitude * Mathf.Sign(-angle2 + 90)));
+
+        // Set y-component of velocity to zero to prevent downward movement
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+        // Normal speed limit
+        if (rb.velocity.magnitude > maxSpeed)
+        {
+            rb.AddRelativeForce(-(Quaternion.Euler(0, Mathf.Sign(angle) * 90, 0) * dirToWall.normalized * (movement.magnitude * Mathf.Sign(-angle2 + 90))));
+        }
+    }
+
+    
 
     void Movement()
     {
@@ -82,15 +114,14 @@ public class PlayerMovement : MonoBehaviour
         float angle = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall.x + worldMovement.z * dirToWall.z) / (dirToWall2.magnitude * direction2.magnitude));
 
         Vector2 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
-        // Pretty much same as the angle above but rotated 90 degrees, used to determine if the player is moving to right or left relative to the wall
-        float angle2 = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall90.x + worldMovement.z * dirToWall90.y) / (dirToWall90.magnitude * direction2.magnitude));
+     
 
         float scale = (angle / 90f);
+        float scale2 = -scale + 1; 
         
         if (grounded)
         {
-            if (!(walled && Mathf.Abs(angle) <= 90))
-                rb.AddRelativeForce(movement);
+            rb.AddRelativeForce(movement);
             // Normal speed limit
             if (velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
             // Slows the player when there are no movement inputs
@@ -99,21 +130,33 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             // Movement and speed limit in air
-            if (!(walled && Mathf.Abs(angle) <= 90) && velocity.magnitude < maxSpeed)
-                rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
         }
 
         if (walled && Mathf.Abs(angle) <= 90 && velocity.magnitude < maxSpeed)
-            rb.AddForce(Quaternion.Euler(0, Mathf.Sign(angle) * 90, 0) * dirToWall.normalized * (movement.magnitude * scale * Mathf.Sign(-angle2 + 90)));
+            rb.AddForce(-dirToWall * (movement.magnitude * 0.75f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍.
 
-            Debug.Log(new Vector2(velocity.x, velocity.z).magnitude);
+        if (!grounded && pressingJump && movement.z > 0 && walled)
+            wallRiding = true;
+        Debug.Log(new Vector2(velocity.x, velocity.z).magnitude);
     }
+    
     
     // Call path: player -> Player Input -> Events -> player
     public void JumpInput(InputAction.CallbackContext action)
     {
         // Sets landingGrace to determine wheter to jump in Jump()
-        if (action.performed) landingGrace = Time.realtimeSinceStartup + landingGracePeriod;
+        if (action.performed)
+        {
+            landingGrace = Time.realtimeSinceStartup + landingGracePeriod;
+            pressingJump = true;
+        }
+
+        if (action.canceled)
+        {
+            pressingJump = false;
+            wallRiding = false;
+        }
     }
     void Jump()
     {
@@ -157,7 +200,11 @@ public class PlayerMovement : MonoBehaviour
     void GroundCheck()
     {
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, groundLayer).Length > 0)
+        {
             grounded = true;
+            wallRiding = false;
+        }
+            
         else
         {
             grounded = false;

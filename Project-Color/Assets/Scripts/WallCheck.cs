@@ -34,6 +34,7 @@ public class WallCheck : MonoBehaviour
         {
             PM.walled = false;
             PM.wallColList.Remove(other);
+            PM.wallRiding = false;
         }
     }
 }
