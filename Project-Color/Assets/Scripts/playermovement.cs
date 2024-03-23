@@ -38,8 +38,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask wallLayer;
     public bool walled;
     public List<Collider> wallColList = new List<Collider>();
-    private Vector3 dirFromWall;
-    
+    private Vector3 dirToWall;
+
     private bool hasJumped;
     private float timeSinceJump;
 
@@ -71,25 +71,25 @@ public class PlayerMovement : MonoBehaviour
 
     void Movement()
     {
-        // Apparently is more efficient using this var
         Vector3 velocity = rb.velocity;
-
-        Quaternion localRotation = transform.localRotation;
-        float dirX = moveDirection.x * moveDirection.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * moveDirection.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        float dirZ = -moveDirection.x * moveDirection.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * moveDirection.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        
-        // Angle between the direction of where the player is going and a wall
-        Vector2 dirFromWall2 = new Vector2(dirFromWall.x, dirFromWall.z);
-        Vector2 direction2 = new Vector2(dirX, dirZ);
-        float angle = Mathf.Rad2Deg * Mathf.Acos((dirX * dirFromWall.x + dirZ * dirFromWall.z) / (dirFromWall2.magnitude * direction2.magnitude));
-        
-        // Calculates the movement force
+        // Movement force
         Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        
+        Vector3 worldMovement = transform.rotation * movement;
+        Vector2 dirToWall2 = new Vector2(dirToWall.x, dirToWall.z);
+        Vector2 direction2 = new Vector2(worldMovement.x, worldMovement.z);
+        // Angle between the direction of where the player is going and the wall
+        float angle = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall.x + worldMovement.z * dirToWall.z) / (dirToWall2.magnitude * direction2.magnitude));
+
+        Vector2 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
+        // Pretty much same as the angle above but rotated 90 degrees, used to determine if the player is moving to right or left relative to the wall
+        float angle2 = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall90.x + worldMovement.z * dirToWall90.y) / (dirToWall90.magnitude * direction2.magnitude));
+
+        float scale = (angle / 90f);
+        
         if (grounded)
         {
-            if (walled && Mathf.Abs(angle) <= 90)
-                rb.AddForce(Quaternion.Euler(0f, 90f, 0f) * movement);
-            else
+            if (!(walled && Mathf.Abs(angle) <= 90))
                 rb.AddRelativeForce(movement);
             // Normal speed limit
             if (velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
@@ -99,11 +99,14 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             // Movement and speed limit in air
-            if (velocity.magnitude < 10) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
-            
+            if (!(walled && Mathf.Abs(angle) <= 90) && velocity.magnitude < maxSpeed)
+                rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
         }
 
-        //Debug.Log(velocity.magnitude);
+        if (walled && Mathf.Abs(angle) <= 90 && velocity.magnitude < maxSpeed)
+            rb.AddForce(Quaternion.Euler(0, Mathf.Sign(angle) * 90, 0) * dirToWall.normalized * (movement.magnitude * scale * Mathf.Sign(-angle2 + 90)));
+
+            Debug.Log(new Vector2(velocity.x, velocity.z).magnitude);
     }
     
     // Call path: player -> Player Input -> Events -> player
@@ -128,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
         if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
             if (moveDirection.x == 0 && moveDirection.y == 0)
-                rb.velocity = new Vector3(0, jumpForce, 0);
+                rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
             else
                 rb.velocity = new Vector3(velX * scale, jumpForce, velZ * scale);
             hasJumped = true;
@@ -166,8 +169,7 @@ public class PlayerMovement : MonoBehaviour
     {
         foreach (Collider col in wallColList)
         {
-            dirFromWall = col.ClosestPoint(transform.position) - transform.position;
-            Debug.Log(dirFromWall);
+            dirToWall = col.ClosestPoint(transform.position) - transform.position;
         }
     }
 }

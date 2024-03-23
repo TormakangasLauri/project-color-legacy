@@ -21,7 +21,13 @@ public class WallCheck : MonoBehaviour
             PM.wallColList.Add(other);
         }
     }
-
+    private void OnTriggerStay(Collider other)
+    {
+        if (wallLayer == (wallLayer | (1 << other.gameObject.layer)))
+        {
+            PM.walled = true;
+        }
+    }
     private void OnTriggerExit(Collider other)
     {
         if (wallLayer == (wallLayer | (1 << other.gameObject.layer)))
