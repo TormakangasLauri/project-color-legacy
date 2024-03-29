@@ -67,6 +67,9 @@ public class PlayerMovement : MonoBehaviour
         if (wallRiding) rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         
         CameraRotation();
+
+        if (Input.GetMouseButtonDown(1)) rb.AddForce(transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
+        if (Input.GetMouseButtonDown(0)) rb.AddForce(camera.transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
     }
 
     private void FixedUpdate()
@@ -100,6 +103,9 @@ public class PlayerMovement : MonoBehaviour
     void Movement()
     {
         Vector3 velocity = rb.velocity;
+        Vector3 relativeVel = transform.rotation * velocity;
+        float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
+        
         // Movement force
         Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
         
@@ -116,21 +122,25 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.AddRelativeForce(movement);
             // Normal speed limit
-            if (velocity.magnitude > maxSpeed) rb.AddRelativeForce(-movement);
+            if (xzSpeed > maxSpeed) rb.AddRelativeForce(xzSpeed - maxSpeed + 1 < 3 ? -movement * (xzSpeed - maxSpeed + 1): -movement * 3);
             // Slows the player when there are no movement inputs
             if (movement == Vector3.zero && velocity.magnitude > 2) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
         }
         else
         {
-            // Movement and speed limit in air
-            rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            // Movement in air
+            if (new Vector2(velocity.x, velocity.z).magnitude < maxSpeed) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
         }
 
-        if (walled && Mathf.Abs(angle) <= 90 && velocity.magnitude < maxSpeed)
-            rb.AddForce(-dirToWall * (movement.magnitude * 0.75f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍.
+        // Pushes the player away from walls
+        if (walled && !wallRiding && Mathf.Abs(angle) <= 90 && velocity.magnitude < maxSpeed)
+            rb.AddForce(-dirToWall * (movement.magnitude * 2.1f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍.
 
+        // Start wallride
         if (!grounded && pressingJump && movement.z > 0 && walled)
             wallRiding = true;
+        
+        Debug.Log(rb.velocity.magnitude);
     }
     
     
@@ -166,7 +176,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
-            if (moveDirection.x == 0 && moveDirection.y == 0)
+            if (moveDirection.magnitude == 0)
                 rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
             else
                 rb.velocity = new Vector3(moveX * scale, jumpForce, moveZ * scale);
