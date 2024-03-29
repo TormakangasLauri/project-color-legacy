@@ -47,6 +47,11 @@ public class PlayerMovement : MonoBehaviour
     public bool pressingJump;
     private bool hasJumped;
     private float timeSinceJump;
+    public bool onSlope;
+
+    public float maxSlopeAngle = 45;
+    private RaycastHit slopeHit;
+    private Vector3 slopeMoveDir;
 
     void Start()
     {
@@ -60,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
         GroundCheck();
         Walled();
         Jump();
+        onSlope = SlopeCheck();
 
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
@@ -95,7 +101,8 @@ public class PlayerMovement : MonoBehaviour
         firstWallRideCall = false;
         
         // Apply force to ride the wall
-        rb.velocity = (wallRunForce / 10);
+        // rb.velocity = (wallRunForce / 10);
+        if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce);
     }
 
     
@@ -103,7 +110,6 @@ public class PlayerMovement : MonoBehaviour
     void Movement()
     {
         Vector3 velocity = rb.velocity;
-        Vector3 relativeVel = transform.rotation * velocity;
         float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
         
         // Movement force
@@ -120,16 +126,23 @@ public class PlayerMovement : MonoBehaviour
         
         if (grounded)
         {
-            rb.AddRelativeForce(movement);
+            if (xzSpeed < maxSpeed) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            
+            //rb.AddRelativeForce(movement);
             // Normal speed limit
-            if (xzSpeed > maxSpeed) rb.AddRelativeForce(xzSpeed - maxSpeed + 1 < 3 ? -movement * (xzSpeed - maxSpeed + 1): -movement * 3);
+            // if (xzSpeed > maxSpeed) rb.AddRelativeForce(xzSpeed - maxSpeed + 1 < 3 ? -movement * (xzSpeed - maxSpeed + 1): -movement * 3);
             // Slows the player when there are no movement inputs
             if (movement == Vector3.zero && velocity.magnitude > 2) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
         }
-        else
+        else if (xzSpeed < maxSpeed * 1.2)
         {
             // Movement in air
-            if (new Vector2(velocity.x, velocity.z).magnitude < maxSpeed) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+        }
+
+        if (onSlope && xzSpeed < maxSpeed)
+        {
+            rb.AddRelativeForce(slopeMoveDir * speed);
         }
 
         // Pushes the player away from walls
@@ -218,12 +231,21 @@ public class PlayerMovement : MonoBehaviour
             grounded = true;
             wallRiding = false;
         }
-            
         else
         {
             grounded = false;
             hasJumped = false;
         }
+    }
+
+    bool SlopeCheck()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, groundLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
+        {
+            slopeMoveDir = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
+            return true;
+        }
+        return false;
     }
 
     void Walled()
