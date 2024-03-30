@@ -85,12 +85,13 @@ public class PlayerMovement : MonoBehaviour
         
         // Extra gravity
         if (!wallRiding) rb.AddForce(0 , -gravity,0);
-        rb.useGravity = true;
         if (onSlope)
         {
             rb.useGravity = false;
             rb.AddForce(-slopeHit.normal * gravity);
         }
+        else
+            rb.useGravity = true;
     }
 
     void WallRide()
@@ -151,15 +152,17 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 slopeMovement = Vector3.ProjectOnPlane(movement, slopeHit.normal);
             
-            //rb.AddForce(slopeMovement / ((velocity.magnitude + 1) / 3));
+            rb.AddForce(slopeMovement / ((velocity.magnitude + 1) / 3), ForceMode.Force);
+
             if (velocity.magnitude < maxSpeed)
             {
-                rb.AddForce(slopeMovement + -slopeHit.normal * (gravity * 2), ForceMode.Force);
+                rb.AddForce(slopeMovement - slopeHit.normal * (gravity * 2), ForceMode.Force);
                 if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.1f), ForceMode.Force);
             }
-            if (movement == Vector3.zero) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
             
-            Debug.Log(slopeMovement);
+            // rb.velocity = slopeMovement / 8;
+            
+            if (movement == Vector3.zero) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
         }
 
         // Pushes the player away from walls
@@ -169,6 +172,8 @@ public class PlayerMovement : MonoBehaviour
         // Start wallride
         if (!grounded && pressingJump && movement.z > 0 && walled)
             wallRiding = true;
+
+        Debug.Log(velocity.magnitude);
     }
     
     
