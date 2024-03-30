@@ -9,7 +9,7 @@ Project Color is a 3 dimensional beat-em-up about a mentally insane robot who ha
 
 ## WHO ARE MAKING IT
 
-- [Törmäkangas Lauri](https://github.com/TormakangasLauri) - Art and animation
+- [Törmäkangas Lauri](https://github.com/TormakangasLauri) - Head of art and animation
 - [Seppänen Miko](https://github.com/mkeyos) - Head of programming
 - [Luosma Vilho](https://github.com/TheFinguy) - Head of level design / Lead sluibailija
 
