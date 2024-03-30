@@ -84,7 +84,13 @@ public class PlayerMovement : MonoBehaviour
         else WallRide();
         
         // Extra gravity
-        if (!wallRiding) rb.AddRelativeForce(0 , -gravity,0);
+        if (!wallRiding) rb.AddForce(0 , -gravity,0);
+        rb.useGravity = true;
+        if (onSlope)
+        {
+            rb.useGravity = false;
+            rb.AddForce(-slopeHit.normal * gravity);
+        }
     }
 
     void WallRide()
@@ -102,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
         
         // Apply force to ride the wall
         // rb.velocity = (wallRunForce / 10);
-        if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce);
+        if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce, ForceMode.Force);
     }
 
     
@@ -113,7 +119,8 @@ public class PlayerMovement : MonoBehaviour
         float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
         
         // Movement force
-        Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        //Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
+        Vector3 movement = (moveDirection.y * transform.forward + moveDirection.x * transform.right) * speed;
         
         Vector3 worldMovement = transform.rotation * movement;
         Vector2 dirToWall2 = new Vector2(dirToWall.x, dirToWall.z);
@@ -122,27 +129,37 @@ public class PlayerMovement : MonoBehaviour
         float angle = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall.x + worldMovement.z * dirToWall.z) / (dirToWall2.magnitude * direction2.magnitude));
 
         float scale = (angle / 90f);
-        float scale2 = -scale + 1; 
+        float scale2 = -scale + 1;
         
-        if (grounded)
+        if (grounded && !onSlope)
         {
-            if (xzSpeed < maxSpeed) rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            //if (xzSpeed < maxSpeed) rb.AddForce(movement / ((velocity.magnitude+1)/3));
+            if (xzSpeed < maxSpeed) rb.AddForce(movement, ForceMode.Force);
             
-            //rb.AddRelativeForce(movement);
             // Normal speed limit
             // if (xzSpeed > maxSpeed) rb.AddRelativeForce(xzSpeed - maxSpeed + 1 < 3 ? -movement * (xzSpeed - maxSpeed + 1): -movement * 3);
+            
             // Slows the player when there are no movement inputs
-            if (movement == Vector3.zero && velocity.magnitude > 2) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
+            if (movement == Vector3.zero && velocity.magnitude > 1) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
         }
-        else if (xzSpeed < maxSpeed * 1.2)
+        else if (xzSpeed < maxSpeed)
         {
             // Movement in air
-            rb.AddRelativeForce(movement / ((velocity.magnitude+1)/3));
+            rb.AddForce(movement / ((velocity.magnitude+1)/3), ForceMode.Force);
         }
-
-        if (onSlope && xzSpeed < maxSpeed)
+        if (onSlope)
         {
-            rb.AddRelativeForce(slopeMoveDir * speed);
+            Vector3 slopeMovement = Vector3.ProjectOnPlane(movement, slopeHit.normal);
+            
+            //rb.AddForce(slopeMovement / ((velocity.magnitude + 1) / 3));
+            if (velocity.magnitude < maxSpeed)
+            {
+                rb.AddForce(slopeMovement + -slopeHit.normal * (gravity * 2), ForceMode.Force);
+                if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.1f), ForceMode.Force);
+            }
+            if (movement == Vector3.zero) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
+            
+            Debug.Log(slopeMovement);
         }
 
         // Pushes the player away from walls
@@ -152,8 +169,6 @@ public class PlayerMovement : MonoBehaviour
         // Start wallride
         if (!grounded && pressingJump && movement.z > 0 && walled)
             wallRiding = true;
-        
-        Debug.Log(rb.velocity.magnitude);
     }
     
     
@@ -241,10 +256,7 @@ public class PlayerMovement : MonoBehaviour
     bool SlopeCheck()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, groundLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
-        {
-            slopeMoveDir = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
             return true;
-        }
         return false;
     }
 
