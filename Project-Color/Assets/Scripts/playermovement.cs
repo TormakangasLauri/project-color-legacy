@@ -102,9 +102,13 @@ public class PlayerMovement : MonoBehaviour
         Vector3 forward = transform.rotation * Vector3.forward;
         Vector3 forward90 = Quaternion.Euler(0, 90, 0) * forward;
         
-        float camAngle90 = Mathf.Rad2Deg * Mathf.Acos((forward90.x * dirToWall.x + forward90.z * dirToWall.z) / (dirToWall2.magnitude * forward90.magnitude));
-        
-        if (firstWallRideCall) wallRunForce = dirToWall90.normalized * (Mathf.Sign(camAngle90 - 90) * speed);
+        float camAngle90 = Vector3.Angle(dirToWall90, Vector3.forward);
+
+        if (firstWallRideCall)
+        {
+            if (camAngle90 < 90) wallRunForce = dirToWall90.normalized * speed;
+            else wallRunForce = dirToWall90.normalized * -speed;
+        }
         firstWallRideCall = false;
         
         // Apply force to ride the wall
@@ -120,28 +124,31 @@ public class PlayerMovement : MonoBehaviour
         float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
         
         // Movement force
-        //Vector3 movement = new Vector3(moveDirection.x * speed, 0, moveDirection.y * speed);
         Vector3 movement = (moveDirection.y * transform.forward + moveDirection.x * transform.right) * speed;
         
-        Vector3 worldMovement = transform.rotation * movement;
-        Vector2 dirToWall2 = new Vector2(dirToWall.x, dirToWall.z);
-        Vector2 direction2 = new Vector2(worldMovement.x, worldMovement.z);
         // Angle between the direction of where the player is going and the wall
-        float angle = Mathf.Rad2Deg * Mathf.Acos((worldMovement.x * dirToWall.x + worldMovement.z * dirToWall.z) / (dirToWall2.magnitude * direction2.magnitude));
+        float wallAngle = Vector3.Angle(dirToWall, movement);
+        float wallAngle90 = Vector3.Angle(Quaternion.Euler(0, 90, 0) * dirToWall, movement);
 
-        float scale = (angle / 90f);
-        float scale2 = -scale + 1;
-        
-        if (grounded && !onSlope)
+        float scale = wallAngle / 90f;
+
+        // Pushes the player away from walls
+        if (walled && !wallRiding && Mathf.Abs(wallAngle) <= 90)
         {
-            //if (xzSpeed < maxSpeed) rb.AddForce(movement / ((velocity.magnitude+1)/3));
-            if (xzSpeed < maxSpeed) rb.AddForce(movement, ForceMode.Force);
-            
-            // Normal speed limit
-            // if (xzSpeed > maxSpeed) rb.AddRelativeForce(xzSpeed - maxSpeed + 1 < 3 ? -movement * (xzSpeed - maxSpeed + 1): -movement * 3);
+            // rb.AddForce(-dirToWall * (movement.magnitude * 3f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍. AS IF IT WORKED
+            if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
+            else movement = Quaternion.Euler(0, -(90 - wallAngle),0) * movement * scale;
+        }
+        
+        if (grounded)
+        {
+            if (!onSlope && xzSpeed < maxSpeed) rb.AddForce(movement, ForceMode.Force);
             
             // Slows the player when there are no movement inputs
-            if (movement == Vector3.zero && velocity.magnitude > 1) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
+            if (movement == Vector3.zero && xzSpeed < maxSpeed) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
+            
+            // Normal speed limit on the ground
+            if (xzSpeed > maxSpeed * 1.2) rb.AddForce(xzSpeed - maxSpeed + 1 < 3 ? -velocity * (xzSpeed - maxSpeed + 1): -velocity * 3);
         }
         else if (xzSpeed < maxSpeed)
         {
@@ -152,25 +159,24 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 slopeMovement = Vector3.ProjectOnPlane(movement, slopeHit.normal);
             
-            rb.AddForce(slopeMovement / ((velocity.magnitude + 1) / 3), ForceMode.Force);
-
             if (velocity.magnitude < maxSpeed)
             {
-                rb.AddForce(slopeMovement - slopeHit.normal * (gravity * 2), ForceMode.Force);
+                rb.AddForce(slopeMovement, ForceMode.Force);
                 if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.1f), ForceMode.Force);
             }
             
-            // rb.velocity = slopeMovement / 8;
+            // Angle between the moving direction and direction to the left of the slope
+            float moveAngle = Vector3.Angle(velocity, Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)));
+            float slopeScale1 = -(moveAngle / 90) + 1;
+            float slopeScale2 = (moveAngle - 90) / 90;
             
-            if (movement == Vector3.zero) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
+            // Limits the relative left and right movement on slope when moving diagonally
+            if (moveAngle < 70 && moveAngle > 20) rb.AddForce(-Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale1));
+            else if (moveAngle > 110 && moveAngle < 160) rb.AddForce(Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale2));
         }
-
-        // Pushes the player away from walls
-        if (walled && !wallRiding && Mathf.Abs(angle) <= 90 && velocity.magnitude < maxSpeed)
-            rb.AddForce(-dirToWall * (movement.magnitude * 2.1f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍.
-
+        
         // Start wallride
-        if (!grounded && pressingJump && movement.z > 0 && walled)
+        if (!grounded && walled && pressingJump && moveDirection.y > 0)
             wallRiding = true;
 
         Debug.Log(velocity.magnitude);

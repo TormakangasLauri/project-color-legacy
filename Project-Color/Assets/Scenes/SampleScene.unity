@@ -544,6 +544,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vihu: {fileID: 529841613}
   player: {fileID: 1128180980}
+  noloslayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!195 &529841613
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2153,6 +2156,10 @@ PrefabInstance:
     - target: {fileID: 7073502008848142260, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7073502008848142260, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+      propertyPath: noloslayer.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
       propertyPath: m_Name
