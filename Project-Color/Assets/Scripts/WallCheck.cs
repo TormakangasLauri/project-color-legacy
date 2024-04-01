@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class WallCheck : MonoBehaviour
 {
@@ -13,28 +15,29 @@ public class WallCheck : MonoBehaviour
         wallLayer = PM.wallLayer;
     }
 
+    private void Update()
+    {
+        if (PM.wallColList.Count > 0) PM.walled = true;
+        else
+        {
+            PM.walled = false;
+            PM.wallRunning = false;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (wallLayer == (wallLayer | (1 << other.gameObject.layer)))
         {
-            PM.walled = true;
+            if (PM.wallColList.Count > 0) PM.wallColList.Clear();
             PM.wallColList.Add(other);
-        }
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        if (wallLayer == (wallLayer | (1 << other.gameObject.layer)))
-        {
-            PM.walled = true;
         }
     }
     private void OnTriggerExit(Collider other)
     {
         if (wallLayer == (wallLayer | (1 << other.gameObject.layer)))
         {
-            PM.walled = false;
             PM.wallColList.Remove(other);
-            PM.wallRiding = false;
         }
     }
 }

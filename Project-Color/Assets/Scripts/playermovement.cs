@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public float landingGracePeriod = 0.2f;
     private float landingGrace;
     private Vector3 wallRunForce;
+    private Vector3 lastFrameWallRunForce;
     
     [Header("Camera")]
     public float mouseSensitivity = 2f;
@@ -42,8 +43,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 dirToWall;
 
     [Header("Bools")]
-    public bool wallRiding;
-    private bool firstWallRideCall = true;
+    public bool wallRunning;
+    public int wallRunDirection;
+    private bool firstWallRunCall = true;
     public bool pressingJump;
     private bool hasJumped;
     private float timeSinceJump;
@@ -70,21 +72,24 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
         
-        if (wallRiding) rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        if (wallRunning) rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         
         CameraRotation();
 
         if (Input.GetMouseButtonDown(1)) rb.AddForce(transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
         if (Input.GetMouseButtonDown(0)) rb.AddForce(camera.transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
+
+        Debug.Log(rb.velocity.magnitude);
     }
 
     private void FixedUpdate()
     {
-        if (!wallRiding) Movement(); // If wallrunning, disable base movement
-        else WallRide();
+        if (!wallRunning) Movement(); // If wallrunning, disable base movement
+        else WallRun();
         
         // Extra gravity
-        if (!wallRiding) rb.AddForce(0 , -gravity,0);
+        if (!wallRunning) rb.AddForce(0, -gravity, 0);
+        else rb.useGravity = false;
         if (onSlope)
         {
             rb.useGravity = false;
@@ -94,26 +99,34 @@ public class PlayerMovement : MonoBehaviour
             rb.useGravity = true;
     }
 
-    void WallRide()
+    void WallRun()
     {
-        Vector2 dirToWall2 = new Vector2(dirToWall.x, dirToWall.z);
         Vector3 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
 
-        Vector3 forward = transform.rotation * Vector3.forward;
-        Vector3 forward90 = Quaternion.Euler(0, 90, 0) * forward;
-        
-        float camAngle90 = Vector3.Angle(dirToWall90, Vector3.forward);
+        float camAngle90 = Vector3.Angle(dirToWall90, transform.rotation * Vector3.forward);
 
-        if (firstWallRideCall)
+        if (firstWallRunCall)
         {
-            if (camAngle90 < 90) wallRunForce = dirToWall90.normalized * speed;
-            else wallRunForce = dirToWall90.normalized * -speed;
+            if (camAngle90 < 90)
+            {
+                wallRunForce = dirToWall90.normalized * speed;
+                wallRunDirection = 1;
+            }
+            else
+            {
+                wallRunForce = dirToWall90.normalized * -speed;
+                wallRunDirection = -1;
+            }
         }
-        firstWallRideCall = false;
+
+        wallRunForce = dirToWall90.normalized * (speed * wallRunDirection);
+
+        firstWallRunCall = false;
         
         // Apply force to ride the wall
-        // rb.velocity = (wallRunForce / 10);
         if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce, ForceMode.Force);
+
+        lastFrameWallRunForce = wallRunForce;
     }
 
     
@@ -133,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         float scale = wallAngle / 90f;
 
         // Pushes the player away from walls
-        if (walled && !wallRiding && Mathf.Abs(wallAngle) <= 90)
+        if (walled && !wallRunning && Mathf.Abs(wallAngle) <= 90)
         {
             // rb.AddForce(-dirToWall * (movement.magnitude * 3f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍. AS IF IT WORKED
             if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
@@ -177,9 +190,7 @@ public class PlayerMovement : MonoBehaviour
         
         // Start wallride
         if (!grounded && walled && pressingJump && moveDirection.y > 0)
-            wallRiding = true;
-
-        Debug.Log(velocity.magnitude);
+            wallRunning = true;
     }
     
     
@@ -196,8 +207,8 @@ public class PlayerMovement : MonoBehaviour
         if (action.canceled)
         {
             pressingJump = false;
-            if (wallRiding) WallJump();
-            wallRiding = false;
+            if (wallRunning) WallJump();
+            wallRunning = false;
         }
     }
     void Jump()
@@ -233,7 +244,7 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z) - dirToWall.normalized * 5;
         
         hasJumped = true;
-        firstWallRideCall = true;
+        firstWallRunCall = true;
     }
     
     void CameraRotation()
@@ -255,7 +266,8 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, groundLayer).Length > 0)
         {
             grounded = true;
-            wallRiding = false;
+            wallRunning = false;
+            firstWallRunCall = true;
         }
         else
         {
@@ -273,9 +285,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Walled()
     {
-        foreach (Collider col in wallColList)
-        {
-            dirToWall = col.ClosestPoint(transform.position) - transform.position;
-        }
+        if (walled) dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
     }
 }
