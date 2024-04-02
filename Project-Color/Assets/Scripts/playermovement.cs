@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Timers;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
@@ -8,25 +9,52 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
+using Vector4 = System.Numerics.Vector4;
 
 public class PlayerMovement : MonoBehaviour
 {
     public InputActionReference move;
     
+    [Header("Objects/Components")]
     private Rigidbody rb;
     new public Camera camera;
 
-    private Vector2 moveDirection; //moveDirecton
-    [Header("Values")]
-    public float speed = 100;
+    [FormerlySerializedAs("speed")] [Header("Movement")]
+    public float acceleration = 100;
     public float maxSpeed = 10;
+    private Vector2 moveDirection;
+    [Header("Slope movement")]
+    public float maxSlopeAngle = 45;
+    public bool onSlope;
+    private RaycastHit slopeHit;
+    private Vector3 slopeMoveDir;
+    
+    [Header("Jump")]
     public float jumpForce = 12;
-    public float gravity = 20;
     public float landingGracePeriod = 0.2f;
     private float landingGrace;
-    private Vector3 wallRunForce;
-    private Vector3 lastFrameWallRunForce;
+    public bool pressingJump;
+    private bool hasJumped;
+    private float timeSinceJump;
     
+    [Header("Wallrun")]
+    public bool wallRunning;
+    public int wallRunDirection;
+    private bool firstWallRunCall = true;
+    private Vector3 wallRunForce;
+    
+    [Header("Slide")]
+    public float maxSlideSpeed = 30;
+
+    public bool sliding;
+    public bool pressingSlide;
+    private bool firstSlideCall;
+    private float slideForceTimer;
+    private Vector3 slideDirection;
+
     [Header("Camera")]
     public float mouseSensitivity = 2f;
     private float cameraVerticalRotation;
@@ -36,24 +64,13 @@ public class PlayerMovement : MonoBehaviour
     public GameObject groundCheck;
     public LayerMask groundLayer;
     public bool grounded;
-    public GameObject wallCheck;
     public LayerMask wallLayer;
     public bool walled;
     [HideInInspector] public List<Collider> wallColList = new List<Collider>();
     private Vector3 dirToWall;
 
-    [Header("Bools")]
-    public bool wallRunning;
-    public int wallRunDirection;
-    private bool firstWallRunCall = true;
-    public bool pressingJump;
-    private bool hasJumped;
-    private float timeSinceJump;
-    public bool onSlope;
-
-    public float maxSlopeAngle = 45;
-    private RaycastHit slopeHit;
-    private Vector3 slopeMoveDir;
+    // Other
+    public float gravity = 20;
 
     void Start()
     {
@@ -67,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
         GroundCheck();
         Walled();
         Jump();
+        Slide();
         onSlope = SlopeCheck();
 
         moveDirection = move.action.ReadValue<Vector2>();
@@ -84,8 +102,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!wallRunning) Movement(); // If wallrunning, disable base movement
-        else WallRun();
+        if (!wallRunning && !sliding) Movement(); // If wallrunning, disable base movement
+        else if (!sliding) WallRun();
         
         // Extra gravity
         if (!wallRunning) rb.AddForce(0, -gravity, 0);
@@ -109,24 +127,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (camAngle90 < 90)
             {
-                wallRunForce = dirToWall90.normalized * speed;
+                wallRunForce = dirToWall90.normalized * acceleration;
                 wallRunDirection = 1;
             }
             else
             {
-                wallRunForce = dirToWall90.normalized * -speed;
+                wallRunForce = dirToWall90.normalized * -acceleration;
                 wallRunDirection = -1;
             }
         }
 
-        wallRunForce = dirToWall90.normalized * (speed * wallRunDirection);
+        wallRunForce = dirToWall90.normalized * (acceleration * wallRunDirection);
 
         firstWallRunCall = false;
         
         // Apply force to ride the wall
         if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce, ForceMode.Force);
-
-        lastFrameWallRunForce = wallRunForce;
     }
 
     
@@ -137,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
         
         // Movement force
-        Vector3 movement = (moveDirection.y * transform.forward + moveDirection.x * transform.right) * speed;
+        Vector3 movement = (moveDirection.y * transform.forward + moveDirection.x * transform.right) * acceleration;
         
         // Angle between the direction of where the player is going and the wall
         float wallAngle = Vector3.Angle(dirToWall, movement);
@@ -145,10 +161,9 @@ public class PlayerMovement : MonoBehaviour
 
         float scale = wallAngle / 90f;
 
-        // Pushes the player away from walls
+        // Redirects the player when moving towards walls to prevent the player from sticking to them
         if (walled && !wallRunning && Mathf.Abs(wallAngle) <= 90)
         {
-            // rb.AddForce(-dirToWall * (movement.magnitude * 3f * scale2)); // This is stupid. It is so stupid, that it works, therefore it is OK 👍. AS IF IT WORKED
             if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
             else movement = Quaternion.Euler(0, -(90 - wallAngle),0) * movement * scale;
         }
@@ -226,10 +241,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
-            if (moveDirection.magnitude == 0)
-                rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
-            else
-                rb.velocity = new Vector3(moveX * scale, jumpForce, moveZ * scale);
+            if (moveDirection.magnitude == 0 || velocity.magnitude > maxSpeed * 1.5f) rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
+            if (moveDirection.magnitude > 0 && velocity.magnitude < maxSpeed * 1.5f)rb.velocity = new Vector3(moveX * scale, jumpForce, moveZ * scale);
+
             hasJumped = true;
             timeSinceJump = Time.time;
         }
@@ -245,6 +259,52 @@ public class PlayerMovement : MonoBehaviour
         
         hasJumped = true;
         firstWallRunCall = true;
+    }
+
+    public void SlideInput(InputAction.CallbackContext action)
+    {
+        if (action.performed) pressingSlide = true;
+        else if (action.canceled)
+        {
+            pressingSlide = false;
+            sliding = false;
+        }
+    }
+
+    void Slide()
+    {
+        // Start sliding if grounded or as soons as the player touches groung while pressing the slide key
+        if (pressingSlide && grounded && !pressingJump)
+        {
+            sliding = true;
+            slideDirection = rb.velocity;
+        }
+
+        if (sliding)
+        {
+            float velMagnitude = rb.velocity.magnitude;
+            if (firstSlideCall)
+            {
+                transform.localScale = new Vector3(1, 0.5f, 1);
+                rb.AddForce(slopeHit.normal * -50, ForceMode.Impulse);
+                slideForceTimer = Time.time + Mathf.Lerp(0, 0.4f, velMagnitude / maxSpeed);
+            }
+            firstSlideCall = false;
+
+            Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
+            // Add force towards movement direction for a brief moment after starting the slide
+            if (Time.time < slideForceTimer && velMagnitude < maxSpeed * 1.2f) rb.AddForce(slideDirection / 10 * acceleration / 2, ForceMode.Force);
+            // Slideforce downhill
+            if (Time.time > slideForceTimer && Vector3.Angle(slopeHit.normal, Vector3.up) > 0 && velMagnitude < maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * (acceleration * 0.5f), ForceMode.Force);
+            // "Crouching" movement
+            if (velMagnitude < maxSpeed * 0.5f || onSlope) rb.AddForce(Vector3.ProjectOnPlane(movement, slopeHit.normal) / 3, ForceMode.Force);
+            if (velMagnitude > maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * -(acceleration * 0.5f), ForceMode.Force);
+        }
+        else
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+            firstSlideCall = true;
+        }
     }
     
     void CameraRotation()
