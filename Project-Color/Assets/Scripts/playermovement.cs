@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
         
         // Movement force
-        Vector3 movement = (moveDirection.y * transform.forward + moveDirection.x * transform.right) * acceleration;
+        Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
         
         // Angle between the direction of where the player is going and the wall
         float wallAngle = Vector3.Angle(dirToWall, movement);
@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
             if (velocity.magnitude < maxSpeed)
             {
                 rb.AddForce(slopeMovement, ForceMode.Force);
-                if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.1f), ForceMode.Force);
+                if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.05f), ForceMode.Force);
             }
             
             // Angle between the moving direction and direction to the left of the slope
@@ -290,12 +290,12 @@ public class PlayerMovement : MonoBehaviour
                 slideForceTimer = Time.time + Mathf.Lerp(0, 0.4f, velMagnitude / maxSpeed);
             }
             firstSlideCall = false;
-
+            
             Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
             // Add force towards movement direction for a brief moment after starting the slide
-            if (Time.time < slideForceTimer && velMagnitude < maxSpeed * 1.2f) rb.AddForce(slideDirection / 10 * acceleration / 2, ForceMode.Force);
+            if (Time.time < slideForceTimer && velMagnitude < maxSpeed * 1.2f) rb.AddForce(slideDirection / 10 * (acceleration * 0.5f), ForceMode.Force);
             // Slideforce downhill
-            if (Time.time > slideForceTimer && Vector3.Angle(slopeHit.normal, Vector3.up) > 0 && velMagnitude < maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * (acceleration * 0.5f), ForceMode.Force);
+            if (Time.time > slideForceTimer && Vector3.Angle(slopeHit.normal, Vector3.up) > 0 && velMagnitude < maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * (acceleration * 0.3f), ForceMode.Force);
             // "Crouching" movement
             if (velMagnitude < maxSpeed * 0.5f || onSlope) rb.AddForce(Vector3.ProjectOnPlane(movement, slopeHit.normal) / 3, ForceMode.Force);
             if (velMagnitude > maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * -(acceleration * 0.5f), ForceMode.Force);
