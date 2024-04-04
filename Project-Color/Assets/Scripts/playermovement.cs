@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
     
     [Header("Checks")]
     public GameObject groundCheck;
-    public LayerMask groundLayer;
+    [FormerlySerializedAs("groundLayer")] public LayerMask terrainLayer;
     public bool grounded;
     public LayerMask wallLayer;
     public bool walled;
@@ -71,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Other
     public float gravity = 20;
+    public bool underTerrain;
 
     void Start()
     {
@@ -86,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
         Jump();
         Slide();
         onSlope = SlopeCheck();
+        underTerrain = RoofCheck();
 
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
@@ -267,7 +269,7 @@ public class PlayerMovement : MonoBehaviour
         else if (action.canceled)
         {
             pressingSlide = false;
-            sliding = false;
+            if (!underTerrain) sliding = false;
         }
     }
 
@@ -283,6 +285,7 @@ public class PlayerMovement : MonoBehaviour
         if (sliding)
         {
             float velMagnitude = rb.velocity.magnitude;
+            
             if (firstSlideCall)
             {
                 transform.localScale = new Vector3(1, 0.5f, 1);
@@ -291,7 +294,23 @@ public class PlayerMovement : MonoBehaviour
             }
             firstSlideCall = false;
             
+            Vector3 velocity = rb.velocity;
+
             Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
+            
+            // Angle between the direction of where the player is going and the wall
+            float wallAngle = Vector3.Angle(dirToWall, movement);
+            float wallAngle90 = Vector3.Angle(Quaternion.Euler(0, 90, 0) * dirToWall, movement);
+
+            float scale = wallAngle / 90f;
+            
+            // Redirects the player when moving towards walls to prevent the player from sticking to them
+            if (walled && !wallRunning && Mathf.Abs(wallAngle) <= 90)
+            {
+                if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
+                else movement = Quaternion.Euler(0, -(90 - wallAngle),0) * movement * scale;
+            }
+            
             // Add force towards movement direction for a brief moment after starting the slide
             if (Time.time < slideForceTimer && velMagnitude < maxSpeed * 1.2f) rb.AddForce(slideDirection / 10 * (acceleration * 0.5f), ForceMode.Force);
             // Slideforce downhill
@@ -299,6 +318,17 @@ public class PlayerMovement : MonoBehaviour
             // "Crouching" movement
             if (velMagnitude < maxSpeed * 0.5f || onSlope) rb.AddForce(Vector3.ProjectOnPlane(movement, slopeHit.normal) / 3, ForceMode.Force);
             if (velMagnitude > maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * -(acceleration * 0.5f), ForceMode.Force);
+            
+            // Angle between the moving direction and direction to the left of the slope
+            float moveAngle = Vector3.Angle(velocity, Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)));
+            float slopeScale1 = -(moveAngle / 90) + 1;
+            float slopeScale2 = (moveAngle - 90) / 90;
+            
+            // Limits the relative left and right movement on slope when moving diagonally
+            if (moveAngle < 70 && moveAngle > 20) rb.AddForce(-Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale1));
+            else if (moveAngle > 110 && moveAngle < 160) rb.AddForce(Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale2));
+
+            if (!pressingSlide && !underTerrain) sliding = false;
         }
         else
         {
@@ -323,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
     
     void GroundCheck()
     {
-        if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, groundLayer).Length > 0)
+        if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, terrainLayer).Length > 0)
         {
             grounded = true;
             wallRunning = false;
@@ -338,8 +368,20 @@ public class PlayerMovement : MonoBehaviour
 
     bool SlopeCheck()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, groundLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, terrainLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
             return true;
+        return false;
+    }
+
+    bool RoofCheck()
+    {
+        Vector3 rayPos = new Vector3(0.5f,-transform.localScale.y,0);
+        for (int i = 0; i < 8; i++)
+        {
+            Quaternion rotation = Quaternion.Euler(0,45 * i,0);
+            if (Physics.Raycast(transform.position + rotation * rayPos, Vector3.up, 2, terrainLayer))
+                return true;
+        }
         return false;
     }
 
