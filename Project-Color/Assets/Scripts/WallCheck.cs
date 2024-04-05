@@ -7,7 +7,7 @@ using UnityEngine.PlayerLoop;
 
 public class WallCheck : MonoBehaviour
 {
-    public PlayerMovement PM;
+    public playermovement PM;
     private LayerMask wallLayer;
 
     private void Start()

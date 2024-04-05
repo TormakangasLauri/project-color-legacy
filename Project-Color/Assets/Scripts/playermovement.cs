@@ -14,7 +14,7 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = System.Numerics.Vector4;
 
-public class PlayerMovement : MonoBehaviour
+public class playermovement : MonoBehaviour
 {
     public InputActionReference move;
     
