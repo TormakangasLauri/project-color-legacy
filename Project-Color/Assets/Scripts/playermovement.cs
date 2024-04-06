@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
+using RadicalForge.Gameplay;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class playermovement : MonoBehaviour
     private Rigidbody rb;
     new public Camera camera;
 
-    [FormerlySerializedAs("speed")] [Header("Movement")]
+    [Header("Movement")]
     public float acceleration = 100;
     public float maxSpeed = 10;
     private Vector2 moveDirection;
@@ -54,6 +55,12 @@ public class playermovement : MonoBehaviour
     private bool firstSlideCall;
     private float slideForceTimer;
     private Vector3 slideDirection;
+
+    [Header("Dash")]
+    public bool canDash;
+    public bool dashing;
+    public float dashDistance = 5;
+    private bool firstDashCall = true;
 
     [Header("Camera")]
     public float mouseSensitivity = 2f;
@@ -96,10 +103,7 @@ public class playermovement : MonoBehaviour
         
         CameraRotation();
 
-        if (Input.GetMouseButtonDown(1)) rb.AddForce(transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
-        if (Input.GetMouseButtonDown(0)) rb.AddForce(camera.transform.rotation * Vector3.forward * 60, ForceMode.Impulse);
-
-        Debug.Log(rb.velocity.magnitude);
+        // Debug.Log(rb.velocity.magnitude);
     }
 
     private void FixedUpdate()
@@ -336,7 +340,61 @@ public class playermovement : MonoBehaviour
             firstSlideCall = true;
         }
     }
-    
+
+    public void DashInput(InputAction.CallbackContext action)
+    {
+        if (action.performed && canDash && !dashing)
+        {
+            StartCoroutine(dash());
+        }
+    }
+
+    void Dash()
+    {
+        if (dashing)
+        {
+            rb.useGravity = false;
+            canDash = false;
+
+            if (firstDashCall)
+            {
+                rb.AddForce(camera.transform.rotation * Vector3.forward * dashDistance * 10, ForceMode.VelocityChange);
+                Debug.Log("dash");
+            }
+
+            firstDashCall = false;
+            dashing = false;
+        }
+        else
+        {
+            rb.useGravity = true;
+            firstDashCall = true;
+        }
+    }
+
+    IEnumerator dash()
+    {
+        rb.useGravity = false;
+        canDash = false;
+        dashing = true;
+
+        Vector3 startPos = transform.position;
+        Vector3 dashDirection = camera.transform.rotation * Vector3.forward;
+        float startVelocity = rb.velocity.magnitude;
+        
+        rb.AddForce(dashDirection * (dashDistance * 10), ForceMode.Impulse);
+
+        yield return new WaitForSeconds(0.2f);
+        yield return new WaitUntil(delegate
+        {
+            if (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled) rb.velocity *= 0.9f;
+            return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.velocity.magnitude < (startVelocity > maxSpeed ? startVelocity: maxSpeed);
+        });
+        
+        rb.useGravity = true;
+        dashing = false;
+    }
+
     void CameraRotation()
     {
         // Rotate the Camera around its local X axis
@@ -356,8 +414,12 @@ public class playermovement : MonoBehaviour
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, terrainLayer).Length > 0)
         {
             grounded = true;
+            
             wallRunning = false;
             firstWallRunCall = true;
+
+            dashing = false;
+            canDash = true;
         }
         else
         {
@@ -387,6 +449,12 @@ public class playermovement : MonoBehaviour
 
     void Walled()
     {
-        if (walled) dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
+        if (walled)
+        {
+            dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
+
+            dashing = false;
+            canDash = true;
+        }
     }
 }
