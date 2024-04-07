@@ -57,10 +57,11 @@ public class playermovement : MonoBehaviour
     private Vector3 slideDirection;
 
     [Header("Dash")]
-    public bool canDash;
+    public bool canDash = true;
     public bool dashing;
     public float dashDistance = 5;
     private bool firstDashCall = true;
+    private float dashCoolDown = 0.1f;
 
     [Header("Camera")]
     public float mouseSensitivity = 2f;
@@ -95,15 +96,14 @@ public class playermovement : MonoBehaviour
         Slide();
         onSlope = SlopeCheck();
         underTerrain = RoofCheck();
+        CameraRotation();
 
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
-        
-        if (wallRunning) rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-        
-        CameraRotation();
 
-        // Debug.Log(rb.velocity.magnitude);
+        // Dash
+        dashCoolDown -= Time.deltaTime;
+        if ((grounded || wallRunning) && !dashing && dashCoolDown < 0) canDash = true;
     }
 
     private void FixedUpdate()
@@ -126,7 +126,6 @@ public class playermovement : MonoBehaviour
     void WallRun()
     {
         Vector3 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
-
         float camAngle90 = Vector3.Angle(dirToWall90, transform.rotation * Vector3.forward);
 
         if (firstWallRunCall)
@@ -142,13 +141,13 @@ public class playermovement : MonoBehaviour
                 wallRunDirection = -1;
             }
         }
+        firstWallRunCall = false;
 
         wallRunForce = dirToWall90.normalized * (acceleration * wallRunDirection);
 
-        firstWallRunCall = false;
-        
         // Apply force to ride the wall
         if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce, ForceMode.Force);
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
     
@@ -343,40 +342,18 @@ public class playermovement : MonoBehaviour
 
     public void DashInput(InputAction.CallbackContext action)
     {
-        if (action.performed && canDash && !dashing)
+        if (action.performed && canDash && !dashing && !grounded && !walled)
         {
-            StartCoroutine(dash());
+            StartCoroutine(Dash());
         }
     }
 
-    void Dash()
-    {
-        if (dashing)
-        {
-            rb.useGravity = false;
-            canDash = false;
-
-            if (firstDashCall)
-            {
-                rb.AddForce(camera.transform.rotation * Vector3.forward * dashDistance * 10, ForceMode.VelocityChange);
-                Debug.Log("dash");
-            }
-
-            firstDashCall = false;
-            dashing = false;
-        }
-        else
-        {
-            rb.useGravity = true;
-            firstDashCall = true;
-        }
-    }
-
-    IEnumerator dash()
+    IEnumerator Dash()
     {
         rb.useGravity = false;
         canDash = false;
         dashing = true;
+        dashCoolDown = 0.1f;
 
         Vector3 startPos = transform.position;
         Vector3 dashDirection = camera.transform.rotation * Vector3.forward;
@@ -419,7 +396,6 @@ public class playermovement : MonoBehaviour
             firstWallRunCall = true;
 
             dashing = false;
-            canDash = true;
         }
         else
         {
@@ -454,7 +430,6 @@ public class playermovement : MonoBehaviour
             dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
 
             dashing = false;
-            canDash = true;
         }
     }
 }
