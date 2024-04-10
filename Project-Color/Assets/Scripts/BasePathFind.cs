@@ -9,9 +9,9 @@ using Random = UnityEngine.Random;
 
 public class BasePathFind : MonoBehaviour
 {
-    public NavMeshAgent vihu;
-    public GameObject player;
-    [FormerlySerializedAs("blockloslayer")] public LayerMask noloslayer;
+    public NavMeshAgent agent;
+    public GameObject target;
+    public LayerMask noloslayer;
     private float lostlostimer;
     private float wanderInterval;
     public int movementMode;
@@ -31,22 +31,22 @@ public class BasePathFind : MonoBehaviour
 
     void Move()
     {
-        if (movementMode == 0 && vihu.remainingDistance < 1)
+        if (movementMode == 0 && agent.remainingDistance < 1)
         {
             wanderInterval -= Time.deltaTime;
             if (wanderInterval < 0)
             {
                 if ((transform.position - wanderOrigin).magnitude < 2.5)
-                    vihu.SetDestination(wanderOrigin + Quaternion.Euler(0, Random.Range(0, 360), 0) * new Vector3(5, 0, 0));
+                    agent.SetDestination(wanderOrigin + Quaternion.Euler(0, Random.Range(0, 360), 0) * new Vector3(5, 0, 0));
                 else
                 {
                     if (Random.Range(0, 10) <= 3)
-                        vihu.SetDestination(wanderOrigin + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f)));
+                        agent.SetDestination(wanderOrigin + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f)));
                     else
                     {
                         Vector3 target = wanderOrigin + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
                         wanderOrigin = target;
-                        vihu.SetDestination(target);
+                        agent.SetDestination(target);
                     }
                 }
 
@@ -61,9 +61,9 @@ public class BasePathFind : MonoBehaviour
             if (targetInSight)
                 lostlostimer = 1;
             if (lostlostimer >= 0)
-                vihu.SetDestination(player.transform.position);
+                agent.SetDestination(target.transform.position);
 
-            if (vihu.remainingDistance < 1 && !targetInSight)
+            if (agent.remainingDistance < 1 && !targetInSight)
             {
                 wanderOrigin = transform.position;
                 movementMode = 0;
@@ -73,7 +73,7 @@ public class BasePathFind : MonoBehaviour
 
     void PlayerSeen()
     {
-        targetInSight = !Physics.Raycast(transform.position, (player.transform.position - transform.position).normalized, (player.transform.position - transform.position).magnitude, noloslayer);
+        targetInSight = !Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, (target.transform.position - transform.position).magnitude, noloslayer);
     }
 
 }

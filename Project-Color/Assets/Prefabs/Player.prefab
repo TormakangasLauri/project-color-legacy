@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 5792234534002109464}
   - component: {fileID: 5792234534002109465}
   - component: {fileID: 5792234534002109443}
+  - component: {fileID: 891123135056075187}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -286,6 +287,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 190cf38d-d88d-43fb-8a79-ec6d58c78ec3
     m_ActionName: player/slide[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a3286d9a-6f6a-40d7-9ad6-a7fd6437c455
+    m_ActionName: player/dash[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: keyboard+mouse
   m_DefaultActionMap: player
@@ -317,9 +322,12 @@ MonoBehaviour:
   maxSlideSpeed: 30
   sliding: 0
   pressingSlide: 0
+  canDash: 1
+  dashing: 0
+  dashDistance: 5
   mouseSensitivity: 2
   groundCheck: {fileID: 5792234533053846735}
-  groundLayer:
+  terrainLayer:
     serializedVersion: 2
     m_Bits: 64
   grounded: 0
@@ -329,6 +337,23 @@ MonoBehaviour:
   walled: 0
   wallColList: []
   gravity: 20
+  underTerrain: 0
+--- !u!114 &891123135056075187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5792234534002109460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b853017d9f487894794963a9e413199c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveInput: {fileID: 7345632375263178156, guid: 40f805a1fa210dc4188c66051fc92385, type: 3}
+  baseSpeed: 8
+  mouseSensitivity: 2
+  cam: {fileID: 5792234535004010236}
 --- !u!1 &5792234535004010237
 GameObject:
   m_ObjectHideFlags: 0
