@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 7073502008848142261}
   - component: {fileID: 8988140253873862383}
   - component: {fileID: 7073502008848142260}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,8 +250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bba52bfc3f37174e824f72d233835ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vihu: {fileID: 8988140253873862383}
-  player: {fileID: 0}
+  agent: {fileID: 8988140253873862383}
+  target: {fileID: 0}
   noloslayer:
     serializedVersion: 2
     m_Bits: 64

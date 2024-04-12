@@ -233,6 +233,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 524619089}
+    - target: {fileID: 7073502008848142260, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 524619089}
     - target: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
       propertyPath: m_Name
       value: Enemy
@@ -372,16 +376,72 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 891123135056075187, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 891123135056075187, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: mouseSensitivity
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109443, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109460, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionId
+      value: 76dc29cb-12a0-48a4-a83c-c57f176f84cf
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionName
+      value: player/attack[/Mouse/leftButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2086290895}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: AttackInput
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerAttack, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5792234534002109465, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109468, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_RootOrder
@@ -427,6 +487,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8251923137470428490, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
 --- !u!1001 &1514911800
@@ -438,6 +502,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7073502008848142260, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
       propertyPath: player
+      value: 
+      objectReference: {fileID: 524619089}
+    - target: {fileID: 7073502008848142260, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+      propertyPath: target
       value: 
       objectReference: {fileID: 524619089}
     - target: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
@@ -721,3 +789,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3315ee48ccc2bce4fa73c4b39288def4, type: 3}
+--- !u!114 &2086290895 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8251923137470428490, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+  m_PrefabInstance: {fileID: 1409609775}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b3867b2979feb745bd8d27d0772d189, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
