@@ -425,7 +425,7 @@ public class playermovement : MonoBehaviour
 
     void Walled()
     {
-        if (walled && wallColList.Count <= 0)
+        if (walled)
         {
             dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
 
