@@ -28,7 +28,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack (GameObject enemy)
     {
-        enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000);
+        //enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000);
+        Destroy(enemy);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -13,6 +13,7 @@ public class EnemyMovement : MonoBehaviour
     public LayerMask terrainLayer;
 
     public float speed;
+    public float stopDistance;
     
     public bool LOSToPlayer;
 
@@ -28,6 +29,8 @@ public class EnemyMovement : MonoBehaviour
 
         agent.speed = speed;
         state = State.navmesh;
+        
+        EnemyController.inst.basicEnemies.Add(gameObject);
     }
 
     private void Update()
@@ -40,7 +43,8 @@ public class EnemyMovement : MonoBehaviour
         // States
         //  idle: not moving / wandering, will finish later
         //  navmesh: moving with NavMeshAgent when player is not in LOS
-        //  los: moving with force when player in LOS
+        //  los: moving with force towards the player when player is in LOS
+        //  attack: attacking
         switch (state)
         {
             case State.idle:
@@ -59,7 +63,7 @@ public class EnemyMovement : MonoBehaviour
         agent.SetDestination(target.transform.position);
 
         // State change check
-        if (LOSToPlayer)
+        if (LOSToPlayer && agent.path.corners.Length <= 2)
         {
             agent.enabled = false;
             state = State.los;
@@ -73,17 +77,39 @@ public class EnemyMovement : MonoBehaviour
         Vector3 directionToPlayer = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
         Vector3 movement = directionToPlayer * (speed * 10);
         
-        rb.angularVelocity = Vector3.up * (-5 * Mathf.Deg2Rad * Vector3.SignedAngle(directionToPlayer, transform.forward, Vector3.up));
-        transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
+        // Rotate to face the player
+        //rb.angularVelocity = Vector3.up * (-5 * Mathf.Deg2Rad * Vector3.SignedAngle(directionToPlayer, transform.forward, Vector3.up));
+        rb.MoveRotation(Quaternion.LookRotation(directionToPlayer));
+        // Rotation limiter
+        //transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
 
-        rb.AddForce(movement);
+        float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
+        
+        // Moving when not in stopping distance of the player
+        if (distOnXZ > stopDistance + stopDistance/2) rb.AddForce(movement);
+        // Slow down enemy when in stopping distance
+        else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+        // Speed limit
         if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+        if (distOnXZ < 2)
+        {
+            rb.AddForce(-movement/3);
+            if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+        } 
         
         // State change check
-        if (!LOSToPlayer)
+        agent.enabled = true;
+        agent.SetDestination(targetPos);
+        if (agent.path.corners.Length > 2 || !LOSToPlayer)
         {
-            agent.enabled = true;
+            Debug.Log("!");
             state = State.navmesh;
         }
+        else agent.enabled = false;
+    }
+
+    private void OnDestroy()
+    {
+        EnemyController.inst.basicEnemies.Remove(gameObject);
     }
 }

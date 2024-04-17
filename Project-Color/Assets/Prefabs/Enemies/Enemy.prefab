@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4123372084808552241}
   - component: {fileID: 6044666093564125475}
   - component: {fileID: 5529644147326160812}
-  - component: {fileID: 4263065158861404307}
   m_Layer: 0
   m_Name: Face
   m_TagString: Untagged
@@ -84,20 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4263065158861404307
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5958499905283089707}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7073502008848142263
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,7 +98,6 @@ GameObject:
   - component: {fileID: 7073502008848142261}
   - component: {fileID: 8988140253873862383}
   - component: {fileID: 6965473459593261956}
-  - component: {fileID: 7073502008848142260}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
@@ -256,22 +240,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   speed: 5
---- !u!114 &7073502008848142260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7073502008848142263}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bba52bfc3f37174e824f72d233835ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agent: {fileID: 8988140253873862383}
-  target: {fileID: 0}
-  noloslayer:
-    serializedVersion: 2
-    m_Bits: 64
-  movementMode: 0
-  targetInSight: 0
+  LOSToPlayer: 0
+  state: 0
