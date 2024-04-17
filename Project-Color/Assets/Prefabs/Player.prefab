@@ -353,6 +353,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: a3286d9a-6f6a-40d7-9ad6-a7fd6437c455
     m_ActionName: player/dash[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 76dc29cb-12a0-48a4-a83c-c57f176f84cf
+    m_ActionName: player/attack[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: keyboard+mouse
   m_DefaultActionMap: player
@@ -407,7 +411,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b853017d9f487894794963a9e413199c, type: 3}
   m_Name: 
