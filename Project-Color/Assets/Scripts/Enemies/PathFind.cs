@@ -3,29 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 public class PathFind : MonoBehaviour
 {
     private NavMeshAgent agent;
     private GameObject target;
-    [HideInInspector] public Vector3 targetPos;
     private LayerMask terrainLayer;
+    private EnemyMovement EM;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        target = GetComponentInParent<EnemyMovement>().target;
-        terrainLayer = GetComponentInParent<EnemyMovement>().terrainLayer;
+        EM = GetComponentInParent<EnemyMovement>();
+        target = EM.target;
+        terrainLayer = EM.terrainLayer;
     }
 
     void Update()
     {
+        transform.localPosition = Vector3.zero;
+        
         RaycastHit hit;
-        Physics.Raycast(target.transform.position, Vector3.down, out hit, terrainLayer);
+        Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
         
         NavMeshPath path = new NavMeshPath();
+        agent.enabled = true;
         agent.CalculatePath(hit.point, path);
-        agent.path = path;
-        targetPos = agent.steeringTarget;
+        agent.enabled = false;
+        EM.path = path;
     }
 }

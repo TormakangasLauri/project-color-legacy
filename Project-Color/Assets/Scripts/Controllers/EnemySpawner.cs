@@ -10,7 +10,18 @@ public class EnemySpawner : MonoBehaviour
     
     void Start()
     {
-        for (int i = 0; i < amount; i++)
+        // for (int i = 0; i < amount; i++)
+        //     Instantiate(enemy, transform.position, new Quaternion());
+
+        StartCoroutine(Spawn());
+    }
+
+    private IEnumerator Spawn()
+    {
+        while (true)
+        {
             Instantiate(enemy, transform.position, new Quaternion());
+            yield return new WaitForSeconds(0.05f);
+        }
     }
 }
