@@ -14,17 +14,17 @@ public class PaintSplash : MonoBehaviour
         collisionEvents = new List<ParticleCollisionEvent>();
     }
 
-    void OnParticleCollision(GameObject other)  // Does not work.
-    {
-        Paintable paintable = other.gameObject.GetComponent<Paintable>();
-
-        foreach (ParticleCollisionEvent collisionEvent in collisionEvents)
-        {
-            if (paintable)
-            {
-                paintable.AddPaint();
-            }
-        }
-    }
+    // void OnParticleCollision(GameObject other)  // Does not work.
+    // {
+    //     Paintable paintable = other.gameObject.GetComponent<Paintable>();
+    //
+    //     foreach (ParticleCollisionEvent collisionEvent in collisionEvents)
+    //     {
+    //         if (paintable)
+    //         {
+    //             paintable.AddPaint();
+    //         }
+    //     }
+    // }
 }
 

@@ -4,12 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerAttack : MonoBehaviour
 {
     private Collider hitbox;
     public LayerMask enemyLayer;
     public List<GameObject> enemies;
+
+    public static PlayerAttack inst;
+
+    public bool pushIsActive;
+
+    private void Awake()
+    {
+        inst = this;
+    }
 
     private void Start()
     {
@@ -29,9 +39,21 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack(GameObject enemy)
     {
-        enemy.GetComponent<NavMeshAgent>().enabled = false;
-        enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 2000 + Vector3.up * 500);
-        //Destroy(enemy);
+        {
+            Health enemyHealth = enemy.GetComponent<Health>();
+            enemyHealth.TakeDamage(20);
+
+            if (enemy != null)
+            {
+                if (enemyHealth.healthAmount <= 0)
+                {
+                    Destroy(enemy);
+                }
+            }
+
+            if (pushIsActive) // goofy lookin' ass knockback
+                enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

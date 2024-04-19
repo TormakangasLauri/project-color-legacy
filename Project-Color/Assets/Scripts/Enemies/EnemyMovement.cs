@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEditor.VersionControl;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -20,10 +21,17 @@ public class EnemyMovement : MonoBehaviour
     public bool LOSToPlayer;
     public bool grounded;
 
+    public static EnemyMovement inst;
+
     private float stateSwitchTimer;
 
     public enum State { idle, navmesh, los, attack };
     public State state;
+    
+    private void Awake()
+    {
+        inst = this;
+    }
 
     private void Start()
     {
@@ -144,5 +152,9 @@ public class EnemyMovement : MonoBehaviour
     private void OnDestroy()
     {
         EnemyController.inst.basicEnemies.Remove(gameObject);
+        if (PlayerAttack.inst.enemies.Contains(gameObject))
+        {
+            PlayerAttack.inst.enemies.Remove(gameObject);
+        }
     }
 }
