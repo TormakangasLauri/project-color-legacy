@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlockoutSceneSettings_TestMap
   m_EditorClassIdentifier: 
   sceneName: TestMap
-  currentTheme: 2
+  currentTheme: 0
   currentTexture: 0
   cameraAnchor: []
   assetDictionary: []

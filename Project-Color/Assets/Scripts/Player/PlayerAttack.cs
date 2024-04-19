@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
@@ -26,10 +27,11 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private void Attack (GameObject enemy)
+    private void Attack(GameObject enemy)
     {
-        //enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000);
-        Destroy(enemy);
+        enemy.GetComponent<NavMeshAgent>().enabled = false;
+        enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 2000 + Vector3.up * 500);
+        //Destroy(enemy);
     }
 
     private void OnTriggerEnter(Collider other)
