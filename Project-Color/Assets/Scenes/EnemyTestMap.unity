@@ -451,6 +451,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5958499905283089707, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6965473459593261956, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
       propertyPath: target
       value: 
@@ -1186,6 +1190,14 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 524619089}
+    - target: {fileID: 4686222180001089621, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+      propertyPath: bulletSpeed
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686222180001089621, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+      propertyPath: shootCooldown
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_Name
       value: Sniper

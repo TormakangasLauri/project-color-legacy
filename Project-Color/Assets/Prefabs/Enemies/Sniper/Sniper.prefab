@@ -460,6 +460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   bullet: {fileID: 2390326941663130154, guid: 60f26884efba2b34fa5a9d271517506d, type: 3}
+  bulletTrail: {fileID: 8057320020195629136, guid: 66b8842ebca1ad247a9a0038e6ebe49b, type: 3}
   shootPoint: {fileID: 3474883329285946529}
   bulletSpeed: 50
-  shootCooldown: 0.1
+  shootCooldown: 5
