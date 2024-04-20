@@ -24,10 +24,10 @@ public class SniperShooting : MonoBehaviour
 
     void Update()
     {
-        if (!Physics.Linecast(transform.position, target.transform.position, LayerMask.GetMask("Terrain"))
-            || Physics.Linecast(transform.position, target.transform.position, LayerMask.GetMask("Enemy")))
+        if (!Physics.Linecast(transform.position, target.transform.position, LayerMask.GetMask("Terrain")))
             LOSToTarget = true;
-        else LOSToTarget = false;
+        else
+            LOSToTarget = false;
 
         if (LOSToTarget) t -= Time.deltaTime;
         else t = shootCooldown;
@@ -35,7 +35,11 @@ public class SniperShooting : MonoBehaviour
         if (LOSToTarget && t < 0)
         {
             t = shootCooldown;
+            
+            // Shooting with bullets
             // Shoot();
+            
+            // Shooting with raycast
             StartCoroutine(Shoot2());
         }
 
@@ -60,26 +64,38 @@ public class SniperShooting : MonoBehaviour
         if (Physics.Raycast(shootPoint.position, targetDirection, out hit))
         {
             GameObject hitObj = hit.transform.gameObject;
-            if (hitObj.CompareTag("Player") || hitObj.layer == LayerMask.GetMask("Enemy"))
+            if (EnemyController.inst.AllEnemies.Contains(hitObj))
             {
-                // Player or enemy hit
-                StartCoroutine(BulletTrail(true));
+                // Enemy hit
+                StartCoroutine(BulletTrail(2));
+            }
+            else if (hitObj.CompareTag("Player"))
+            {
+                // Player hit
+                StartCoroutine(BulletTrail(1));
             }
 
         }
-        else StartCoroutine(BulletTrail(false));
+        else StartCoroutine(BulletTrail(0));
     }
 
-    private IEnumerator BulletTrail(bool hitPlayer)
+    private IEnumerator BulletTrail(int hit)
     {
         Vector3 targetDir = target.transform.position - shootPoint.position;
         GameObject trail = Instantiate(bulletTrail, shootPoint.position + targetDir / 2, Quaternion.LookRotation(targetDir));
         trail.transform.Rotate(new Vector3(90,0,0));
         trail.transform.localScale = new Vector3(0.05f, targetDir.magnitude / 2, 0.05f);
         
-        if (hitPlayer) trail.GetComponent<MeshRenderer>().material.color = Color.red;
+        if (hit == 1) trail.GetComponent<MeshRenderer>().material.color = Color.red;
+        else if (hit == 2) trail.GetComponent<MeshRenderer>().material.color = Color.yellow;
+
+        Color currentColor = trail.GetComponent<MeshRenderer>().material.color;
+        for (float i = 1; i > 0; i -= 0.1f)
+        {
+            trail.GetComponent<MeshRenderer>().material.color = new Color(currentColor.r, currentColor.g, currentColor.b, i);
+            yield return new WaitForSeconds(0.1f);
+        }
         
-        yield return new WaitForSeconds(1);
         Destroy(trail);
     }
 }

@@ -20,18 +20,11 @@ public class EnemyMovement : MonoBehaviour
     public float stopDistance;
     public bool LOSToPlayer;
     public bool grounded;
-
-    public static EnemyMovement inst;
-
+    
     private float stateSwitchTimer;
 
     public enum State { idle, navmesh, los, attack };
     public State state;
-    
-    private void Awake()
-    {
-        inst = this;
-    }
 
     private void Start()
     {
@@ -40,11 +33,10 @@ public class EnemyMovement : MonoBehaviour
         pathFinder = GetComponentInChildren<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         target = GameObject.FindWithTag("Player");
+        terrainLayer = LayerMask.GetMask("Terrain");
 
         agent.speed = speed;
         state = State.navmesh;
-        
-        EnemyController.inst.basicEnemies.Add(gameObject);
     }
 
     private void Update()
@@ -147,14 +139,5 @@ public class EnemyMovement : MonoBehaviour
         if (Physics.OverlapBox(transform.position + Vector3.down * 0.5f, new Vector3(0.3f, 1, 0.3f), Quaternion.identity, terrainLayer).Length > 0)
             grounded = true;
         else grounded = false;
-    }
-
-    private void OnDestroy()
-    {
-        EnemyController.inst.basicEnemies.Remove(gameObject);
-        if (PlayerAttack.inst.enemies.Contains(gameObject))
-        {
-            PlayerAttack.inst.enemies.Remove(gameObject);
-        }
     }
 }

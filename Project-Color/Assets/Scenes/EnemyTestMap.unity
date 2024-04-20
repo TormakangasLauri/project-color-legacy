@@ -811,6 +811,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8251923137470428490, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: pushIsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8251923137470428490, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: enemyLayer.m_Bits
       value: 256
       objectReference: {fileID: 0}

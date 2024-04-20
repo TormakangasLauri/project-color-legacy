@@ -341,7 +341,10 @@ GameObject:
   - component: {fileID: 315481782989711631}
   - component: {fileID: 5230440912717490788}
   - component: {fileID: 2579234994773169901}
+  - component: {fileID: 8256769091064229477}
   - component: {fileID: 4686222180001089621}
+  - component: {fileID: 8594405485110631424}
+  - component: {fileID: 2805113634935138333}
   m_Layer: 8
   m_Name: Sniper
   m_TagString: Untagged
@@ -446,6 +449,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &8256769091064229477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8245528752783580106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6483a00a9c68844dabe2f1eeead6a03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4686222180001089621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,3 +479,33 @@ MonoBehaviour:
   shootPoint: {fileID: 3474883329285946529}
   bulletSpeed: 50
   shootCooldown: 5
+  t: 0
+  LOSToTarget: 0
+--- !u!114 &8594405485110631424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8245528752783580106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+--- !u!114 &2805113634935138333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8245528752783580106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df737c4d1a06db438cf61d0ceb70f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 0}
+  healthAmount: 100
+  damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}

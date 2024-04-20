@@ -52,7 +52,7 @@ public class PlayerAttack : MonoBehaviour
             }
 
             if (pushIsActive) // goofy lookin' ass knockback
-                enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000);
+                enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 1000 + Vector3.up * 200);
         }
     }
 

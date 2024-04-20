@@ -9,7 +9,7 @@ public class Health : MonoBehaviour
     public Image healthBar;
     public float healthAmount = 100;
     public Color damageFlash = new Color(116f / 255f, 18f / 255f, 27f / 255f);
-    public Renderer enemyRenderer;
+    private Renderer enemyRenderer;
     
     private TextMeshProUGUI healthText;
 

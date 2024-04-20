@@ -165,6 +165,8 @@ GameObject:
   - component: {fileID: 7073502008848142261}
   - component: {fileID: 8988140253873862383}
   - component: {fileID: 6965473459593261956}
+  - component: {fileID: 1767858099887017788}
+  - component: {fileID: 7204883100522111362}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
@@ -312,3 +314,31 @@ MonoBehaviour:
   LOSToPlayer: 0
   grounded: 0
   state: 0
+--- !u!114 &1767858099887017788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073502008848142263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+--- !u!114 &7204883100522111362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073502008848142263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df737c4d1a06db438cf61d0ceb70f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 0}
+  healthAmount: 100
+  damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
