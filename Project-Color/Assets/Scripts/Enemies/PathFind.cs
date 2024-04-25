@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -10,14 +12,15 @@ public class PathFind : MonoBehaviour
     private NavMeshAgent agent;
     private GameObject target;
     private LayerMask terrainLayer;
-    private EnemyMovement EM;
+    private EnemyType ET;
+    private string type;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        EM = GetComponentInParent<EnemyMovement>();
-        target = EM.target;
-        terrainLayer = EM.terrainLayer;
+        ET = GetComponentInParent<EnemyType>();
+        target = ET.target;
+        terrainLayer = LayerMask.GetMask("Terrain");
     }
 
     void Update()
@@ -31,6 +34,6 @@ public class PathFind : MonoBehaviour
         agent.enabled = true;
         agent.CalculatePath(hit.point, path);
         agent.enabled = false;
-        EM.path = path;
+        ET.path = path;
     }
 }

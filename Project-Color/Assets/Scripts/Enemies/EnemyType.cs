@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyType : MonoBehaviour
 {
@@ -11,9 +12,14 @@ public class EnemyType : MonoBehaviour
         MILO
     };
     public Type type;
+
+    public GameObject target;
+    public NavMeshPath path;
     
     void Start()
     {
+        target = GameObject.FindWithTag("Player");
+
         switch (type)
         {
             case Type.basic:
@@ -27,7 +33,7 @@ public class EnemyType : MonoBehaviour
                 break;
         }
     }
-    
+
     private void OnDestroy()
     {
         switch (type)

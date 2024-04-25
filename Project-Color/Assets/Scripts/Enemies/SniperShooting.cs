@@ -15,6 +15,7 @@ public class SniperShooting : MonoBehaviour
     public float shootCooldown;
     public float t;
     public bool LOSToTarget;
+    public bool moving = false;
 
     private void Start()
     {
@@ -29,7 +30,7 @@ public class SniperShooting : MonoBehaviour
         else
             LOSToTarget = false;
 
-        if (LOSToTarget) t -= Time.deltaTime;
+        if (LOSToTarget || !moving) t -= Time.deltaTime;
         else t = shootCooldown;
         
         if (LOSToTarget && t < 0)
@@ -37,6 +38,7 @@ public class SniperShooting : MonoBehaviour
             t = shootCooldown;
             
             // Shooting with bullets
+            // Collision detection is a bit questionable so we're using raycasts for now
             // Shoot();
             
             // Shooting with raycast

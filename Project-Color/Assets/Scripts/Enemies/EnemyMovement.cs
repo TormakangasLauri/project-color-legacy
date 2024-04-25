@@ -11,15 +11,17 @@ public class EnemyMovement : MonoBehaviour
     private NavMeshAgent agent;
     private NavMeshAgent pathFinder;
     private Rigidbody rb;
+    private EnemyType ET;
+
     public GameObject target;
     
-    public LayerMask terrainLayer;
+    [HideInInspector] public LayerMask terrainLayer;
     public NavMeshPath path;
 
     public float speed;
-    public float stopDistance;
-    public bool LOSToPlayer;
-    public bool grounded;
+    [HideInInspector] public float stopDistance;
+    [HideInInspector] public bool LOSToTarget;
+    [HideInInspector] public bool grounded;
     
     private float stateSwitchTimer;
 
@@ -32,7 +34,8 @@ public class EnemyMovement : MonoBehaviour
         agent.enabled = true;
         pathFinder = GetComponentInChildren<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
-        target = GameObject.FindWithTag("Player");
+        ET = GetComponent<EnemyType>();
+        target = GetComponent<EnemyType>().target;
         terrainLayer = LayerMask.GetMask("Terrain");
 
         agent.speed = speed;
@@ -42,9 +45,11 @@ public class EnemyMovement : MonoBehaviour
     private void Update()
     {
         Grounded();
-        LOSToPlayer = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
+        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
         stateSwitchTimer -= Time.deltaTime;
+
+        path = ET.path;
         
         // Debug.Log(path.corners.Length);
     }
@@ -81,7 +86,7 @@ public class EnemyMovement : MonoBehaviour
         rb.MoveRotation(Quaternion.LookRotation(directionToPlayer));
         
         // State change check
-        if (LOSToPlayer && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - 1) && stateSwitchTimer < 0)
+        if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - 1) && stateSwitchTimer < 0)
         {
             stateSwitchTimer = 1;
             StartCoroutine(NavMeshToLOS());
@@ -125,7 +130,7 @@ public class EnemyMovement : MonoBehaviour
         // State change check
         RaycastHit hit;
         Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
-        if ((path.corners.Length > 2 || !LOSToPlayer) && hit.point.y + 0.1 >= transform.position.y - 1 && grounded && stateSwitchTimer < 0)
+        if ((path.corners.Length > 2 || !LOSToTarget) && hit.point.y + 0.1 >= transform.position.y - 1 && grounded && stateSwitchTimer < 0)
         {
             stateSwitchTimer = 1;
             
