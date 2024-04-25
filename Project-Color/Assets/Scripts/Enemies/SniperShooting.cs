@@ -19,7 +19,7 @@ public class SniperShooting : MonoBehaviour
 
     private void Start()
     {
-        target = GameObject.FindWithTag("Player");
+        target = GetComponent<EnemyType>().target;
         t = shootCooldown;
     }
 

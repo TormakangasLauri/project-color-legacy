@@ -13,18 +13,18 @@ public class PathFind : MonoBehaviour
     private GameObject target;
     private LayerMask terrainLayer;
     private EnemyType ET;
-    private string type;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         ET = GetComponentInParent<EnemyType>();
-        target = ET.target;
         terrainLayer = LayerMask.GetMask("Terrain");
     }
 
     void Update()
     {
+        target = ET.target;
+
         transform.localPosition = Vector3.zero;
         
         RaycastHit hit;

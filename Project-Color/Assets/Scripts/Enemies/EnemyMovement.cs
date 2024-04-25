@@ -13,7 +13,7 @@ public class EnemyMovement : MonoBehaviour
     private Rigidbody rb;
     private EnemyType ET;
 
-    public GameObject target;
+    private GameObject target;
     
     [HideInInspector] public LayerMask terrainLayer;
     public NavMeshPath path;

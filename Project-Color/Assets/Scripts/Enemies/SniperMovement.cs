@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class SniperMovement : MonoBehaviour
 {
     private Rigidbody rb;
-    public GameObject target;
+    private GameObject target;
     
     public float speed;
     public float maxDistToTarget;
