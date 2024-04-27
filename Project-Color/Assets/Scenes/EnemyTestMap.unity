@@ -1217,15 +1217,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1401833808994689376, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -57.91807
+      value: -70.67
       objectReference: {fileID: 0}
     - target: {fileID: 1401833808994689376, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.025
+      value: 8.31
       objectReference: {fileID: 0}
     - target: {fileID: 1401833808994689376, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 76.38246
+      value: 70.67
       objectReference: {fileID: 0}
     - target: {fileID: 1401833808994689376, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1270,6 +1270,14 @@ PrefabInstance:
     - target: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
       propertyPath: m_Name
       value: Sniper
+      objectReference: {fileID: 0}
+    - target: {fileID: 8256769091064229477, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+      propertyPath: speed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8256769091064229477, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+      propertyPath: maxDistToTarget
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}

@@ -30,7 +30,7 @@ public class SniperShooting : MonoBehaviour
         else
             LOSToTarget = false;
 
-        if (LOSToTarget || !moving) t -= Time.deltaTime;
+        if (LOSToTarget && !moving) t -= Time.deltaTime;
         else t = shootCooldown;
         
         if (LOSToTarget && t < 0)
@@ -44,9 +44,6 @@ public class SniperShooting : MonoBehaviour
             // Shooting with raycast
             StartCoroutine(Shoot2());
         }
-
-        Vector3 Rot = target.transform.position - transform.position;
-        GetComponent<Rigidbody>().MoveRotation(Quaternion.LookRotation(new Vector3(Rot.x, 0, Rot.z)));
     }
 
     private void Shoot()
