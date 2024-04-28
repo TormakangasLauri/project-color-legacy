@@ -29,6 +29,8 @@ public class EnemyController : MonoBehaviour
         if (t < 0)
         { t = 0.5f;
             
+            // BASIC ENEMY
+
             // Sort enemies based on the distance to player
             basicEnemyList.Sort((obj1, obj2) =>
             {
@@ -49,6 +51,13 @@ public class EnemyController : MonoBehaviour
                 basicEnemyList[i].GetComponent<NavMeshAgent>().stoppingDistance = stopDist;
                 basicEnemyList[i].GetComponent<EnemyMovement>().stopDistance = stopDist;
             }
+        }
+
+        // M.I.L.O
+
+        foreach (GameObject milo in MILOList)
+        {
+            milo.GetComponent<EnemyMovement>().stopDistance = 3;
         }
         
         AllEnemies.Clear();

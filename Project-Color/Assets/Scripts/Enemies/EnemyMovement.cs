@@ -20,8 +20,8 @@ public class EnemyMovement : MonoBehaviour
 
     public float speed;
     [HideInInspector] public float stopDistance;
-    [HideInInspector] public bool LOSToTarget;
-    [HideInInspector] public bool grounded;
+    public bool LOSToTarget;
+    public bool grounded;
     
     private float stateSwitchTimer;
 
@@ -86,7 +86,7 @@ public class EnemyMovement : MonoBehaviour
         rb.MoveRotation(Quaternion.LookRotation(directionToPlayer));
         
         // State change check
-        if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - 1) && stateSwitchTimer < 0)
+        if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - transform.localScale.y/2) && stateSwitchTimer < 0)
         {
             stateSwitchTimer = 1;
             StartCoroutine(NavMeshToLOS());
@@ -130,18 +130,23 @@ public class EnemyMovement : MonoBehaviour
         // State change check
         RaycastHit hit;
         Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
-        if ((path.corners.Length > 2 || !LOSToTarget) && hit.point.y + 0.1 >= transform.position.y - 1 && grounded && stateSwitchTimer < 0)
+        RaycastHit enemyHit;
+        Physics.Raycast(transform.position, Vector3.down, out enemyHit, 100, terrainLayer);
+        if ((path.corners.Length > 2 || !LOSToTarget) && hit.point.y + 0.1 >= enemyHit.point.y && grounded && stateSwitchTimer < 0)
         {
             stateSwitchTimer = 1;
             
             agent.enabled = true;
             state = State.navmesh;
+
+            Debug.Log("!");
         }
     }
 
     private void Grounded()
     {
-        if (Physics.OverlapBox(transform.position + Vector3.down * 0.5f, new Vector3(0.3f, 1, 0.3f), Quaternion.identity, terrainLayer).Length > 0)
+        Vector3 s = transform.localScale;
+        if (Physics.OverlapBox(transform.position + Vector3.down * s.y/2, new Vector3(s.x * 0.3f, s.y * 1, s.z * 0.3f), Quaternion.identity, terrainLayer).Length > 0)
             grounded = true;
         else grounded = false;
     }
