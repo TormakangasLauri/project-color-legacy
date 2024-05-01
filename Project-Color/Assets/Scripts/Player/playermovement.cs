@@ -1,19 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Timers;
-using RadicalForge.Gameplay;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
-using Vector4 = System.Numerics.Vector4;
 
 public class playermovement : MonoBehaviour
 {
@@ -60,7 +51,6 @@ public class playermovement : MonoBehaviour
     public bool canDash = true;
     public bool dashing;
     public float dashDistance = 5;
-    private bool firstDashCall = true;
     private float dashCoolDown = 0.1f;
 
     [Header("Camera")]
@@ -70,7 +60,7 @@ public class playermovement : MonoBehaviour
     
     [Header("Checks")]
     public GameObject groundCheck;
-    [FormerlySerializedAs("groundLayer")] public LayerMask terrainLayer;
+    public LayerMask terrainLayer;
     public bool grounded;
     public LayerMask wallLayer;
     public bool walled;

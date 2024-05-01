@@ -5,11 +5,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using UnityEngine.InputSystem.HID;
 
 public class EnemyMovement : MonoBehaviour
 {
-    private NavMeshAgent agent;
-    private NavMeshAgent pathFinder;
     private Rigidbody rb;
     private EnemyType ET;
 
@@ -30,16 +29,13 @@ public class EnemyMovement : MonoBehaviour
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.enabled = true;
-        pathFinder = GetComponentInChildren<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
         ET = GetComponent<EnemyType>();
         target = GetComponent<EnemyType>().target;
         terrainLayer = LayerMask.GetMask("Terrain");
 
-        agent.speed = speed;
         state = State.navmesh;
+        path = new NavMeshPath();
     }
 
     private void Update()
@@ -50,15 +46,13 @@ public class EnemyMovement : MonoBehaviour
         stateSwitchTimer -= Time.deltaTime;
 
         path = ET.path;
-        
-        // Debug.Log(path.corners.Length);
     }
 
     private void FixedUpdate()
     {
         // States
         //  idle: not moving / wandering, will finish later
-        //  navmesh: moving with NavMeshAgent when player is not in LOS
+        //  navmesh: moving using a NavMeshPath when player is not in LOS
         //  los: moving with force towards the player when player is in LOS
         //  attack: attacking
         switch (state)
@@ -72,32 +66,48 @@ public class EnemyMovement : MonoBehaviour
                 LOSMovement();
                 break;
         }
+
+        // Gravity
+        if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
     }
 
     private void NavMeshMovement()
     {
+        if (path.corners.Length >= 2)
+        {
+            Vector3 targetPos = target.transform.position;
+            Vector3 cornerPos = path.corners[1];
+            Vector3 pos = transform.position;
+            Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
+            Vector3 movement = directionToTarget * (speed * 10);
+
+            // Rotate to face the player
+            rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+
+            float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
+
+            // Moving when not in stopping distance of the target
+            if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
+            // Slow down enemy when in stopping distance
+            else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+            // Speed limit
+            if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+            if (distOnXZ < 2)
+            {
+                rb.AddForce(-movement / 3);
+                if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+            }
+        }
+
         RaycastHit hit;
         Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
-        
-        agent.SetDestination(hit.point);
-        Vector3 targetPos = target.transform.position;
-        Vector3 pos = transform.position;
-        Vector3 directionToPlayer = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
-        rb.MoveRotation(Quaternion.LookRotation(directionToPlayer));
-        
+
         // State change check
-        if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - transform.localScale.y/2) && stateSwitchTimer < 0)
+        if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - transform.localScale.y / 2) && stateSwitchTimer < 0)
         {
             stateSwitchTimer = 1;
-            StartCoroutine(NavMeshToLOS());
+            state = State.los;
         }
-    }
-
-    private IEnumerator NavMeshToLOS()
-    {
-        yield return new WaitForSeconds(0.5f);
-        agent.enabled = false;
-        state = State.los;
     }
 
     private void LOSMovement()
@@ -124,9 +134,6 @@ public class EnemyMovement : MonoBehaviour
             if (rb.velocity.magnitude > speed) rb.AddForce(movement);
         }
         
-        // Gravity
-        if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
-        
         // State change check
         RaycastHit hit;
         Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
@@ -136,10 +143,7 @@ public class EnemyMovement : MonoBehaviour
         {
             stateSwitchTimer = 1;
             
-            agent.enabled = true;
             state = State.navmesh;
-
-            Debug.Log("!");
         }
     }
 

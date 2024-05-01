@@ -7,7 +7,6 @@ public class SniperMovement : MonoBehaviour
 {
     private Rigidbody rb;
     private GameObject target;
-    private NavMeshAgent agent;
     
     public float speed;
     public float maxDistToTarget;
@@ -28,12 +27,10 @@ public class SniperMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         target = GetComponent<EnemyType>().target;
-        agent = GetComponent<NavMeshAgent>();
         terrainLayer = LayerMask.GetMask("Terrain");
         SS = GetComponent<SniperShooting>();
         ET = GetComponent<EnemyType>();
 
-        agent.speed = speed;
         state = State.idle;
     }
     
@@ -47,8 +44,8 @@ public class SniperMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // States
-        //  idle: not moving / wandering (?)
-        //  find: moving with NavMeshAgent when player is not in LOS
+        //  idle: not moving
+        //  find: moving using NavMeshPath when player is not in LOS
         //  escape: moving with force away from the player when player in LOS and too close
         //  attack: shoots while staying still
         switch (state)
@@ -66,6 +63,9 @@ public class SniperMovement : MonoBehaviour
                 Attack();
                 break;
         }
+
+        // Gravity
+        if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
     }
 
     private void Idle()
@@ -78,19 +78,18 @@ public class SniperMovement : MonoBehaviour
 
     private void Find()
     {
-        RaycastHit hit;
-        Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
-
-        agent.SetDestination(hit.point);
-
-        // Rotate towards the next corner on path
-        if (agent.path.corners.Length >= 2)
+        if (path.corners.Length >= 2)
         {
-            Vector3 targetPos = target.transform.position;
-            Vector3 nextCorner = agent.path.corners[1];
+            Vector3 cornerPos = path.corners[1];
             Vector3 pos = transform.position;
-            Vector3 directionToPlayer = new Vector3(nextCorner.x - pos.x, 0, nextCorner.z - pos.z).normalized;
-            rb.MoveRotation(Quaternion.LookRotation(directionToPlayer));
+            Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
+            Vector3 movement = directionToTarget * (speed * 10);
+
+            // Rotate to face the player
+            rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+
+            rb.AddForce(movement);
+            if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
         }
 
         // State change check
@@ -102,7 +101,6 @@ public class SniperMovement : MonoBehaviour
     private IEnumerator FindToAttack()
     {
         yield return new WaitForSeconds(0.1f);
-        agent.enabled = false;
         state = State.attack;
     }
 
@@ -142,17 +140,20 @@ public class SniperMovement : MonoBehaviour
         rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
         // State change check
-        if ((targetPos - pos).magnitude < maxDistToTarget && LOSToTarget)
+        if ((targetPos - pos).magnitude < maxDistToTarget && targetPos.y > pos.y - 1 && LOSToTarget)
         {
             SS.moving = true;
             state = State.escape;
+            GetComponentInChildren<SniperPathFind>().enabled = true;
+            GetComponentInChildren<PathFind>().enabled = false;
         }
         else if (!LOSToTarget)
         {
-            if (Random.value > 0.5)
+            if (Random.value > -1)
             {
-                agent.enabled = true;
                 state = State.find;
+                GetComponentInChildren<SniperPathFind>().enabled = false;
+                GetComponentInChildren<PathFind>().enabled = true;
             }
             else
             {

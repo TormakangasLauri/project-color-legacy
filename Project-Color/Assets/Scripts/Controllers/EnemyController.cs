@@ -48,7 +48,6 @@ public class EnemyController : MonoBehaviour
                     enemiesOnLayer += stopDist;
                 }
 
-                basicEnemyList[i].GetComponent<NavMeshAgent>().stoppingDistance = stopDist;
                 basicEnemyList[i].GetComponent<EnemyMovement>().stopDistance = stopDist;
             }
         }
