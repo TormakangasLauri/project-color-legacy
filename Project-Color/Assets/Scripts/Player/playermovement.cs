@@ -70,6 +70,7 @@ public class playermovement : MonoBehaviour
     // Other
     public float gravity = 20;
     public bool underTerrain;
+    public bool attacking;
 
     void Start()
     {
@@ -99,10 +100,10 @@ public class playermovement : MonoBehaviour
     private void FixedUpdate()
     {
         if (!wallRunning && !sliding) Movement(); // If wallrunning, disable base movement
-        else if (!sliding) WallRun();
+        else if (!sliding && !attacking) WallRun();
         
         // Extra gravity
-        if (!wallRunning) rb.AddForce(0, -gravity, 0);
+        if (!wallRunning) rb.AddForce(0, !attacking ? -gravity: -gravity*5f, 0);
         else rb.useGravity = false;
         if (onSlope)
         {
@@ -332,7 +333,7 @@ public class playermovement : MonoBehaviour
 
     public void DashInput(InputAction.CallbackContext action)
     {
-        if (action.performed && canDash && !dashing && !grounded && !walled)
+        if (action.performed && canDash && !dashing && !grounded && !walled && !attacking)
         {
             StartCoroutine(Dash());
         }

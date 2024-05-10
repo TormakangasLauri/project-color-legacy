@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "slam",
+                    "type": "Button",
+                    "id": "01242dc2-0f0a-4b16-9fe1-690e61e006c3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -121,7 +130,7 @@
                 {
                     "name": "",
                     "id": "99b2f37a-3cb7-4bac-9dc7-7edafd5237aa",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "keyboard+mouse",
@@ -132,7 +141,7 @@
                 {
                     "name": "",
                     "id": "ccec6740-87fa-4ccd-82dc-9229d8e15955",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "keyboard+mouse",
@@ -148,6 +157,17 @@
                     "processors": "",
                     "groups": "keyboard+mouse",
                     "action": "attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2e386a99-b492-49a8-a0d4-690d2c5280a8",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "slam",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -45,6 +45,10 @@ public class Health : MonoBehaviour
         {
             healthBar.fillAmount = healthAmount / 100;
         }
+        if (healthAmount <= 0)
+        {
+            Destroy(gameObject);
+        }
 
         StartCoroutine(FlashColor());
     }
