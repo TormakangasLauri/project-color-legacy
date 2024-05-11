@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -15,9 +16,16 @@ public class PlayerAttack : MonoBehaviour
 
     private playermovement PM;
     private SlamAreaCheck SAC;
+    public AttackIndicator AI;
     public static PlayerAttack inst;
 
     public bool pushIsActive;
+
+    public bool lmbHeld;
+    public bool rmbHeld;
+    public float holdTimer;
+
+    Transform normalTransform;
 
     private void Awake()
     {
@@ -29,24 +37,79 @@ public class PlayerAttack : MonoBehaviour
         hitbox = GetComponent<Collider>();
         PM = GetComponentInParent<playermovement>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
+
+        normalTransform = transform;
+    }
+
+    private void Update()
+    {
+        if (lmbHeld || rmbHeld) holdTimer += Time.deltaTime;
+        else holdTimer = 0;
+        AI.SetValue(holdTimer);
+
+        if (holdTimer >= 1 && lmbHeld)
+        {
+            transform.localPosition = new Vector3(0, 0, 2.5f);
+            transform.localScale = new Vector3(2, 1.5f, 2);
+        }
+        else
+        {
+            transform.localPosition = new Vector3(0, 0, 1.5f);
+            transform.localScale = new Vector3(1, 1, 1);
+        }
     }
 
     public void AttackInput(InputAction.CallbackContext action)
     {
-        if (action.performed && !PM.attacking)
+        if (action.performed)
         {
-            foreach (GameObject enemy in enemies)
+            rmbHeld = false;
+            holdTimer = 0;
+            lmbHeld = true;
+        }
+        else if (action.canceled)
+        {
+            lmbHeld = false;
+            if (holdTimer < 0.3 && !PM.attacking)
             {
-                Attack(enemy);
+                Debug.Log("Attack");
+                foreach (GameObject enemy in enemies)
+                {
+                    Attack(enemy);
+                }
+            }
+            else if (holdTimer >= 1)
+            {
+                Debug.Log("Charged Attack");
+                foreach (GameObject enemy in enemies)
+                {
+                    ChargedAttack(enemy);
+                }
             }
         }
     }
 
     public void SlamInput(InputAction.CallbackContext action)
     {
-        if (action.performed && !PM.grounded && !PM.attacking)
+        if (action.performed)
         {
-            StartCoroutine(Slam());
+            lmbHeld = false;
+            holdTimer = 0;
+            rmbHeld = true;
+        }
+        else if (action.canceled)
+        {
+            rmbHeld = false;
+            if (holdTimer < 0.3 && !PM.grounded && !PM.attacking)
+            {
+                Debug.Log("Slam");
+                StartCoroutine(Slam());
+            }
+            else if (holdTimer >= 1)
+            {
+                Debug.Log("Bounce");
+                Bounce();
+            }
         }
     }
 
@@ -56,7 +119,16 @@ public class PlayerAttack : MonoBehaviour
         enemyHealth.TakeDamage(20);
 
         if (pushIsActive) // goofy lookin' ass knockback
-            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 400 + Vector3.up * 200);
+            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 300 + Vector3.up * 160);
+    }
+
+    void ChargedAttack(GameObject enemy)
+    {
+        Health enemyHealth = enemy.GetComponent<Health>();
+        enemyHealth.TakeDamage(20);
+
+        if (pushIsActive)
+            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 700 + Vector3.up * 200);
     }
 
     private IEnumerator Slam()
@@ -75,6 +147,25 @@ public class PlayerAttack : MonoBehaviour
         }
 
         PM.attacking = false;
+    }
+
+    void Bounce()
+    {
+        RaycastHit hit;
+        Transform cam = transform.parent;
+        Physics.Raycast(cam.position, cam.forward, out hit, 2, LayerMask.GetMask("Terrain"));
+
+        if (hit.collider != null)
+        {
+            Debug.Log("hit");
+            Vector3 dir = -cam.forward;
+            if (dir.y < 0)
+            {
+                dir.y = 0;
+                dir.Normalize();
+            }
+            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * 30, ForceMode.Impulse);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
