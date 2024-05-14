@@ -1288,7 +1288,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109443, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: terrainLayer.m_Bits
-      value: 320
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109460, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_Name
@@ -1648,6 +1648,10 @@ PrefabInstance:
       propertyPath: m_AgentTypeID
       value: 1479372276
       objectReference: {fileID: 0}
+    - target: {fileID: 7073502008848142261, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
       propertyPath: m_Name
       value: M.I.L.O
@@ -1923,10 +1927,10 @@ PrefabInstance:
     - target: {fileID: 5179219638018414745, guid: 074aa3c22ab12ce4090e2e167281c1e5, type: 3}
       propertyPath: enemy
       value: 
-      objectReference: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+      objectReference: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
     - target: {fileID: 5179219638018414745, guid: 074aa3c22ab12ce4090e2e167281c1e5, type: 3}
       propertyPath: amount
-      value: 500
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5179219638018414746, guid: 074aa3c22ab12ce4090e2e167281c1e5, type: 3}
       propertyPath: m_Name

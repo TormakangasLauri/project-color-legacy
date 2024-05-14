@@ -10,10 +10,10 @@ public class EnemySpawner : MonoBehaviour
     
     void Start()
     {
-        // for (int i = 0; i < amount; i++)
-        //     Instantiate(enemy, transform.position, new Quaternion());
+        for (int i = 0; i < amount; i++)
+            Instantiate(enemy, transform.position, new Quaternion());
 
-        StartCoroutine(Spawn());
+        //StartCoroutine(Spawn());
     }
 
     private IEnumerator Spawn()

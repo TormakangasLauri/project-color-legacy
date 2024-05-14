@@ -155,9 +155,39 @@ public class PlayerAttack : MonoBehaviour
         Transform cam = transform.parent;
         Physics.Raycast(cam.position, cam.forward, out hit, 2, LayerMask.GetMask("Terrain"));
 
-        if (hit.collider != null)
+        RaycastHit enemyHit;
+        Physics.Raycast(cam.position, cam.forward, out enemyHit, 2, LayerMask.GetMask("Enemy"));
+
+        // If bounce hits an enemy, add force to enemy and the player away from each other
+        // Hitting terrain only adds force to the player but more than when hitting enemies
+        if (enemyHit.collider != null)
         {
-            Debug.Log("hit");
+            Debug.Log("enemy hit");
+            Vector3 dir = -cam.forward;
+            if (dir.y < 0)
+            {
+                dir.y = 0;
+                dir.Normalize();
+            }
+            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * 15, ForceMode.Impulse);
+
+            dir = cam.forward;
+            if (dir.y < 0)
+            {
+                dir.y = 0;
+                dir.Normalize();
+            }
+            enemyHit.collider.GetComponent<Rigidbody>().AddForce(dir * 20, ForceMode.Impulse);
+
+            foreach (GameObject enemy in enemies)
+            {
+                Vector3 dir2 = (enemy.transform.position - transform.parent.parent.position).normalized;
+                enemy.GetComponent<Rigidbody>().AddForce(dir2 * 5, ForceMode.Impulse);
+            }
+        }
+        else if (hit.collider != null)
+        {
+            Debug.Log("terrain hit");
             Vector3 dir = -cam.forward;
             if (dir.y < 0)
             {
