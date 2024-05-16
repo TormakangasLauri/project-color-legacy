@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -21,12 +22,26 @@ public class PlayerAttack : MonoBehaviour
 
     public bool pushIsActive;
 
-    public bool lmbHeld;
-    public bool rmbHeld;
-    public float holdTimer;
+    bool lmbHeld;
+    bool rmbHeld;
+    float holdTimer;
 
     Transform normalTransform;
-
+    
+    [Header("Attack")]
+    public float attackDamage = 20;
+    public Vector2 attackKB = new Vector2(300, 160);
+    [Header("Charged Attack")]
+    public float cAttackDamage = 50;
+    public Vector2 cAttackKB = new Vector2(700, 200);
+    [Header("Slam")]
+    public float slamDamage = 20;
+    public Vector2 slamKB = new Vector2(100, 600);
+    [Header("Bounce")]
+    public float bounceForceOnPlayer = 30;
+    public float enemyBounceMult = 1;
+    public float bounceForceOnEnemy = 20;
+    
     private void Awake()
     {
         inst = this;
@@ -72,7 +87,6 @@ public class PlayerAttack : MonoBehaviour
             lmbHeld = false;
             if (holdTimer < 0.3 && !PM.attacking)
             {
-                Debug.Log("Attack");
                 foreach (GameObject enemy in enemies)
                 {
                     Attack(enemy);
@@ -80,7 +94,6 @@ public class PlayerAttack : MonoBehaviour
             }
             else if (holdTimer >= 1)
             {
-                Debug.Log("Charged Attack");
                 foreach (GameObject enemy in enemies)
                 {
                     ChargedAttack(enemy);
@@ -102,12 +115,10 @@ public class PlayerAttack : MonoBehaviour
             rmbHeld = false;
             if (holdTimer < 0.3 && !PM.grounded && !PM.attacking)
             {
-                Debug.Log("Slam");
                 StartCoroutine(Slam());
             }
             else if (holdTimer >= 1)
             {
-                Debug.Log("Bounce");
                 Bounce();
             }
         }
@@ -116,19 +127,19 @@ public class PlayerAttack : MonoBehaviour
     private void Attack(GameObject enemy)
     {
         Health enemyHealth = enemy.GetComponent<Health>();
-        enemyHealth.TakeDamage(20);
+        enemyHealth.TakeDamage(attackDamage);
 
         if (pushIsActive) // goofy lookin' ass knockback
-            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 300 + Vector3.up * 160);
+            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * attackKB.x + Vector3.up * attackKB.y);
     }
 
     void ChargedAttack(GameObject enemy)
     {
         Health enemyHealth = enemy.GetComponent<Health>();
-        enemyHealth.TakeDamage(20);
+        enemyHealth.TakeDamage(cAttackDamage);
 
         if (pushIsActive)
-            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * 700 + Vector3.up * 200);
+            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * cAttackKB.x + Vector3.up * cAttackKB.y);
     }
 
     private IEnumerator Slam()
@@ -139,11 +150,11 @@ public class PlayerAttack : MonoBehaviour
         foreach (GameObject enemy in SAC.enemies)
         {
             // Damage
-            enemy.GetComponent<Health>().TakeDamage(20);
+            enemy.GetComponent<Health>().TakeDamage(slamDamage);
 
             // Knockback
             Vector3 dir = (enemy.transform.position - transform.parent.position).normalized;
-            if (pushIsActive) enemy.GetComponent<Rigidbody>().AddForce(dir * 100 + Vector3.up * 600);
+            if (pushIsActive) enemy.GetComponent<Rigidbody>().AddForce(dir * slamKB.x + Vector3.up * slamKB.y);
         }
 
         PM.attacking = false;
@@ -162,39 +173,41 @@ public class PlayerAttack : MonoBehaviour
         // Hitting terrain only adds force to the player but more than when hitting enemies
         if (enemyHit.collider != null)
         {
-            Debug.Log("enemy hit");
+            // Add force to player when hitting an enemy
             Vector3 dir = -cam.forward;
             if (dir.y < 0)
             {
                 dir.y = 0;
                 dir.Normalize();
             }
-            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * 15, ForceMode.Impulse);
-
+            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnPlayer * enemyBounceMult, ForceMode.Impulse);
+            
+            // Add force to targeted enemy
             dir = cam.forward;
             if (dir.y < 0)
             {
                 dir.y = 0;
                 dir.Normalize();
             }
-            enemyHit.collider.GetComponent<Rigidbody>().AddForce(dir * 20, ForceMode.Impulse);
+            enemyHit.collider.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnEnemy, ForceMode.Impulse);
 
+            // Add force to all other enemies in attack range
             foreach (GameObject enemy in enemies)
             {
                 Vector3 dir2 = (enemy.transform.position - transform.parent.parent.position).normalized;
-                enemy.GetComponent<Rigidbody>().AddForce(dir2 * 5, ForceMode.Impulse);
+                enemy.GetComponent<Rigidbody>().AddForce(dir2 * bounceForceOnEnemy/4, ForceMode.Impulse);
             }
         }
         else if (hit.collider != null)
         {
-            Debug.Log("terrain hit");
+            // Add force to player when hitting terrain
             Vector3 dir = -cam.forward;
             if (dir.y < 0)
             {
                 dir.y = 0;
                 dir.Normalize();
             }
-            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * 30, ForceMode.Impulse);
+            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnPlayer, ForceMode.Impulse);
         }
     }
 

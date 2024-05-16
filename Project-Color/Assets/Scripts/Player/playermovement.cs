@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -374,7 +375,7 @@ public class playermovement : MonoBehaviour
         // Rotate the Player Object around its Y axis
         float inputX = Input.GetAxis("Mouse X") * mouseSensitivity;
         cameraHorizontalRotation += inputX;
-        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f); 
+        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
     }
     
     void GroundCheck()

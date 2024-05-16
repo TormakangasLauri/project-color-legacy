@@ -73,6 +73,17 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "",
+                    "id": "6a06c39a-12fe-4857-abcd-9fde342ad53a",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
+                    "action": "jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "2D Vector",
                     "id": "d231da6e-7ea9-4d6e-9e56-e800ca47a1c9",
                     "path": "2DVector",
@@ -129,11 +140,33 @@
                 },
                 {
                     "name": "",
+                    "id": "67df0f42-c868-4ee3-9dfe-641654abdae3",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
+                    "action": "movement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "99b2f37a-3cb7-4bac-9dc7-7edafd5237aa",
                     "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "keyboard+mouse",
+                    "action": "slide",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "39b94e55-5c37-40ab-8c12-f430064387a7",
+                    "path": "<Gamepad>/leftStick/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
                     "action": "slide",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -151,6 +184,17 @@
                 },
                 {
                     "name": "",
+                    "id": "cc0232dd-5c31-492b-aa3a-dbb81597f2df",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
+                    "action": "dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "60667f76-53ef-4476-bf9a-7a41b9a0c70a",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -162,11 +206,33 @@
                 },
                 {
                     "name": "",
+                    "id": "cbab4168-592b-4122-8a53-de2476827624",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
+                    "action": "attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "2e386a99-b492-49a8-a0d4-690d2c5280a8",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "keyboard+mouse",
+                    "action": "slam",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "33964274-edcd-4a7e-b0b7-49ff27d07224",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
                     "action": "slam",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -186,6 +252,17 @@
                 },
                 {
                     "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "controller",
+            "bindingGroup": "controller",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
                 }
