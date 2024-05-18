@@ -29,7 +29,7 @@ public class EnemyMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         ET = GetComponent<EnemyType>();
-        target = GetComponent<EnemyType>().target;
+        target = GameObject.FindWithTag("Player");
         terrainLayer = LayerMask.GetMask("Terrain");
 
         state = State.navmesh;

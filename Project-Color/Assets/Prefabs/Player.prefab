@@ -175,9 +175,6 @@ MonoBehaviour:
   enemies: []
   AI: {fileID: 0}
   pushIsActive: 1
-  lmbHeld: 0
-  rmbHeld: 0
-  holdTimer: 0
   attackDamage: 20
   attackKB: {x: 300, y: 160}
   cAttackDamage: 50
@@ -308,6 +305,7 @@ GameObject:
   - component: {fileID: 5792234534002109465}
   - component: {fileID: 5792234534002109443}
   - component: {fileID: 891123135056075187}
+  - component: {fileID: 2057886765}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -535,7 +533,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e45b71bbfd421544599c6ebf598ef172, type: 3}
   m_Name: 
@@ -578,7 +576,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b853017d9f487894794963a9e413199c, type: 3}
   m_Name: 
@@ -587,6 +585,18 @@ MonoBehaviour:
   baseSpeed: 8
   mouseSensitivity: 2
   cam: {fileID: 5792234535004010236}
+--- !u!114 &2057886765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5792234534002109460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a736c33fbb726844ab48606d0029cfbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5792234535004010237
 GameObject:
   m_ObjectHideFlags: 0

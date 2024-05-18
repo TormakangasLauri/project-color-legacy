@@ -26,7 +26,7 @@ public class SniperMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        target = GetComponent<EnemyType>().target;
+        target = GameObject.FindWithTag("Player");
         terrainLayer = LayerMask.GetMask("Terrain");
         SS = GetComponent<SniperShooting>();
         ET = GetComponent<EnemyType>();

@@ -1,27 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemy;
-    public int amount;
-    
-    void Start()
+    public List<GameObject> enemies;
+
+    public static EnemySpawner inst;
+
+    private void Awake() { inst = this; }
+
+    /// <summary>
+    /// Spawn enemies
+    /// </summary>
+    /// <param name="enemy">Number code of the enemy, see the list from the script in GameController</param>
+    /// <param name="amount">Amount of enemies to spawn</param>
+    /// <param name="location">Spawn location</param>
+    /// <param name="spread">Max distance that the enemies can spawn away from the spawn location</param>
+    /// <param name="time">Total time for all enemies to be spawned in seconds</param>
+    public IEnumerator Spawn(int enemy, int amount, Vector3 location, float spread, float time)
     {
+        GameObject e = enemies[enemy];
+        
         for (int i = 0; i < amount; i++)
-            Instantiate(enemy, transform.position, new Quaternion());
-
-        //StartCoroutine(Spawn());
-    }
-
-    private IEnumerator Spawn()
-    {
-        while (true)
         {
-            Instantiate(enemy, transform.position, new Quaternion());
-            yield return new WaitForSeconds(0.05f);
+            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
+            Instantiate(e, location + random, new Quaternion());
+            yield return new WaitForSeconds(time / amount);
         }
     }
 }
