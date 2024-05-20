@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "gamePadCamera",
+                    "type": "Value",
+                    "id": "c23e9537-c892-4884-b7f7-57a42b326b63",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -163,7 +172,7 @@
                 {
                     "name": "",
                     "id": "39b94e55-5c37-40ab-8c12-f430064387a7",
-                    "path": "<Gamepad>/leftStick/down",
+                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "controller",
@@ -234,6 +243,17 @@
                     "processors": "",
                     "groups": "controller",
                     "action": "slam",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b195d6f2-cfb0-42af-979d-d5629dacd013",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "controller",
+                    "action": "gamePadCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

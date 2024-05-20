@@ -10,6 +10,7 @@ using Vector3 = UnityEngine.Vector3;
 public class playermovement : MonoBehaviour
 {
     public InputActionReference move;
+    public InputActionReference rightStick;
     
     [Header("Objects/Components")]
     private Rigidbody rb;
@@ -375,6 +376,15 @@ public class playermovement : MonoBehaviour
         // Rotate the Player Object around its Y axis
         float inputX = Input.GetAxis("Mouse X") * mouseSensitivity;
         cameraHorizontalRotation += inputX;
+        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
+
+        // Gamepad input
+        Vector2 input = rightStick.action.ReadValue<Vector2>();
+        cameraVerticalRotation -= input.y;
+        cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, -90f, 90f);
+        camera.transform.localRotation = Quaternion.Euler(cameraVerticalRotation, 0, 0);
+
+        cameraHorizontalRotation += input.x;
         transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
     }
     

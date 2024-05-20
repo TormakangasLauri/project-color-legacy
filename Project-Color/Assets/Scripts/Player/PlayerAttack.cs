@@ -126,20 +126,24 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack(GameObject enemy)
     {
-        Health enemyHealth = enemy.GetComponent<Health>();
+        EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
         enemyHealth.TakeDamage(attackDamage);
 
+        Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * attackKB.x + Vector3.up * attackKB.y;
         if (pushIsActive) // goofy lookin' ass knockback
-            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * attackKB.x + Vector3.up * attackKB.y);
+            enemyHealth.Knockback(KBdir, ForceMode.Force);
+
+        Debug.Log(KBdir);
     }
 
     void ChargedAttack(GameObject enemy)
     {
-        Health enemyHealth = enemy.GetComponent<Health>();
+        EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
         enemyHealth.TakeDamage(cAttackDamage);
 
+        Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * cAttackKB.x + Vector3.up * cAttackKB.y;
         if (pushIsActive)
-            enemy.GetComponent<Rigidbody>().AddForce(GetComponentInParent<Transform>().rotation * Vector3.forward * cAttackKB.x + Vector3.up * cAttackKB.y);
+            enemyHealth.Knockback(KBdir, ForceMode.Force);
     }
 
     private IEnumerator Slam()
@@ -150,11 +154,12 @@ public class PlayerAttack : MonoBehaviour
         foreach (GameObject enemy in SAC.enemies)
         {
             // Damage
-            enemy.GetComponent<Health>().TakeDamage(slamDamage);
+            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
+            enemyHealth.TakeDamage(slamDamage);
 
             // Knockback
             Vector3 dir = (enemy.transform.position - transform.parent.position).normalized;
-            if (pushIsActive) enemy.GetComponent<Rigidbody>().AddForce(dir * slamKB.x + Vector3.up * slamKB.y);
+            if (pushIsActive) enemyHealth.Knockback(dir * slamKB.x + Vector3.up * slamKB.y, ForceMode.Force);
         }
 
         PM.attacking = false;
@@ -189,13 +194,13 @@ public class PlayerAttack : MonoBehaviour
                 dir.y = 0;
                 dir.Normalize();
             }
-            enemyHit.collider.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnEnemy, ForceMode.Impulse);
+            enemyHit.collider.GetComponent<EnemyHealth>().Knockback(dir * bounceForceOnEnemy, ForceMode.Impulse);
 
             // Add force to all other enemies in attack range
             foreach (GameObject enemy in enemies)
             {
                 Vector3 dir2 = (enemy.transform.position - transform.parent.parent.position).normalized;
-                enemy.GetComponent<Rigidbody>().AddForce(dir2 * bounceForceOnEnemy/4, ForceMode.Impulse);
+                enemy.GetComponent<EnemyHealth>().Knockback(dir2 * bounceForceOnEnemy/4, ForceMode.Impulse);
             }
         }
         else if (hit.collider != null)

@@ -534,12 +534,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e45b71bbfd421544599c6ebf598ef172, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   move: {fileID: 7345632375263178156, guid: 40f805a1fa210dc4188c66051fc92385, type: 3}
+  rightStick: {fileID: -2857771203048886174, guid: 40f805a1fa210dc4188c66051fc92385, type: 3}
   camera: {fileID: 5792234535004010236}
   acceleration: 70
   maxSpeed: 10
@@ -577,7 +578,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b853017d9f487894794963a9e413199c, type: 3}
   m_Name: 
@@ -611,7 +612,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 0}
-  healthAmount: 100
+  maxHealth: 100
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
 --- !u!1 &5792234535004010237
 GameObject:
