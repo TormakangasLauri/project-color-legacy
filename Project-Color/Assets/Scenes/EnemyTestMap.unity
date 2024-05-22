@@ -1186,6 +1186,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4908406319276477480, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109460, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1248,6 +1252,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+--- !u!1 &1409609776 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2658511241868940477, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+  m_PrefabInstance: {fileID: 1409609775}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1409609777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1409609776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f258ae4c099a39d4eb233c08f57e691a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brush: {fileID: 5698074007402446992, guid: 6fe6505be9213a74ab188ac671d16b0d, type: 3}
+  maxRange: 15
+  radius: 1
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1001 &1539564627
 PrefabInstance:
   m_ObjectHideFlags: 0
