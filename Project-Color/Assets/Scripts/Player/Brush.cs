@@ -21,6 +21,8 @@ public class Brush : MonoBehaviour
     public float rotSpeed;
     public float knockback;
 
+    List<GameObject> enemiesHit = new List<GameObject>();
+
     private void Start()
     {
         player = GameObject.FindWithTag("Player");
@@ -57,6 +59,7 @@ public class Brush : MonoBehaviour
         });
         yield return new WaitForSeconds(floatTime);
         Vector3 turnPoint = transform.position - (playerPos - transform.position).normalized * 0.08f;
+        enemiesHit.Clear();
         yield return new WaitUntil(delegate
         {
             Vector3 pos = transform.position;
@@ -83,8 +86,9 @@ public class Brush : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy") && !enemiesHit.Contains(other.gameObject))
         {
+            enemiesHit.Add(other.gameObject);
             Vector3 kb = rb.velocity.normalized * knockback;
             other.gameObject.GetComponent<EnemyHealth>().Knockback(kb, ForceMode.Force);
         }

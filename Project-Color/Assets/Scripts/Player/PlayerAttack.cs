@@ -132,8 +132,6 @@ public class PlayerAttack : MonoBehaviour
         Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * attackKB.x + Vector3.up * attackKB.y;
         if (pushIsActive) // goofy lookin' ass knockback
             enemyHealth.Knockback(KBdir, ForceMode.Force);
-
-        Debug.Log(KBdir);
     }
 
     void ChargedAttack(GameObject enemy)
