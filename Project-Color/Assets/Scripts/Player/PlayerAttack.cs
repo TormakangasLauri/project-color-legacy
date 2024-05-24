@@ -26,6 +26,8 @@ public class PlayerAttack : MonoBehaviour
     bool rmbHeld;
     float holdTimer;
 
+    public bool canAttack = true;
+
     Transform normalTransform;
     
     [Header("Attack")]
@@ -76,13 +78,13 @@ public class PlayerAttack : MonoBehaviour
 
     public void AttackInput(InputAction.CallbackContext action)
     {
-        if (action.performed)
+        if (action.performed && canAttack)
         {
             rmbHeld = false;
             holdTimer = 0;
             lmbHeld = true;
         }
-        else if (action.canceled)
+        else if (action.canceled && canAttack)
         {
             lmbHeld = false;
             if (holdTimer < 0.3 && !PM.attacking)
@@ -104,13 +106,13 @@ public class PlayerAttack : MonoBehaviour
 
     public void SlamInput(InputAction.CallbackContext action)
     {
-        if (action.performed)
+        if (action.performed && canAttack)
         {
             lmbHeld = false;
             holdTimer = 0;
             rmbHeld = true;
         }
-        else if (action.canceled)
+        else if (action.canceled && canAttack)
         {
             rmbHeld = false;
             if (holdTimer < 0.3 && !PM.grounded && !PM.attacking)

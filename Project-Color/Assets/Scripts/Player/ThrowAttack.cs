@@ -13,8 +13,6 @@ public class ThrowAttack : MonoBehaviour
     public float radius;
     public LayerMask hitLayer;
 
-    bool thrown = false;
-
     Vector3 velocity = Vector3.zero;
 
     void Start()
@@ -25,7 +23,7 @@ public class ThrowAttack : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !thrown)
+        if (Input.GetKeyDown(KeyCode.E) && PA.canAttack)
         {
             StartCoroutine(Throw());
         }
@@ -33,8 +31,6 @@ public class ThrowAttack : MonoBehaviour
 
     IEnumerator Throw()
     {
-        thrown = true;
-
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out hit, maxRange, hitLayer);
@@ -52,6 +48,5 @@ public class ThrowAttack : MonoBehaviour
         b.GetComponent<Brush>().point = point;
 
         yield return null;
-        thrown = false;
     }
 }

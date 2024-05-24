@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: 1233417462030450571}
   - component: {fileID: 3132231166954643275}
   - component: {fileID: 8251923137470428490}
+  - component: {fileID: 1409609777}
   m_Layer: 0
   m_Name: AttackHB
   m_TagString: Untagged
@@ -175,15 +176,34 @@ MonoBehaviour:
   enemies: []
   AI: {fileID: 0}
   pushIsActive: 1
-  attackDamage: 20
+  canAttack: 1
+  attackDamage: 0
   attackKB: {x: 300, y: 160}
-  cAttackDamage: 50
+  cAttackDamage: 0
   cAttackKB: {x: 700, y: 200}
   slamDamage: 20
   slamKB: {x: 100, y: 600}
   bounceForceOnPlayer: 30
   enemyBounceMult: 0.5
   bounceForceOnEnemy: 20
+--- !u!114 &1409609777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2658511241868940477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f258ae4c099a39d4eb233c08f57e691a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brush: {fileID: 5698074007402446992, guid: 6fe6505be9213a74ab188ac671d16b0d, type: 3}
+  maxRange: 15
+  radius: 1
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &5792234533031612284
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,7 +626,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5792234534002109460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1df737c4d1a06db438cf61d0ceb70f6a, type: 3}
   m_Name: 

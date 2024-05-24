@@ -9,6 +9,7 @@ public class Brush : MonoBehaviour
     GameObject player;
     Vector3 playerPos;
     Rigidbody rb;
+    PlayerAttack PA;
 
     public float maxRange;
     public float speed;
@@ -27,6 +28,7 @@ public class Brush : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
         rb = GetComponent<Rigidbody>();
+        PA = GameObject.FindWithTag("Player").GetComponentInChildren<PlayerAttack>();
 
         StartCoroutine(Move());
     }
@@ -38,10 +40,13 @@ public class Brush : MonoBehaviour
 
     IEnumerator Move()
     {
+        PA.canAttack = false;
+
         Vector3 startPos = transform.position;
         float currentSpeed = speed;
         Vector3 dir = (point - startPos).normalized;
 
+        // Move towards path end point
         float t = floatTime;
         yield return new WaitUntil(delegate
         {
@@ -57,9 +62,13 @@ public class Brush : MonoBehaviour
 
             return dist < 0.08;
         });
+        // Float in air
         yield return new WaitForSeconds(floatTime);
+
         Vector3 turnPoint = transform.position - (playerPos - transform.position).normalized * 0.08f;
         enemiesHit.Clear();
+
+        // Move towards the player
         yield return new WaitUntil(delegate
         {
             Vector3 pos = transform.position;
@@ -77,6 +86,7 @@ public class Brush : MonoBehaviour
         });
 
         Destroy(gameObject);
+        PA.canAttack = true;
     }
 
     private void FixedUpdate()
