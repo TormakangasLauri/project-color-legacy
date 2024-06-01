@@ -8,12 +8,16 @@ public class ThrowAttack : MonoBehaviour
     PlayerAttack PA;
     GameObject player;
     public GameObject brush;
-
+    
     public float maxRange;
     public float radius;
+    public float speed;
+    public float floatTime;
+    public float speedLossRadius;
     public LayerMask hitLayer;
 
-    Vector3 velocity = Vector3.zero;
+    public float damage;
+    public float knockback;
 
     void Start()
     {
@@ -33,19 +37,24 @@ public class ThrowAttack : MonoBehaviour
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out hit, maxRange, hitLayer);
         Vector3 point;
-        if (hit.transform != null)
-        {
+        // Set point away from the hit surface the amount of radius or set it in the air if max distance reached
+        if (Physics.Raycast(ray, out hit, maxRange, hitLayer))
             point = hit.point + (player.transform.position - hit.point).normalized * radius;
-        }
         else
-        {
             point = player.transform.position + Camera.main.transform.forward * maxRange;
-        }
 
+        // Create the "brush" and assign variables
         GameObject b = Instantiate(brush, player.transform.position, Quaternion.Euler(90, 0, 0));
-        b.GetComponent<Brush>().point = point;
+        Brush B = b.GetComponent<Brush>();
+        
+        B.point = point;
+        B.radius = radius;
+        B.speed = speed;
+        B.floatTime = floatTime;
+        B.speedLossRadius = speedLossRadius;
+        B.damage = damage;
+        B.knockback = knockback;
 
         yield return null;
     }

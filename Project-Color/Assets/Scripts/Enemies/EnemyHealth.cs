@@ -12,9 +12,6 @@ public class EnemyHealth : MonoBehaviour
     public Color damageFlash = new Color(116f / 255f, 18f / 255f, 27f / 255f);
     private Renderer enemyRenderer;
     Rigidbody rb;
-    
-    private TextMeshProUGUI healthText;
-
 
     void Start()
     {
