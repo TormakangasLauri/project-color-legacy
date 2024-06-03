@@ -201,9 +201,14 @@ MonoBehaviour:
   brush: {fileID: 5698074007402446992, guid: 6fe6505be9213a74ab188ac671d16b0d, type: 3}
   maxRange: 15
   radius: 1
+  speed: 30
+  floatTime: 0
+  speedLossRadius: 2
   hitLayer:
     serializedVersion: 2
     m_Bits: 64
+  damage: 0
+  knockback: 1000
 --- !u!1 &5792234533031612284
 GameObject:
   m_ObjectHideFlags: 0
