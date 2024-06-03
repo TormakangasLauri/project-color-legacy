@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Paintable : MonoBehaviour
+public class PaintableArea : MonoBehaviour
 {
     public Shader paintableShader;
     private Texture2D objectTexture;

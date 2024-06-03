@@ -52,7 +52,7 @@ public class PlayerAttack : MonoBehaviour
     private void Start()
     {
         hitbox = GetComponent<Collider>();
-        PM = GetComponentInParent<playermovement>();
+        PM = transform.parent.GetComponentInParent<playermovement>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
 
         normalTransform = transform;

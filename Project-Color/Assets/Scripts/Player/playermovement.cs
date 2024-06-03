@@ -70,9 +70,10 @@ public class playermovement : MonoBehaviour
     private Vector3 dirToWall;
 
     // Other
+    
     public float gravity = 20;
     public bool underTerrain;
-    public bool attacking;
+
 
     void Start()
     {
