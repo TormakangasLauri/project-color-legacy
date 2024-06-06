@@ -20,6 +20,8 @@ public class PlayerAttack : MonoBehaviour
     public AttackIndicator AI;
     public static PlayerAttack inst;
 
+    public ParticleSystem inkParticle;
+
     public bool pushIsActive;
 
     bool lmbHeld;
@@ -89,6 +91,7 @@ public class PlayerAttack : MonoBehaviour
             lmbHeld = false;
             if (holdTimer < 0.3 && !PM.attacking)
             {
+                inkParticle.Play();
                 foreach (GameObject enemy in enemies)
                 {
                     Attack(enemy);

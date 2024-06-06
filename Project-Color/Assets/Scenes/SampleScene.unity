@@ -542,11 +542,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bba52bfc3f37174e824f72d233835ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vihu: {fileID: 529841613}
-  player: {fileID: 1128180980}
+  agent: {fileID: 0}
+  target: {fileID: 0}
   noloslayer:
     serializedVersion: 2
     m_Bits: 0
+  movementMode: 0
+  targetInSight: 0
 --- !u!195 &529841613
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1111,7 +1113,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1222,28 +1224,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move: {fileID: 7345632375263178156, guid: 40f805a1fa210dc4188c66051fc92385, type: 3}
+  rightStick: {fileID: 0}
   camera: {fileID: 963194227}
-  speed: 50
+  acceleration: 100
   maxSpeed: 10
+  maxSlopeAngle: 45
+  onSlope: 0
   jumpForce: 12
-  gravity: 20
   landingGracePeriod: 0.2
+  pressingJump: 0
+  wallRunning: 0
+  wallRunDirection: 0
+  maxSlideSpeed: 30
+  sliding: 0
+  pressingSlide: 0
+  canDash: 1
+  dashing: 0
+  dashDistance: 5
   mouseSensitivity: 2
   groundCheck: {fileID: 1990243898}
-  groundLayer:
+  terrainLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   grounded: 0
-  wallCheck: {fileID: 1790694060}
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
   walled: 0
   wallColList: []
-  wallRiding: 0
-  pressingJump: 0
-  onSlope: 0
-  maxSlopeAngle: 45
+  gravity: 20
+  underTerrain: 0
+  attacking: 0
 --- !u!114 &1128180990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2209,5 +2220,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7073502008848142267, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
