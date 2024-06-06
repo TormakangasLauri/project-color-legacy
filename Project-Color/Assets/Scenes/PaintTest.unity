@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -398,6 +398,27 @@ PrefabInstance:
       objectReference: {fileID: 1193740990}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+--- !u!1 &1499248096 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5792234534002109460, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
+  m_PrefabInstance: {fileID: 1499248095}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1499248097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1499248096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb06fe47b1efa9418445b7194ad6456, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inkParticle: {fileID: 0}
+  parentController: {fileID: 0}
+  splatGunNozzle: {fileID: 0}
+  freeLookCamera: {fileID: 0}
 --- !u!1 &1499290034
 GameObject:
   m_ObjectHideFlags: 0

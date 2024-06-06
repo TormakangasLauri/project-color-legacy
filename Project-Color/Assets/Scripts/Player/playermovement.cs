@@ -73,6 +73,7 @@ public class playermovement : MonoBehaviour
     
     public float gravity = 20;
     public bool underTerrain;
+    public bool attacking;
 
 
     void Start()
