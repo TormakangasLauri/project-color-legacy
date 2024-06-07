@@ -21,6 +21,7 @@ public class PlayerAttack : MonoBehaviour
     public static PlayerAttack inst;
 
     public ParticleSystem inkParticle;
+    public ParticleSystem inkRemove;
 
     public bool pushIsActive;
 
@@ -120,6 +121,7 @@ public class PlayerAttack : MonoBehaviour
             rmbHeld = false;
             if (holdTimer < 0.3 && !PM.grounded && !PM.attacking)
             {
+                inkRemove.Play();
                 StartCoroutine(Slam());
             }
             else if (holdTimer >= 1)
