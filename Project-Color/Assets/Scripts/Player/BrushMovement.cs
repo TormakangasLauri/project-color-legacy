@@ -4,7 +4,7 @@ using System.Drawing;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-public class Brush : MonoBehaviour
+public class BrushMovement : MonoBehaviour
 {
     GameObject player;
     Vector3 playerPos;

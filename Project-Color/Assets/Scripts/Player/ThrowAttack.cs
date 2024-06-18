@@ -46,7 +46,7 @@ public class ThrowAttack : MonoBehaviour
 
         // Create the "brush" and assign variables
         GameObject b = Instantiate(brush, player.transform.position, Quaternion.Euler(90, 0, 0));
-        Brush B = b.GetComponent<Brush>();
+        BrushMovement B = b.GetComponent<BrushMovement>();
         
         B.point = point;
         B.radius = radius;

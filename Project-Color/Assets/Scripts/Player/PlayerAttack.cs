@@ -20,6 +20,8 @@ public class PlayerAttack : MonoBehaviour
     public AttackIndicator AI;
     public static PlayerAttack inst;
 
+    public ParticleSystem ps;
+
     public bool pushIsActive;
 
     bool lmbHeld;
@@ -73,6 +75,12 @@ public class PlayerAttack : MonoBehaviour
         {
             transform.localPosition = new Vector3(0, 0, 1.5f);
             transform.localScale = new Vector3(1, 1, 1);
+        }
+
+        // Shoot paint particles
+        if (Input.GetMouseButtonDown(0) && ps != null)
+        {
+            ps.Play();
         }
     }
 
