@@ -25,6 +25,23 @@ public class Brush
 
     public int splatChannel = 0;
 
+    public void CopyBrush(Brush brush)
+    {
+        splatTexture = brush.splatTexture;
+        splatsX = brush.splatsX;
+        splatsY = brush.splatsY;
+        splatIndex = brush.splatIndex;
+
+        splatScale = brush.splatScale;
+        splatRandomScaleMin = brush.splatRandomScaleMin;
+        splatRandomScaleMax = brush.splatRandomScaleMax;
+
+        splatRotation = brush.splatRotation;
+        splatRandomRotation = brush.splatRandomRotation;
+
+        splatChannel = brush.splatChannel;
+    }
+
     public Vector4 getMask()
     {
         if (this.splatChannel == 0) return new Vector4(1, 0, 0, 0);

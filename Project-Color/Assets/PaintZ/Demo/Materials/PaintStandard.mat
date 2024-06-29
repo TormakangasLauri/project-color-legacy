@@ -23,7 +23,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpTex:
-        m_Texture: {fileID: 2800000, guid: fbbd067c5200cd046b8f24a268b3588e, type: 3}
+        m_Texture: {fileID: 2800000, guid: bd9f8d3c83e1817448f20654d4a3a740, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 79e493535844f004f9cd54200a6ae323, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6e93a993aa9434d4a9055e58664f09fa, type: 3}
         m_Scale: {x: 3, y: 3}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -67,7 +67,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BumpPower: 1
+    - _BumpPower: 5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -85,8 +85,9 @@ Material:
     - _SplatEdgeBumpWidth: 1
     - _SplatGlossiness: 0.8
     - _SplatMetallic: 0
-    - _SplatTileBump: 1
+    - _SplatTileBump: 0.25
     - _SrcBlend: 1
+    - _Transparency: 0.5
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

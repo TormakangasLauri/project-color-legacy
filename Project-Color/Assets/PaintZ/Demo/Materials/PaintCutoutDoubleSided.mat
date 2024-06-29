@@ -98,6 +98,7 @@ Material:
     - _SplatMetallic: 0
     - _SplatTileBump: 1
     - _SrcBlend: 1
+    - _Transparency: 0.5
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

@@ -10,6 +10,8 @@
 
 		_SplatColor1("Splat Color 1", Color) = (1,.5,0,1)
 		_SplatColor2("Splat Color 2", Color) = (1,0,0,1)
+		_SplatColor3("Splat Color 3", Color) = (0,1,0,1)
+		_SplatColor4("Splat Color 4", Color) = (0,0,1,1)
 
 		_SplatTex("Splat Texture", 2D) = "black" {}
 		_SplatTileNormalTex("Splat Normal", 2D) = "bump" {}
@@ -35,23 +37,23 @@
 		sampler2D _BumpTex;
 		sampler2D _SplatTex;
 		sampler2D _SplatTileNormalTex;
-		sampler2D _WorldTangentTex;
-		sampler2D _WorldBinormalTex;
 
 		float _SplatEdgeBump;
 		float _SplatEdgeBumpWidth;
 		float _SplatTileBump;
-
+		
 		fixed4 _Color;
 		fixed4 _SplatColor1;
 		fixed4 _SplatColor2;
+		fixed4 _SplatColor3;
+		fixed4 _SplatColor4;
 
 		half _BumpPower;
 		half _Glossiness;
 		half _Metallic;
 		half _SplatGlossiness;
 		half _SplatMetallic;
-
+		
 		float4 _SplatTex_TexelSize;
 		float4 _BumpTex_ST;
 		float4 _SplatTileNormalTex_ST;
@@ -136,20 +138,11 @@
 		offsetSplat += (splatTileNormalTex.xy - 0.5) * _SplatTileBump;
 
 		// Create the world normal of the splats
-#if 0
+
 		// Use tangentless technique to get world normals
 		float3 worldNormal = WorldNormalVector(IN, float3(0,0,1));
 		float3 offsetSplatLocal2 = normalize(float3(offsetSplat, sqrt(1.0 - saturate(dot(offsetSplat, offsetSplat)))));
 		float3 offsetSplatWorld = perturb_normal(offsetSplatLocal2, worldNormal, normalize(IN.worldPos - _WorldSpaceCameraPos), IN.uv2_SplatTex);
-#else
-		// Sample the world tangent and binormal textures for texcoord1 (the second uv channel)
-		// you could skip the binormal texture and cross the vertex normal with the tangent texture to get the bitangent
-		float3 worldTangentTex = tex2D(_WorldTangentTex, IN.uv2_SplatTex).xyz * 2.0 - 1.0;
-		float3 worldBinormalTex = tex2D(_WorldBinormalTex, IN.uv2_SplatTex).xyz * 2.0 - 1.0;
-
-		// Create the world normal of the splats
-		float3 offsetSplatWorld = offsetSplat.x * worldTangentTex + offsetSplat.y * worldBinormalTex;
-#endif
 
 		// Get the tangent and binormal for the texcoord0 (this is just the actual tangent and binormal that comes in from the vertex shader)
 		float3 worldTangent = WorldNormalVector(IN, float3(1,0,0));
@@ -178,6 +171,8 @@
 		// Lerp the color with the splat colors based on the splat mask channels
 		c.xyz = lerp(c.xyz, _SplatColor1.xyz, splatMask.x);
 		c.xyz = lerp(c.xyz, _SplatColor2.xyz, splatMask.y);
+		c.xyz = lerp(c.xyz, _SplatColor3.xyz, splatMask.z);
+		c.xyz = lerp(c.xyz, _SplatColor4.xyz, splatMask.w);
 
 		o.Albedo = c.rgb;
 		o.Normal = tanNormal;
@@ -187,6 +182,6 @@
 
 	}
 	ENDCG
-		}
-			FallBack "Diffuse"
+	}
+		FallBack "Diffuse"
 }

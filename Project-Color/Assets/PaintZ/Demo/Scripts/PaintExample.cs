@@ -49,7 +49,7 @@ public class PaintExample : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4)) brush.splatChannel = 3;
         if (Input.GetKeyDown(KeyCode.Alpha5)) brush.splatChannel = 4;
 
-        if (RandomChannel) brush.splatChannel = Random.Range(0, 2);
+        if (RandomChannel) brush.splatChannel = Random.Range(0, 4);
 
         if (Input.GetMouseButton(0))
         {
@@ -76,11 +76,18 @@ public class PaintExample : MonoBehaviour
         ShowMenu = GUILayout.Toggle(ShowMenu,"");
         if (!ShowMenu) return;
 
+        //if (GUILayout.Button("Main Menu"))
+        //{
+        //    Application.LoadLevel(0);
+        //}
+
         GUILayout.BeginVertical(GUI.skin.box);
 
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Channel 0")) brush.splatChannel = 0;
         if (GUILayout.Button("Channel 1")) brush.splatChannel = 1;
+        if (GUILayout.Button("Channel 2")) brush.splatChannel = 2;
+        if (GUILayout.Button("Channel 3")) brush.splatChannel = 3;
         if (GUILayout.Button("Erase"))
         {
             brush.splatChannel = 4;

@@ -6,15 +6,13 @@ public enum PaintDebug
 {
     none,
     splatTex,
-    worldPosTex,
-    worldTangentTex,
-    worldBinormalTex
+    worldPosTex
 }
 
 public enum TextureSize
 {
     //Texture16x16 = 16,
-    //Texture32x32 = 32,
+    Texture32x32 = 32,
     Texture64x64 = 64,
     Texture128x128 = 128,
     Texture256x256 = 256,
@@ -27,16 +25,17 @@ public enum TextureSize
 public class PaintTarget : MonoBehaviour
 {
     public TextureSize paintTextureSize = TextureSize.Texture256x256;
-    public TextureSize renderTextureSize = TextureSize.Texture256x256;
 
     public bool SetupOnStart = false;
     public bool PaintAllSplats = false;
 
     public PaintDebug debugTexture = PaintDebug.none;
 
+    public static Vector4 scores;
+
     private Camera renderCamera = null;
 
-    private RenderTexture splatTex;
+    public RenderTexture splatTex;
     private RenderTexture splatTexAlt;
     public Texture2D splatTexPick;
 
@@ -46,8 +45,6 @@ public class PaintTarget : MonoBehaviour
 
     private RenderTexture worldPosTex;
     private RenderTexture worldPosTexTemp;
-    private RenderTexture worldTangentTex;
-    private RenderTexture worldBinormalTex;
 
     private List<Paint> m_Splats = new List<Paint>();
     private bool evenFrame = false;
@@ -57,8 +54,6 @@ public class PaintTarget : MonoBehaviour
 
     private Material paintBlitMaterial;
     private Material worldPosMaterial;
-    private Material worldTangentMaterial;
-    private Material worldBiNormalMaterial;
 
     private static RenderTexture RT256;
     private static RenderTexture RT4;
@@ -158,10 +153,14 @@ public class PaintTarget : MonoBehaviour
 
             Color c1 = r.sharedMaterial.GetColor("_SplatColor1");
             Color c2 = r.sharedMaterial.GetColor("_SplatColor2");
+            Color c3 = r.sharedMaterial.GetColor("_SplatColor3");
+            Color c4 = r.sharedMaterial.GetColor("_SplatColor4");
 
             Color cc = Color.black;
             if (pc.r > .5) cc = c1;
             if (pc.g > .5) cc = c2;
+            if (pc.b > .5) cc = c3;
+            if (pc.a > .5) cc = c4;
 
             return cc;
         }
@@ -263,6 +262,63 @@ public class PaintTarget : MonoBehaviour
         }
     }
 
+    public static void TallyScore()
+    {
+        scores = Vector4.zero;
+
+        if (RT256 == null)
+        {
+            RT256 = new RenderTexture(256, 256, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            RT256.autoGenerateMips = true;
+            RT256.useMipMap = true;
+            RT256.Create();
+            RT4 = new RenderTexture(4, 4, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            RT4.Create();
+            Tex4 = new Texture2D(4, 4, TextureFormat.ARGB32, false);
+        }
+
+        PaintTarget[] targets = GameObject.FindObjectsOfType<PaintTarget>() as PaintTarget[];
+
+        foreach (PaintTarget target in targets)
+        {
+            if (!target.validTarget) continue;
+            if (!target.setupComplete) continue;
+
+            Graphics.Blit(target.splatTex, RT256, target.paintBlitMaterial, 3);
+            Graphics.Blit(RT256, RT4);
+
+            RenderTexture.active = RT4;
+            Tex4.ReadPixels(new Rect(0, 0, 4, 4), 0, 0);
+            Tex4.Apply();
+
+            Color scoresColor = new Color(0, 0, 0, 0);
+            scoresColor += Tex4.GetPixel(0, 0);
+            scoresColor += Tex4.GetPixel(0, 1);
+            scoresColor += Tex4.GetPixel(0, 2);
+            scoresColor += Tex4.GetPixel(0, 3);
+
+            scoresColor += Tex4.GetPixel(1, 0);
+            scoresColor += Tex4.GetPixel(1, 1);
+            scoresColor += Tex4.GetPixel(1, 2);
+            scoresColor += Tex4.GetPixel(1, 3);
+
+            scoresColor += Tex4.GetPixel(2, 0);
+            scoresColor += Tex4.GetPixel(2, 1);
+            scoresColor += Tex4.GetPixel(2, 2);
+            scoresColor += Tex4.GetPixel(2, 3);
+
+            scoresColor += Tex4.GetPixel(3, 0);
+            scoresColor += Tex4.GetPixel(3, 1);
+            scoresColor += Tex4.GetPixel(3, 2);
+            scoresColor += Tex4.GetPixel(3, 3);
+
+            scores.x += scoresColor.r;
+            scores.y += scoresColor.g;
+            scores.z += scoresColor.b;
+            scores.w += scoresColor.a;
+        }
+    }
+
     private static void UpdatePickColors(PaintTarget paintTarget, RenderTexture rt)
     {
         if (!paintTarget.validTarget) return;
@@ -283,23 +339,9 @@ public class PaintTarget : MonoBehaviour
         paintTarget.bPickDirty = false;
     }
 
-    private void CreateCamera()
+    private void _InitCamera()
     {
-        GameObject cam = GameObject.Find("PaintCamera");
-        if (cam != null)
-        {
-            renderCamera = cam.GetComponent<Camera>();
-            return;
-        }
-
-        GameObject rtCameraObject = new GameObject();
-        rtCameraObject.name = "PaintCamera";
-        //rtCameraObject.tag = "PaintCamera";
-        rtCameraObject.transform.position = Vector3.zero;
-        rtCameraObject.transform.rotation = Quaternion.identity;
-        rtCameraObject.transform.localScale = Vector3.one;
-        rtCameraObject.hideFlags = HideFlags.HideInHierarchy;
-        renderCamera = rtCameraObject.AddComponent<Camera>();
+        if (renderCamera == null) return;
         renderCamera.clearFlags = CameraClearFlags.SolidColor;
         renderCamera.backgroundColor = new Color(0, 0, 0, 0);
         renderCamera.orthographic = true;
@@ -310,6 +352,27 @@ public class PaintTarget : MonoBehaviour
         renderCamera.useOcclusionCulling = false;
         renderCamera.enabled = false;
         renderCamera.cullingMask = LayerMask.NameToLayer("Nothing");
+        renderCamera.stereoTargetEye = StereoTargetEyeMask.None;
+    }
+
+    private void CreateCamera()
+    {
+        GameObject cam = GameObject.Find("PaintCamera");
+        if (cam != null)
+        {
+            renderCamera = cam.GetComponent<Camera>();
+            _InitCamera();
+            return;
+        }
+
+        GameObject rtCameraObject = new GameObject();
+        rtCameraObject.name = "PaintCamera";
+        rtCameraObject.transform.position = Vector3.zero;
+        rtCameraObject.transform.rotation = Quaternion.identity;
+        rtCameraObject.transform.localScale = Vector3.one;
+        //rtCameraObject.hideFlags = HideFlags.HideInHierarchy;
+        renderCamera = rtCameraObject.AddComponent<Camera>();
+        _InitCamera();
     }
 
     void CheckValid()
@@ -319,8 +382,7 @@ public class PaintTarget : MonoBehaviour
 
         foreach (Material mat in paintRenderer.sharedMaterials)
         {
-            if (!mat.shader.name.StartsWith("Paint/"))
-            {
+            if (!mat.shader.name.Contains("Paint"))                  {
                 return;
             }
         }
@@ -339,21 +401,19 @@ public class PaintTarget : MonoBehaviour
 
     private void SetupPaint()
     {
-
         CreateCamera();
         CreateMaterials();
         CreateTextures();
 
         RenderTextures();
         setupComplete = true;
+        ClearPaint();
     }
 
     private void CreateMaterials()
     {
         paintBlitMaterial = new Material(Shader.Find("Hidden/PaintBlit"));
         worldPosMaterial = new Material(Shader.Find("Hidden/PaintPos"));
-        worldTangentMaterial = new Material(Shader.Find("Hidden/PaintTangent"));
-        worldBiNormalMaterial = new Material(Shader.Find("Hidden/PaintBinormal"));
     }
 
     private void CreateTextures()
@@ -363,24 +423,15 @@ public class PaintTarget : MonoBehaviour
         splatTexAlt = new RenderTexture((int)paintTextureSize, (int)paintTextureSize, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
         splatTexAlt.Create();
 
-        //splatTexPick = new Texture2D((int)paintTextureSize, (int)paintTextureSize, TextureFormat.ARGB32, false);
-        //splatTexPick = new Texture2D((int)renderTextureSize, (int)renderTextureSize, TextureFormat.ARGB32, false);
-
-        worldPosTex = new RenderTexture((int)renderTextureSize, (int)renderTextureSize, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        worldPosTex = new RenderTexture((int)paintTextureSize, (int)paintTextureSize, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         worldPosTex.Create();
-        worldPosTexTemp = new RenderTexture((int)renderTextureSize, (int)renderTextureSize, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        worldPosTexTemp = new RenderTexture((int)paintTextureSize, (int)paintTextureSize, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         worldPosTexTemp.Create();
-        worldTangentTex = new RenderTexture((int)renderTextureSize, (int)renderTextureSize, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
-        worldTangentTex.Create();
-        worldBinormalTex = new RenderTexture((int)renderTextureSize, (int)renderTextureSize, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
-        worldBinormalTex.Create();
 
         foreach (Material mat in paintRenderer.materials)
         {
             mat.SetTexture("_SplatTex", splatTex);
             mat.SetTexture("_WorldPosTex", worldPosTex);
-            mat.SetTexture("_WorldTangentTex", worldTangentTex);
-            mat.SetTexture("_WorldBinormalTex", worldBinormalTex);
             mat.SetVector("_SplatTexSize", new Vector4((int)paintTextureSize, (int)paintTextureSize, 0, 0));
         }
     }
@@ -399,27 +450,13 @@ public class PaintTarget : MonoBehaviour
             cb.DrawRenderer(paintRenderer, worldPosMaterial, i);
         }
 
-        cb.SetRenderTarget(worldTangentTex);
-        cb.ClearRenderTarget(true, true, new Color(0, 0, 0, 0));
-        for (int i = 0; i < paintRenderer.materials.Length; i++)
-        {
-            cb.DrawRenderer(paintRenderer, worldTangentMaterial, i);
-        }
-
-        cb.SetRenderTarget(worldBinormalTex);
-        cb.ClearRenderTarget(true, true, new Color(0, 0, 0, 0));
-        for (int i = 0; i < paintRenderer.materials.Length; i++)
-        {
-            cb.DrawRenderer(paintRenderer, worldBiNormalMaterial, i);
-        }
-
         // Only have to render the camera once!
         renderCamera.AddCommandBuffer(CameraEvent.AfterEverything, cb);
         renderCamera.Render();
         renderCamera.RemoveAllCommandBuffers();
 
         // Bleed the world position out 2 pixels
-        paintBlitMaterial.SetVector("_SplatTexSize", new Vector2((int)renderTextureSize, (int)renderTextureSize));
+        paintBlitMaterial.SetVector("_SplatTexSize", new Vector2((int)paintTextureSize, (int)paintTextureSize));
         Graphics.Blit(worldPosTex, worldPosTexTemp, paintBlitMaterial, 2);
         Graphics.Blit(worldPosTexTemp, worldPosTex, paintBlitMaterial, 2);
 
@@ -431,14 +468,6 @@ public class PaintTarget : MonoBehaviour
 
             case PaintDebug.worldPosTex:
                 paintRenderer.material.SetTexture("_MainTex", worldPosTex);
-                break;
-
-            case PaintDebug.worldTangentTex:
-                paintRenderer.material.SetTexture("_MainTex", worldTangentTex);
-                break;
-
-            case PaintDebug.worldBinormalTex:
-                paintRenderer.material.SetTexture("_MainTex", worldBinormalTex);
                 break;
         }
     }
