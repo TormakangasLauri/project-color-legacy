@@ -13,6 +13,8 @@ public class Scores : MonoBehaviour
     public Text player3;
     public Text player4;
 
+    public Collider paintArea;
+
 	void Start ()
     {
 	}
@@ -44,6 +46,5 @@ public class Scores : MonoBehaviour
         if (player2 != null) player2.text = Mathf.RoundToInt(((PaintTarget.scores.y / n) * 100.0f)).ToString() + "%";
         if (player3 != null) player3.text = Mathf.RoundToInt(((PaintTarget.scores.z / n) * 100.0f)).ToString() + "%";
         if (player4 != null) player4.text = Mathf.RoundToInt(((PaintTarget.scores.w / n) * 100.0f)).ToString() + "%";
-
     }
 }

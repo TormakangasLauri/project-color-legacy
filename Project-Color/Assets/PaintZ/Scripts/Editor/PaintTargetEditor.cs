@@ -87,6 +87,7 @@ public class PaintTargetEditor : Editor
             script.paintTextureSize = (TextureSize)EditorGUILayout.EnumPopup("Paint Texture", script.paintTextureSize);
             script.SetupOnStart = GUILayout.Toggle(script.SetupOnStart, "Setup On Start");
             script.PaintAllSplats = GUILayout.Toggle(script.PaintAllSplats, "Paint All Splats");
+            script.IncludeInScore = GUILayout.Toggle(script.IncludeInScore, "Include In Score");
 
             GUILayout.EndVertical();
 

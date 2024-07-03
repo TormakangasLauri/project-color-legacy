@@ -28,6 +28,7 @@ public class PaintTarget : MonoBehaviour
 
     public bool SetupOnStart = false;
     public bool PaintAllSplats = false;
+    public bool IncludeInScore = false;
 
     public PaintDebug debugTexture = PaintDebug.none;
 
@@ -283,6 +284,7 @@ public class PaintTarget : MonoBehaviour
         {
             if (!target.validTarget) continue;
             if (!target.setupComplete) continue;
+            if (!target.IncludeInScore) continue;
 
             Graphics.Blit(target.splatTex, RT256, target.paintBlitMaterial, 3);
             Graphics.Blit(RT256, RT4);

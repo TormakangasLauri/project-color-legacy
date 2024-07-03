@@ -256,7 +256,7 @@ public class playermovement : MonoBehaviour
         Vector3 velocity = rb.velocity;
         
         // Walljumping throws the player away from the wall
-        rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z) - dirToWall.normalized * 5;
+        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall.normalized * 8 + Vector3.up * jumpForce * 0.6f;
         
         hasJumped = true;
         firstWallRunCall = true;
