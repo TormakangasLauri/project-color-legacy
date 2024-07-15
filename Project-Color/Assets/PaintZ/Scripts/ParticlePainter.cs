@@ -16,15 +16,6 @@ public class ParticlePainter : MonoBehaviour
         collisionEvents = new List<ParticleCollisionEvent>();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) brush.splatChannel = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) brush.splatChannel = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha3)) brush.splatChannel = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha4)) brush.splatChannel = 3;
-        if (Input.GetKeyDown(KeyCode.Alpha5)) brush.splatChannel = 4;
-    }
-
     private void OnParticleCollision(GameObject other)
     {
         PaintTarget paintTarget = other.GetComponent<PaintTarget>();

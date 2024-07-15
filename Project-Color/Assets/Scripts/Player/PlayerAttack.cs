@@ -8,6 +8,7 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -20,7 +21,12 @@ public class PlayerAttack : MonoBehaviour
     public AttackIndicator AI;
     public static PlayerAttack inst;
 
+    public int paintChannel;
     public ParticleSystem ps;
+    public ParticleSystem ps1;
+    public ParticleSystem ps2;
+    public ParticleSystem ps3;
+    public AttackParticle AP;
 
     public bool pushIsActive;
 
@@ -29,6 +35,8 @@ public class PlayerAttack : MonoBehaviour
     float holdTimer;
 
     public bool canAttack = true;
+    bool attackFromRight = true;
+    float sideSwitchTimer = 0;
 
     Transform normalTransform;
     
@@ -77,11 +85,15 @@ public class PlayerAttack : MonoBehaviour
             transform.localScale = new Vector3(1, 1, 1);
         }
 
-        // Shoot paint particles
-        if (Input.GetMouseButtonDown(0) && ps != null)
-        {
-            ps.Play();
-        }
+        // Paint color picker
+        if (Input.GetKeyDown(KeyCode.Alpha1)) paintChannel = 0;
+        if (Input.GetKeyDown(KeyCode.Alpha2)) paintChannel = 1;
+        if (Input.GetKeyDown(KeyCode.Alpha3)) paintChannel = 2;
+        if (Input.GetKeyDown(KeyCode.Alpha4)) paintChannel = 3;
+
+        // Attack side reset
+        if (sideSwitchTimer < 0) attackFromRight = true;
+        sideSwitchTimer -= Time.deltaTime;
     }
 
     public void AttackInput(InputAction.CallbackContext action)
@@ -101,6 +113,8 @@ public class PlayerAttack : MonoBehaviour
                 {
                     Attack(enemy);
                 }
+                
+                PLayParticleSystem();
             }
             else if (holdTimer >= 1)
             {
@@ -108,6 +122,8 @@ public class PlayerAttack : MonoBehaviour
                 {
                     ChargedAttack(enemy);
                 }
+
+                PLayParticleSystem();
             }
         }
     }
@@ -221,6 +237,32 @@ public class PlayerAttack : MonoBehaviour
                 dir.Normalize();
             }
             transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnPlayer, ForceMode.Impulse);
+        }
+    }
+
+    void PLayParticleSystem()
+    {
+        if (attackFromRight)
+        {
+            StartCoroutine(AP.RotateRL());
+            attackFromRight = false;
+        }
+        else
+        {
+            StartCoroutine(AP.RotateLR());
+            attackFromRight = true;
+        }
+
+        // Time before automatically switching attack side
+        sideSwitchTimer = 1f;
+
+        switch (paintChannel)
+        {
+            case 0: ps.Play(); break;
+            case 1: ps1.Play(); break;
+            case 2: ps2.Play(); break;
+            case 3: ps3.Play(); break;
+            default: break;
         }
     }
 
