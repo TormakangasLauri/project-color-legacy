@@ -21,12 +21,20 @@ public class PlayerAttack : MonoBehaviour
     public AttackIndicator AI;
     public static PlayerAttack inst;
 
+    private CollisionPainter CP1;
+    private CollisionPainter CP2;
+
     public int paintChannel;
-    public ParticleSystem ps;
-    public ParticleSystem ps1;
-    public ParticleSystem ps2;
-    public ParticleSystem ps3;
+    public ParticleSystem attackParticle1;
+    public ParticleSystem attackParticle2;
+    public ParticleSystem attackParticle3;
+    public ParticleSystem attackParticle4;
     public AttackParticle AP;
+
+    public ParticleSystem slamParticle1;
+    public ParticleSystem slamParticle2;
+    public ParticleSystem slamParticle3;
+    public ParticleSystem slamParticle4;
 
     public bool pushIsActive;
 
@@ -64,6 +72,8 @@ public class PlayerAttack : MonoBehaviour
         hitbox = GetComponent<Collider>();
         PM = transform.parent.GetComponentInParent<playermovement>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
+        CP1 = gameObject.transform.parent.GetChild(1).GetChild(4).GetComponent<CollisionPainter>();
+        CP2 = gameObject.transform.parent.GetChild(1).GetChild(5).GetComponent<CollisionPainter>();
 
         normalTransform = transform;
     }
@@ -86,10 +96,10 @@ public class PlayerAttack : MonoBehaviour
         }
 
         // Paint color picker
-        if (Input.GetKeyDown(KeyCode.Alpha1)) paintChannel = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) paintChannel = 1;
-        if (Input.GetKeyDown(KeyCode.Alpha3)) paintChannel = 2;
-        if (Input.GetKeyDown(KeyCode.Alpha4)) paintChannel = 3;
+        if (Input.GetKeyDown(KeyCode.Alpha1)) paintChannel = 0; ChangeBrushColor();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) paintChannel = 1; ChangeBrushColor();
+        if (Input.GetKeyDown(KeyCode.Alpha3)) paintChannel = 2; ChangeBrushColor();
+        if (Input.GetKeyDown(KeyCode.Alpha4)) paintChannel = 3; ChangeBrushColor();
 
         // Attack side reset
         if (sideSwitchTimer < 0) attackFromRight = true;
@@ -114,7 +124,7 @@ public class PlayerAttack : MonoBehaviour
                     Attack(enemy);
                 }
                 
-                PLayParticleSystem();
+                PLayAttackParticle(false);
             }
             else if (holdTimer >= 1)
             {
@@ -123,7 +133,7 @@ public class PlayerAttack : MonoBehaviour
                     ChargedAttack(enemy);
                 }
 
-                PLayParticleSystem();
+                PLayAttackParticle(true);
             }
         }
     }
@@ -186,6 +196,8 @@ public class PlayerAttack : MonoBehaviour
             if (pushIsActive) enemyHealth.Knockback(dir * slamKB.x + Vector3.up * slamKB.y, ForceMode.Force);
         }
 
+        PlaySLamParticle();
+
         PM.attacking = false;
     }
 
@@ -240,30 +252,40 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    void PLayParticleSystem()
+    void PLayAttackParticle(bool charged)
     {
-        if (attackFromRight)
-        {
-            StartCoroutine(AP.RotateRL());
-            attackFromRight = false;
-        }
-        else
-        {
-            StartCoroutine(AP.RotateLR());
-            attackFromRight = true;
-        }
+        StartCoroutine(AP.Rotate(attackFromRight, charged));
+        attackFromRight = !attackFromRight;
 
         // Time before automatically switching attack side
         sideSwitchTimer = 1f;
 
         switch (paintChannel)
         {
-            case 0: ps.Play(); break;
-            case 1: ps1.Play(); break;
-            case 2: ps2.Play(); break;
-            case 3: ps3.Play(); break;
+            case 0: attackParticle1.Play(); break;
+            case 1: attackParticle2.Play(); break;
+            case 2: attackParticle3.Play(); break;
+            case 3: attackParticle4.Play(); break;
             default: break;
         }
+    }
+
+    void PlaySLamParticle()
+    {
+        switch (paintChannel)
+        {
+            case 0: slamParticle1.Play(); break;
+            case 1: slamParticle2.Play(); break;
+            case 2: slamParticle3.Play(); break;
+            case 3: slamParticle4.Play(); break;
+            default: break;
+        }
+    }
+
+    void ChangeBrushColor()
+    {
+        CP1.brush.splatChannel = paintChannel;
+        CP2.brush.splatChannel = paintChannel;
     }
 
     private void OnTriggerEnter(Collider other)
