@@ -35,6 +35,7 @@ public class PlayerAttack : MonoBehaviour
     public ParticleSystem slamParticle2;
     public ParticleSystem slamParticle3;
     public ParticleSystem slamParticle4;
+    public GameObject slamParticle0;
 
     public bool pushIsActive;
 
@@ -272,6 +273,9 @@ public class PlayerAttack : MonoBehaviour
 
     void PlaySLamParticle()
     {
+        slamParticle0.GetComponent<ParticlePainter>().brush.splatChannel = paintChannel;
+        slamParticle0.GetComponent<ParticleSystem>().Play();
+
         switch (paintChannel)
         {
             case 0: slamParticle1.Play(); break;
