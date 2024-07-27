@@ -37,6 +37,9 @@ public class PlayerAttack : MonoBehaviour
     public ParticleSystem slamParticle4;
     public GameObject slamParticle0;
 
+    public ParticleSystem bounceParticle;
+    public ParticleSystem bounceTrail;
+
     public bool pushIsActive;
 
     bool lmbHeld;
@@ -215,6 +218,8 @@ public class PlayerAttack : MonoBehaviour
         // Hitting terrain only adds force to the player but more than when hitting enemies
         if (enemyHit.collider != null)
         {
+            StartCoroutine(PlayBounceTrail());
+
             // Add force to player when hitting an enemy
             Vector3 dir = -cam.forward;
             if (dir.y < 0)
@@ -242,6 +247,9 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (hit.collider != null)
         {
+            PlayBounceParticle();
+            StartCoroutine(PlayBounceTrail());
+            
             // Add force to player when hitting terrain
             Vector3 dir = -cam.forward;
             if (dir.y < 0)
@@ -267,7 +275,6 @@ public class PlayerAttack : MonoBehaviour
             case 1: attackParticle2.Play(); break;
             case 2: attackParticle3.Play(); break;
             case 3: attackParticle4.Play(); break;
-            default: break;
         }
     }
 
@@ -282,8 +289,23 @@ public class PlayerAttack : MonoBehaviour
             case 1: slamParticle2.Play(); break;
             case 2: slamParticle3.Play(); break;
             case 3: slamParticle4.Play(); break;
-            default: break;
         }
+    }
+
+    void PlayBounceParticle()
+    {
+        bounceParticle.GetComponent<ParticlePainter>().brush.splatChannel = paintChannel;
+        bounceParticle.GetComponent<ParticleSystem>().Play();
+    }
+    
+    IEnumerator PlayBounceTrail()
+    {
+        bounceTrail.GetComponent<ParticlePainter>().brush.splatChannel = paintChannel;
+        
+        bounceTrail.Play();
+        yield return new WaitForSeconds(0.2f);
+        yield return new WaitUntil(() => PM.grounded || PM.walled);
+        bounceTrail.Stop();
     }
 
     void ChangeBrushColor()
