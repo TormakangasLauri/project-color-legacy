@@ -24,6 +24,9 @@ public class PlayerAttack : MonoBehaviour
     private CollisionPainter CP1;
     private CollisionPainter CP2;
 
+    public CollisionPainter CP3;
+    public CollisionPainter CP4;
+
     public int paintChannel;
     public ParticleSystem attackParticle1;
     public ParticleSystem attackParticle2;
@@ -207,6 +210,8 @@ public class PlayerAttack : MonoBehaviour
 
     void Bounce()
     {
+        PM.wallRunning = false;
+
         RaycastHit hit;
         Transform cam = transform.parent;
         Physics.Raycast(cam.position, cam.forward, out hit, 2, LayerMask.GetMask("Terrain"));
@@ -312,6 +317,8 @@ public class PlayerAttack : MonoBehaviour
     {
         CP1.brush.splatChannel = paintChannel;
         CP2.brush.splatChannel = paintChannel;
+        CP3.brush.splatChannel = paintChannel;
+        CP4.brush.splatChannel = paintChannel;
     }
 
     private void OnTriggerEnter(Collider other)

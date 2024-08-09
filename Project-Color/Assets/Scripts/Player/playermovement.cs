@@ -241,8 +241,7 @@ public class playermovement : MonoBehaviour
 
         if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
         {
-            if (moveDirection.magnitude > 0 && velocity.magnitude < maxSpeed * 1.5f && velocity.magnitude > 0.5)
-                rb.velocity = new Vector3(moveX * scale, jumpForce, moveZ * scale);
+            if (moveDirection.magnitude > 0 && velocity.magnitude < maxSpeed * 1.5f && velocity.magnitude > 0.5) rb.velocity = new Vector3(moveX * scale, jumpForce, moveZ * scale);
             else rb.velocity = new Vector3(velocity.x, jumpForce, velocity.z);
 
             hasJumped = true;
