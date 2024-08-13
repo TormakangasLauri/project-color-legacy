@@ -44,7 +44,7 @@ public class Scores : MonoBehaviour
         // 32 = 11.08235
         // 512 = 9.364706
         // 4096 = 8.894118
-        //Debug.Log(n);
+        Debug.Log(n);
 
         if (player1 != null) player1.text = Mathf.RoundToInt(((PaintTarget.scores.x / n) * 100.0f)).ToString() + "%";
         if (player2 != null) player2.text = Mathf.RoundToInt(((PaintTarget.scores.y / n) * 100.0f)).ToString() + "%";

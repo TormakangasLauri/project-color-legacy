@@ -25,12 +25,20 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        BasicEnemy();
+        Milo();
+
+        AllEnemies.Clear();
+        AllEnemies.AddRange(basicEnemyList);
+        AllEnemies.AddRange(SniperList);
+        AllEnemies.AddRange(MILOList);
+    }
+
+    void BasicEnemy()
+    {
         t -= Time.deltaTime;
         if (t < 0)
         { t = 0.5f;
-            
-            // BASIC ENEMY
-
             // Sort enemies based on the distance to player
             basicEnemyList.Sort((obj1, obj2) =>
             {
@@ -51,17 +59,13 @@ public class EnemyController : MonoBehaviour
                 basicEnemyList[i].GetComponent<EnemyMovement>().stopDistance = stopDist;
             }
         }
+    }
 
-        // M.I.L.O
-
+    void Milo()
+    {
         foreach (GameObject milo in MILOList)
         {
             milo.GetComponent<EnemyMovement>().stopDistance = 3;
         }
-        
-        AllEnemies.Clear();
-        AllEnemies.AddRange(basicEnemyList);
-        AllEnemies.AddRange(SniperList);
-        AllEnemies.AddRange(MILOList);
     }
 }

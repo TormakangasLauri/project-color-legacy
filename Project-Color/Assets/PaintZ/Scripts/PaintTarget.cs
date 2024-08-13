@@ -284,7 +284,7 @@ public class PaintTarget : MonoBehaviour
         {
             if (!target.validTarget) continue;
             if (!target.setupComplete) continue;
-            if (!target.IncludeInScore) continue;
+            // if (!target.IncludeInScore) continue;
 
             Graphics.Blit(target.splatTex, RT256, target.paintBlitMaterial, 3);
             Graphics.Blit(RT256, RT4);
@@ -294,25 +294,26 @@ public class PaintTarget : MonoBehaviour
             Tex4.Apply();
 
             Color scoresColor = new Color(0, 0, 0, 0);
-            scoresColor += Tex4.GetPixel(0, 0);
-            scoresColor += Tex4.GetPixel(0, 1);
-            scoresColor += Tex4.GetPixel(0, 2);
-            scoresColor += Tex4.GetPixel(0, 3);
 
-            scoresColor += Tex4.GetPixel(1, 0);
-            scoresColor += Tex4.GetPixel(1, 1);
-            scoresColor += Tex4.GetPixel(1, 2);
-            scoresColor += Tex4.GetPixel(1, 3);
+            Collider col = GameObject.Find("Paintarea").GetComponent<Collider>();
 
-            scoresColor += Tex4.GetPixel(2, 0);
-            scoresColor += Tex4.GetPixel(2, 1);
-            scoresColor += Tex4.GetPixel(2, 2);
-            scoresColor += Tex4.GetPixel(2, 3);
+            for (int x = 0; x < 4; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
+                    // Convert pixel coordinates to UV coordinates
+                    Vector2 uv = new Vector2((float)x / 4f, (float)y / 4f);
 
-            scoresColor += Tex4.GetPixel(3, 0);
-            scoresColor += Tex4.GetPixel(3, 1);
-            scoresColor += Tex4.GetPixel(3, 2);
-            scoresColor += Tex4.GetPixel(3, 3);
+                    // Assuming the texture is mapped on the target object, get the world position of the pixel
+                    Vector3 worldPos = UVToWorldPosition(target, uv);
+
+                    // Check if the world position is inside the collider
+                    if (col.bounds.Contains(worldPos))
+                    {
+                        scoresColor += Tex4.GetPixel(x, y);
+                    }
+                }
+            }
 
             scores.x += scoresColor.r;
             scores.y += scoresColor.g;
@@ -320,6 +321,57 @@ public class PaintTarget : MonoBehaviour
             scores.w += scoresColor.a;
         }
     }
+
+    // Helper function to convert UV coordinates to world position
+    private static Vector3 UVToWorldPosition(PaintTarget target, Vector2 uv)
+    {
+        Renderer renderer = target.GetComponent<Renderer>();
+        Mesh mesh = renderer.GetComponent<MeshFilter>().mesh;
+
+        // Get the corresponding triangle in the mesh based on the UV coordinates
+        for (int i = 0; i < mesh.triangles.Length; i += 3)
+        {
+            int index0 = mesh.triangles[i];
+            int index1 = mesh.triangles[i + 1];
+            int index2 = mesh.triangles[i + 2];
+
+            Vector2 uv0 = mesh.uv[index0];
+            Vector2 uv1 = mesh.uv[index1];
+            Vector2 uv2 = mesh.uv[index2];
+
+            if (IsPointInTriangle(uv, uv0, uv1, uv2))
+            {
+                Vector3 p0 = mesh.vertices[index0];
+                Vector3 p1 = mesh.vertices[index1];
+                Vector3 p2 = mesh.vertices[index2];
+
+                Vector3 localPos = BarycentricInterpolation(uv, uv0, uv1, uv2, p0, p1, p2);
+                return target.transform.TransformPoint(localPos);
+            }
+        }
+
+        return Vector3.zero; // If no corresponding triangle found, return zero vector
+    }
+
+    private static bool IsPointInTriangle(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2)
+    {
+        // Barycentric point in triangle test
+        float a = 1.0f / ((p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y));
+        float s = a * ((p1.y - p2.y) * (p.x - p2.x) + (p2.x - p1.x) * (p.y - p2.y));
+        float t = a * ((p2.y - p0.y) * (p.x - p2.x) + (p0.x - p2.x) * (p.y - p2.y));
+        return s >= 0 && t >= 0 && (s + t) <= 1;
+    }
+
+    private static Vector3 BarycentricInterpolation(Vector2 p, Vector2 p0, Vector2 p1, Vector2 p2, Vector3 v0, Vector3 v1, Vector3 v2)
+    {
+        // Barycentric interpolation
+        float denom = (p1.y - p2.y) * (p0.x - p2.x) + (p2.x - p1.x) * (p0.y - p2.y);
+        float w0 = ((p1.y - p2.y) * (p.x - p2.x) + (p2.x - p1.x) * (p.y - p2.y)) / denom;
+        float w1 = ((p2.y - p0.y) * (p.x - p2.x) + (p0.x - p2.x) * (p.y - p2.y)) / denom;
+        float w2 = 1.0f - w0 - w1;
+        return w0 * v0 + w1 * v1 + w2 * v2;
+    }
+
 
     private static void UpdatePickColors(PaintTarget paintTarget, RenderTexture rt)
     {
