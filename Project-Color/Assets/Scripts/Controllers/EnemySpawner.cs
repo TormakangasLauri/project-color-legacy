@@ -23,12 +23,16 @@ public class EnemySpawner : MonoBehaviour
     public IEnumerator Spawn(int enemy, int amount, Vector3 location, float spread, float time)
     {
         GameObject e = enemies[enemy];
-        
+        List<GameObject> spawnedEnemies = new List<GameObject>();
+
         for (int i = 0; i < amount; i++)
         {
             Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-            Instantiate(e, location + random, new Quaternion());
+            GameObject enmy = Instantiate(e, location + random, new Quaternion());
+            spawnedEnemies.Add(enmy);
             yield return new WaitForSeconds(time / amount);
         }
+
+        yield return spawnedEnemies;
     }
 }
