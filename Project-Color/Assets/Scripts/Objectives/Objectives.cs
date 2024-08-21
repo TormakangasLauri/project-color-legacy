@@ -2,11 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MassMurder : MonoBehaviour
+public class Objectives : MonoBehaviour
 {
     private List<GameObject> enemies = new List<GameObject>();
     
-    public IEnumerator massMurder()
+	public IEnumerator ObjectiveControl()
+	{
+		
+		
+		yield return null;
+	}
+
+    public IEnumerator Kill()
+    {
+        
+        
+        yield return null;
+    }
+    
+    public IEnumerator Platform()
+    {
+        
+        
+        yield return null;
+    }
+
+	public IEnumerator Paint()
     {
         
         
@@ -21,7 +42,7 @@ public class MassMurder : MonoBehaviour
     /// <param name="location">Spawn location</param>
     /// <param name="spread">Max distance that the enemies can spawn away from the spawn location</param>
     /// <param name="time">Total time for all enemies to be spawned in seconds</param>
-    public IEnumerator Spawn(int enemyIndex, int amount, Vector3 location, float spread, float time)
+    private IEnumerator Spawn(int enemyIndex, int amount, Vector3 location, float spread, float time)
     {
         GameObject e = enemies[enemyIndex];
         List<GameObject> spawnedEnemies = new List<GameObject>();
