@@ -1,36 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Objectives : MonoBehaviour
 {
+    enum objectives
+    {
+        kill,
+        platform,
+        paint
+    };
+
     private List<GameObject> enemies = new List<GameObject>();
-    
-	public IEnumerator ObjectiveControl()
-	{
-		
-		
-		yield return null;
-	}
+    private List<objectives> activeObjectives = new List<objectives>();
+
+    EnemyController enemyController;
+
+    public TextMeshPro killObjectiveText;
+
+    void Start()
+    {
+        enemyController = GetComponent<EnemyController>();
+    }
 
     public IEnumerator Kill()
     {
-        
-        
+        activeObjectives.Add(objectives.kill);
+
+        List<GameObject> enemiesInObjective = new List<GameObject>();
+        enemiesInObjective.AddRange(enemyController.AllEnemies.GetRange(0, 10));
+
+        yield return new WaitUntil(delegate
+        {
+            killObjectiveText.text = enemiesInObjective.Count.ToString();
+            return enemiesInObjective.Count == 0;
+        });
+
         yield return null;
     }
     
     public IEnumerator Platform()
     {
-        
-        
+        activeObjectives.Add(objectives.platform);
+
         yield return null;
     }
 
 	public IEnumerator Paint()
     {
-        
-        
+        activeObjectives.Add(objectives.paint);
+
         yield return null;
     }
 

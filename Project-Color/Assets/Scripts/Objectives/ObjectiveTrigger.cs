@@ -4,15 +4,33 @@ using UnityEngine;
 
 public class ObjectiveTrigger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public enum Objective
     {
-        
-    }
+        kill,
+        platform,
+        paint
+    };
 
-    // Update is called once per frame
-    void Update()
+    public Objective objective;
+
+    public Objectives Objectives;
+
+    public void OnTriggerEnter(Collider col)
     {
-        
+        if (col.gameObject.tag == "Player")
+        {
+            switch (objective)
+            {
+                case Objective.kill:
+                    StartCoroutine(Objectives.Kill());
+                    break;
+                case Objective.platform:
+                    StartCoroutine(Objectives.Platform());
+                    break;
+                case Objective.paint:
+                    StartCoroutine(Objectives.Paint());
+                    break;
+            }
+        }
     }
 }

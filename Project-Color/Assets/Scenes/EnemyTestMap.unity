@@ -637,26 +637,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: spawnPlane
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.data[0]
-      value: 
-      objectReference: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.data[1]
-      value: 
-      objectReference: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.data[2]
-      value: 
-      objectReference: {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
     - target: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: m_Name
       value: GameController
@@ -704,6 +684,18 @@ PrefabInstance:
     - target: {fileID: 1302738677871118286, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: objectiveList.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: objectiveList.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: objectiveList.Array.data[1]
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
@@ -997,7 +989,7 @@ GameObject:
   - component: {fileID: 823504534}
   - component: {fileID: 823504533}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: KillObjective
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1020,7 +1012,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -258, y: 165}
+  m_AnchoredPosition: {x: -143, y: 108}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &823504533
@@ -1045,8 +1037,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1070,8 +1062,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
