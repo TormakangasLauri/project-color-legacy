@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Objectives : MonoBehaviour
 {
@@ -13,16 +12,21 @@ public class Objectives : MonoBehaviour
         paint
     };
 
+    List<GameObject> enemySpawnPoints = new List<GameObject>();
+
     private List<GameObject> enemies = new List<GameObject>();
     private List<objectives> activeObjectives = new List<objectives>();
 
     EnemyController enemyController;
 
-    public TextMeshPro killObjectiveText;
+    public TextMeshProUGUI killObjectiveText;
+
+    public bool platformActive = false;
 
     void Start()
     {
         enemyController = GetComponent<EnemyController>();
+        enemySpawnPoints.AddRange(GameObject.FindGameObjectsWithTag("SpawnPoint"));
     }
 
     public IEnumerator Kill()
@@ -38,20 +42,27 @@ public class Objectives : MonoBehaviour
             return enemiesInObjective.Count == 0;
         });
 
-        yield return null;
+        activeObjectives.Remove(objectives.kill);
     }
     
     public IEnumerator Platform()
     {
         activeObjectives.Add(objectives.platform);
 
-        yield return null;
+        platformActive = true;
+
+        yield return new WaitWhile(delegate { return platformActive; });
+
+        activeObjectives.Remove(objectives.platform);
     }
 
 	public IEnumerator Paint()
     {
         activeObjectives.Add(objectives.paint);
 
+
+
+        activeObjectives.Remove(objectives.paint);
         yield return null;
     }
 

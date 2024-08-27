@@ -14,6 +14,11 @@ public class EnemyController : MonoBehaviour
     public List<GameObject> basicEnemyList = new List<GameObject>();
     public List<GameObject> SniperList = new List<GameObject>();
     public List<GameObject> MILOList = new List<GameObject>();
+
+    public List<GameObject> basicEnemyList_active = new List<GameObject>();
+    public List<GameObject> SniperList_active = new List<GameObject>();
+    public List<GameObject> MILOList_active = new List<GameObject>();
+
     public static EnemyController inst;
     private GameObject player;
     private float t;
@@ -24,8 +29,12 @@ public class EnemyController : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
 
-		for (int i = 0; i < 150; i++)
+		for (int i = 0; i < 100; i++)
             Instantiate(enemies[0], Vector3.down * 500, Quaternion.identity);
+        for (int i = 0; i < 30; i++)
+            Instantiate(enemies[1], Vector3.down * 500, Quaternion.identity);
+        for (int i = 0; i < 10; i++)
+            Instantiate(enemies[2], Vector3.down * 500, Quaternion.identity);
     }
 
     void Update()
@@ -37,6 +46,9 @@ public class EnemyController : MonoBehaviour
         AllEnemies.AddRange(basicEnemyList);
         AllEnemies.AddRange(SniperList);
         AllEnemies.AddRange(MILOList);
+        AllEnemies.AddRange(basicEnemyList_active);
+        AllEnemies.AddRange(SniperList_active);
+        AllEnemies.AddRange(MILOList_active);
     }
 
     void BasicEnemy()
