@@ -8,6 +8,8 @@ using UnityEngine.Serialization;
 
 public class EnemyController : MonoBehaviour
 {
+    public List<GameObject> enemies = new List<GameObject>();
+
     public List<GameObject> AllEnemies = new List<GameObject>();
     public List<GameObject> basicEnemyList = new List<GameObject>();
     public List<GameObject> SniperList = new List<GameObject>();
@@ -21,6 +23,9 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindWithTag("Player");
+
+		for (int i = 0; i < 150; i++)
+            Instantiate(enemies[0], Vector3.down * 500, Quaternion.identity);
     }
 
     void Update()

@@ -32,6 +32,20 @@ public class EnemyType : MonoBehaviour
                 EnemyController.inst.MILOList.Add(gameObject);
                 break;
         }
+
+        GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshCollider>().enabled = false;
+        GetComponent<PaintTarget>().enabled = false;
+        transform.Find("PathFinder").gameObject.SetActive(false);
+        gameObject.SetActive(false);
+    }
+
+    public void Activate()
+    {
+        GetComponent<MeshRenderer>().enabled = true;
+        GetComponent<MeshCollider>().enabled = true;
+        GetComponent<PaintTarget>().enabled = true;
+        transform.Find("PathFinder").gameObject.SetActive(true);
     }
 
     private void OnDestroy()

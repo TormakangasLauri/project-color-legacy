@@ -2305,10 +2305,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 448478528, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
-      propertyPath: brush.splatTexture
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109460, guid: 769135263e4e77a48b12247df4863ca0, type: 3}
       propertyPath: m_Name
       value: Player
