@@ -12,6 +12,8 @@ public class ObjectiveTrigger : MonoBehaviour
         paint
     };
 
+    public int killGroup;
+
     public Objective objective;
 
     public Objectives Objectives;
@@ -23,7 +25,7 @@ public class ObjectiveTrigger : MonoBehaviour
             switch (objective)
             {
                 case Objective.kill:
-                    StartCoroutine(Objectives.Kill());
+                    StartCoroutine(Objectives.Kill(killGroup));
                     break;
                 case Objective.platform_start:
                     StartCoroutine(Objectives.Platform());

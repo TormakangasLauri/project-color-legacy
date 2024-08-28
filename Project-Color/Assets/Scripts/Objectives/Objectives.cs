@@ -12,7 +12,7 @@ public class Objectives : MonoBehaviour
         paint
     };
 
-    List<GameObject> enemySpawnPoints = new List<GameObject>();
+    public List<GameObject> enemySpawnPointGroups = new List<GameObject>();
 
     private List<GameObject> enemies = new List<GameObject>();
     private List<objectives> activeObjectives = new List<objectives>();
@@ -26,10 +26,9 @@ public class Objectives : MonoBehaviour
     void Start()
     {
         enemyController = GetComponent<EnemyController>();
-        enemySpawnPoints.AddRange(GameObject.FindGameObjectsWithTag("SpawnPoint"));
     }
 
-    public IEnumerator Kill()
+    public IEnumerator Kill(int killGroup)
     {
         activeObjectives.Add(objectives.kill);
 
