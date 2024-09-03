@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Objectives : MonoBehaviour
@@ -33,15 +35,25 @@ public class Objectives : MonoBehaviour
         activeObjectives.Add(objectives.kill);
 
         List<GameObject> enemiesInObjective = new List<GameObject>();
-        enemiesInObjective.AddRange(enemyController.AllEnemies.GetRange(0, 10));
 
+        // Starts the spawning system
+        StartCoroutine(StartWaves(killGroup));
+
+        // Wait until all enemies in the objective are killed
         yield return new WaitUntil(delegate
         {
+            // Update list
+            enemiesInObjective.Clear();
+            foreach (GameObject enemy in enemyController.allEnemies_active)
+                if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
+                    enemiesInObjective.Add(enemy);
+
             killObjectiveText.text = enemiesInObjective.Count.ToString();
             return enemiesInObjective.Count == 0;
         });
 
         activeObjectives.Remove(objectives.kill);
+        Debug.Log("Kill objective completed");
     }
     
     public IEnumerator Platform()
@@ -53,37 +65,98 @@ public class Objectives : MonoBehaviour
         yield return new WaitWhile(delegate { return platformActive; });
 
         activeObjectives.Remove(objectives.platform);
+        Debug.Log("Platform objective completed");
     }
 
 	public IEnumerator Paint()
     {
         activeObjectives.Add(objectives.paint);
 
-
+        // Paint objective requirements
 
         activeObjectives.Remove(objectives.paint);
         yield return null;
+        Debug.Log("Paint objective completed");
     }
 
-	/// <summary>
-    /// Spawn enemies
-    /// </summary>
-    /// <param name="enemy">Number code of the enemy, see the list from the script in GameController</param>
-    /// <param name="amount">Amount of enemies to spawn</param>
-    /// <param name="location">Spawn location</param>
-    /// <param name="spread">Max distance that the enemies can spawn away from the spawn location</param>
-    /// <param name="time">Total time for all enemies to be spawned in seconds</param>
-    private IEnumerator Spawn(int enemyIndex, int amount, Vector3 location, float spread, float time)
+    IEnumerator StartWaves(int killGroup)
     {
-        GameObject e = enemies[enemyIndex];
-        List<GameObject> spawnedEnemies = new List<GameObject>();
+        while (true)
+        {
+            bool spawned = false;
+            foreach (GameObject spawnPoint in enemySpawnPointGroups[killGroup].GetComponentsInChildren<GameObject>())
+            {
+                Spawn(spawnPoint, killGroup);
+                spawned = true;
+            }
 
-        for (int i = 0; i < amount; i++)
+            yield return new WaitForSeconds(10);
+            if (!spawned) break;
+        }
+    }
+
+    private IEnumerator Spawn(GameObject spawnPoint, int killGroup)
+    {
+        EnemySpawnPoint esp = spawnPoint.GetComponent<EnemySpawnPoint>();
+
+        float spread = 2;
+        float wait = 0.05f;
+
+        // Basic enemy
+        for (int i = 0; i < esp.basicCount; i++)
         {
             Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-            GameObject enemy = Instantiate(e, location + random, new Quaternion());
-            spawnedEnemies.Add(enemy);
-            yield return new WaitForSeconds(time / amount);
+            GameObject enemy = enemyController.basicEnemyList[0];
+
+            // Change lists
+            enemyController.allEnemies_active.Add(enemy);
+            enemyController.basicEnemyList_active.Add(enemy);
+            enemyController.basicEnemyList.RemoveAt(0);
+
+            // Spawn
+            enemy.transform.position = spawnPoint.transform.position + random;
+            enemy.GetComponent<EnemyType>().Activate();
+            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+
+            yield return new WaitForSeconds(wait);
+        }
+
+        // Sniper
+        for (int i = 0; i < esp.sniperCount; i++)
+        {
+            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
+            GameObject enemy = enemyController.sniperList[0];
+
+            // Change lists
+            enemyController.allEnemies_active.Add(enemy);
+            enemyController.sniperList_active.Add(enemy);
+            enemyController.sniperList.RemoveAt(0);
+
+            // Spawn
+            enemy.transform.position = spawnPoint.transform.position + random;
+            enemy.GetComponent<EnemyType>().Activate();
+            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+
+            yield return new WaitForSeconds(wait);
+        }
+
+        // Milo
+        for (int i = 0; i < esp.MILOCount; i++)
+        {
+            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
+            GameObject enemy = enemyController.MILOList[0];
+
+            // Change lists
+            enemyController.allEnemies_active.Add(enemy);
+            enemyController.MILOList_active.Add(enemy);
+            enemyController.MILOList.RemoveAt(0);
+
+            // Spawn
+            enemy.transform.position = spawnPoint.transform.position + random;
+            enemy.GetComponent<EnemyType>().Activate();
+            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+
+            yield return new WaitForSeconds(wait);
         }
     }
 }

@@ -10,13 +10,14 @@ public class EnemyController : MonoBehaviour
 {
     public List<GameObject> enemies = new List<GameObject>();
 
-    public List<GameObject> AllEnemies = new List<GameObject>();
+    public List<GameObject> allEnemies = new List<GameObject>();
     public List<GameObject> basicEnemyList = new List<GameObject>();
-    public List<GameObject> SniperList = new List<GameObject>();
+    public List<GameObject> sniperList = new List<GameObject>();
     public List<GameObject> MILOList = new List<GameObject>();
 
+    public List<GameObject> allEnemies_active = new List<GameObject>();
     public List<GameObject> basicEnemyList_active = new List<GameObject>();
-    public List<GameObject> SniperList_active = new List<GameObject>();
+    public List<GameObject> sniperList_active = new List<GameObject>();
     public List<GameObject> MILOList_active = new List<GameObject>();
 
     public static EnemyController inst;
@@ -42,13 +43,13 @@ public class EnemyController : MonoBehaviour
         BasicEnemy();
         Milo();
 
-        AllEnemies.Clear();
-        AllEnemies.AddRange(basicEnemyList);
-        AllEnemies.AddRange(SniperList);
-        AllEnemies.AddRange(MILOList);
-        AllEnemies.AddRange(basicEnemyList_active);
-        AllEnemies.AddRange(SniperList_active);
-        AllEnemies.AddRange(MILOList_active);
+        allEnemies.Clear();
+        allEnemies.AddRange(basicEnemyList);
+        allEnemies.AddRange(sniperList);
+        allEnemies.AddRange(MILOList);
+        allEnemies.AddRange(basicEnemyList_active);
+        allEnemies.AddRange(sniperList_active);
+        allEnemies.AddRange(MILOList_active);
     }
 
     void BasicEnemy()

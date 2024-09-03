@@ -15,6 +15,8 @@ public class EnemyType : MonoBehaviour
 
     public GameObject target;
     public NavMeshPath path;
+
+    public int killGroup;
     
     void Start()
     {
@@ -26,18 +28,14 @@ public class EnemyType : MonoBehaviour
                 EnemyController.inst.basicEnemyList.Add(gameObject);
                 break;
             case Type.sniper:
-                EnemyController.inst.SniperList.Add(gameObject);
+                EnemyController.inst.sniperList.Add(gameObject);
                 break;
             case Type.MILO:
                 EnemyController.inst.MILOList.Add(gameObject);
                 break;
         }
 
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshCollider>().enabled = false;
-        GetComponent<PaintTarget>().enabled = false;
-        transform.Find("PathFinder").gameObject.SetActive(false);
-        gameObject.SetActive(false);
+        Deactivate();
     }
 
     public void Activate()
@@ -46,6 +44,18 @@ public class EnemyType : MonoBehaviour
         GetComponent<MeshCollider>().enabled = true;
         GetComponent<PaintTarget>().enabled = true;
         transform.Find("PathFinder").gameObject.SetActive(true);
+        gameObject.SetActive(true);
+    }
+
+    public void Deactivate()
+    {
+        GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshCollider>().enabled = false;
+        GetComponent<PaintTarget>().enabled = false;
+        transform.Find("PathFinder").gameObject.SetActive(false);
+        gameObject.SetActive(false);
+
+        transform.position = new Vector3(0, -500, 0);
     }
 
     private void OnDestroy()
@@ -56,7 +66,7 @@ public class EnemyType : MonoBehaviour
                 EnemyController.inst.basicEnemyList.Remove(gameObject);
                 break;
             case Type.sniper:
-                EnemyController.inst.SniperList.Remove(gameObject);
+                EnemyController.inst.sniperList.Remove(gameObject);
                 break;
             case Type.MILO:
                 EnemyController.inst.MILOList.Remove(gameObject);
