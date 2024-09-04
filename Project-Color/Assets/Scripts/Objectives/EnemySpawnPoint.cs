@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemySpawnPoint : MonoBehaviour
 {
-    public int waves;
     public int group;
+    public int wave;
 
     public int basicCount;
     public int sniperCount;

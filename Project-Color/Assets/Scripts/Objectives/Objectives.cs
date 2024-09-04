@@ -16,7 +16,6 @@ public class Objectives : MonoBehaviour
 
     public List<GameObject> enemySpawnPointGroups = new List<GameObject>();
 
-    private List<GameObject> enemies = new List<GameObject>();
     private List<objectives> activeObjectives = new List<objectives>();
 
     EnemyController enemyController;
@@ -48,7 +47,7 @@ public class Objectives : MonoBehaviour
                 if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
                     enemiesInObjective.Add(enemy);
 
-            killObjectiveText.text = enemiesInObjective.Count.ToString();
+            //killObjectiveText.text = enemiesInObjective.Count.ToString();
             return enemiesInObjective.Count == 0;
         });
 
@@ -81,16 +80,22 @@ public class Objectives : MonoBehaviour
 
     IEnumerator StartWaves(int killGroup)
     {
+        int wave = 0;
         while (true)
         {
             bool spawned = false;
-            foreach (GameObject spawnPoint in enemySpawnPointGroups[killGroup].GetComponentsInChildren<GameObject>())
+            for (int i = 0; i < enemySpawnPointGroups[killGroup].transform.childCount; i++)
             {
-                Spawn(spawnPoint, killGroup);
-                spawned = true;
+                Transform spawnPoint = enemySpawnPointGroups[killGroup].transform.GetChild(i);
+                if (spawnPoint.gameObject.GetComponent<EnemySpawnPoint>().wave == wave)
+                {
+                    StartCoroutine(Spawn(spawnPoint.gameObject, killGroup));
+                    spawned = true;
+                }
             }
 
-            yield return new WaitForSeconds(10);
+            wave++;
+            yield return new WaitForSeconds(5);
             if (!spawned) break;
         }
     }
@@ -101,7 +106,6 @@ public class Objectives : MonoBehaviour
 
         float spread = 2;
         float wait = 0.05f;
-
         // Basic enemy
         for (int i = 0; i < esp.basicCount; i++)
         {
@@ -117,8 +121,9 @@ public class Objectives : MonoBehaviour
             enemy.transform.position = spawnPoint.transform.position + random;
             enemy.GetComponent<EnemyType>().Activate();
             enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
-            yield return new WaitForSeconds(wait);
+            //yield return new WaitForSeconds(wait);
         }
 
         // Sniper

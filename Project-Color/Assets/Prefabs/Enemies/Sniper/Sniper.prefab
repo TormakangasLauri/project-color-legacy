@@ -406,11 +406,13 @@ GameObject:
   - component: {fileID: 696715499566141690}
   - component: {fileID: 315481782989711631}
   - component: {fileID: 5230440912717490788}
+  - component: {fileID: 8391860554981440932}
   - component: {fileID: 2579234994773169901}
   - component: {fileID: 8256769091064229477}
   - component: {fileID: 4686222180001089621}
   - component: {fileID: 8594405485110631424}
   - component: {fileID: 129741967588987255}
+  - component: {fileID: 4349320011856611247}
   m_Layer: 8
   m_Name: Sniper
   m_TagString: Untagged
@@ -495,11 +497,25 @@ CapsuleCollider:
   m_GameObject: {fileID: 8245528752783580106}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!64 &8391860554981440932
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8245528752783580106}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!54 &2579234994773169901
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -568,6 +584,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   target: {fileID: 0}
+  killGroup: 0
 --- !u!114 &129741967588987255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -583,3 +600,22 @@ MonoBehaviour:
   maxHealth: 100
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
+--- !u!114 &4349320011856611247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8245528752783580106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ed8ad4fc591514692edfe1dbb12e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paintTextureSize: 256
+  SetupOnStart: 0
+  PaintAllSplats: 0
+  IncludeInScore: 0
+  debugTexture: 0
+  splatTex: {fileID: 0}
+  splatTexPick: {fileID: 0}
