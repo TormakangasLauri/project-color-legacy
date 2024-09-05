@@ -12,11 +12,17 @@ public class ObjectiveTrigger : MonoBehaviour
         paint
     };
 
-    public int killGroup;
-
     public Objective objective;
 
-    public Objectives Objectives;
+    public bool destroyOnTrigger = true;
+    public int killGroup;
+
+    Objectives Objectives;
+
+    private void Start()
+    {
+        Objectives = GameObject.Find("GameController").GetComponent<Objectives>();
+    }
 
     public void OnTriggerEnter(Collider col)
     {
@@ -37,6 +43,8 @@ public class ObjectiveTrigger : MonoBehaviour
                     StartCoroutine(Objectives.Paint());
                     break;
             }
+
+            if (destroyOnTrigger) Destroy(gameObject);
         }
     }
 }

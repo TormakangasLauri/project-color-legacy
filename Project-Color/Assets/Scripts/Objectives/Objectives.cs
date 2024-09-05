@@ -23,6 +23,7 @@ public class Objectives : MonoBehaviour
     public TextMeshProUGUI killObjectiveText;
 
     public bool platformActive = false;
+    bool spawning = false;
 
     void Start()
     {
@@ -47,8 +48,8 @@ public class Objectives : MonoBehaviour
                 if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
                     enemiesInObjective.Add(enemy);
 
-            //killObjectiveText.text = enemiesInObjective.Count.ToString();
-            return enemiesInObjective.Count == 0;
+            killObjectiveText.text = enemiesInObjective.Count.ToString();
+            return enemiesInObjective.Count == 0 && !spawning;
         });
 
         activeObjectives.Remove(objectives.kill);
@@ -80,6 +81,8 @@ public class Objectives : MonoBehaviour
 
     IEnumerator StartWaves(int killGroup)
     {
+        spawning = true;
+
         int wave = 0;
         while (true)
         {
@@ -98,6 +101,8 @@ public class Objectives : MonoBehaviour
             yield return new WaitForSeconds(5);
             if (!spawned) break;
         }
+
+        spawning = false;
     }
 
     private IEnumerator Spawn(GameObject spawnPoint, int killGroup)
@@ -123,7 +128,7 @@ public class Objectives : MonoBehaviour
             enemy.GetComponent<EnemyType>().killGroup = killGroup;
             enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
-            //yield return new WaitForSeconds(wait);
+            yield return new WaitForSeconds(wait);
         }
 
         // Sniper
@@ -141,6 +146,7 @@ public class Objectives : MonoBehaviour
             enemy.transform.position = spawnPoint.transform.position + random;
             enemy.GetComponent<EnemyType>().Activate();
             enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             yield return new WaitForSeconds(wait);
         }
@@ -160,6 +166,7 @@ public class Objectives : MonoBehaviour
             enemy.transform.position = spawnPoint.transform.position + random;
             enemy.GetComponent<EnemyType>().Activate();
             enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             yield return new WaitForSeconds(wait);
         }

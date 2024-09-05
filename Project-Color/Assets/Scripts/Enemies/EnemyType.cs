@@ -35,7 +35,12 @@ public class EnemyType : MonoBehaviour
                 break;
         }
 
-        Deactivate();
+        // Deactivate
+        GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshCollider>().enabled = false;
+        GetComponent<PaintTarget>().enabled = false;
+        transform.Find("PathFinder").gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void Activate()
@@ -49,6 +54,24 @@ public class EnemyType : MonoBehaviour
 
     public void Deactivate()
     {
+        EnemyController.inst.allEnemies_active.Remove(gameObject);
+        EnemyController.inst.allEnemies.Add(gameObject);
+        switch (type)
+        {
+            case Type.basic:
+                EnemyController.inst.basicEnemyList_active.Remove(gameObject);
+                EnemyController.inst.basicEnemyList.Add(gameObject);
+                break;
+            case Type.sniper:
+                EnemyController.inst.sniperList_active.Remove(gameObject);
+                EnemyController.inst.sniperList.Add(gameObject);
+                break;
+            case Type.MILO:
+                EnemyController.inst.MILOList_active.Remove(gameObject);
+                EnemyController.inst.MILOList.Add(gameObject);
+                break;
+        }
+        
         GetComponent<MeshRenderer>().enabled = false;
         GetComponent<MeshCollider>().enabled = false;
         GetComponent<PaintTarget>().enabled = false;

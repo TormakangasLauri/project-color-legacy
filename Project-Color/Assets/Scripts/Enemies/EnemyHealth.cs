@@ -25,11 +25,10 @@ public class EnemyHealth : MonoBehaviour
         healthAmount -= damage;
         if (healthAmount <= 0)
         {
-            Destroy(gameObject);
+            gameObject.GetComponent<EnemyType>().Deactivate();
             OnDeath();
         }
-
-        StartCoroutine(FlashColor());
+        else StartCoroutine(FlashColor());
     }
 
     IEnumerator FlashColor()
