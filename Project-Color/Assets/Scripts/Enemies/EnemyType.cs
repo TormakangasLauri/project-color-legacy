@@ -16,24 +16,28 @@ public class EnemyType : MonoBehaviour
     public GameObject target;
     public NavMeshPath path;
 
+    private EnemyController enemyController;
+
     public int killGroup;
     
     void Start()
     {
         target = GameObject.FindWithTag("Player");
+        enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
 
         switch (type)
         {
             case Type.basic:
-                EnemyController.inst.basicEnemyList.Add(gameObject);
+                enemyController.basicEnemyList.Add(gameObject);
                 break;
             case Type.sniper:
-                EnemyController.inst.sniperList.Add(gameObject);
+                enemyController.sniperList.Add(gameObject);
                 break;
             case Type.MILO:
-                EnemyController.inst.MILOList.Add(gameObject);
+                enemyController.MILOList.Add(gameObject);
                 break;
         }
+        enemyController.allEnemies.Add(gameObject);
 
         // Deactivate
         GetComponent<MeshRenderer>().enabled = false;
@@ -43,8 +47,27 @@ public class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Activate()
+    public void Activate(int group = -1)
     {
+        enemyController.allEnemies.Remove(gameObject);
+        enemyController.allEnemies_active.Add(gameObject);
+        switch (type)
+        {
+            case Type.basic:
+                enemyController.basicEnemyList.Remove(gameObject);
+                enemyController.basicEnemyList_active.Add(gameObject);
+                break;
+            case Type.sniper:
+                enemyController.sniperList.Remove(gameObject);
+                enemyController.sniperList_active.Add(gameObject);
+                break;
+            case Type.MILO:
+                enemyController.MILOList.Remove(gameObject);
+                enemyController.MILOList_active.Add(gameObject);
+                break;
+        }
+        killGroup = group;
+        
         GetComponent<MeshRenderer>().enabled = true;
         GetComponent<MeshCollider>().enabled = true;
         GetComponent<PaintTarget>().enabled = true;
@@ -54,21 +77,21 @@ public class EnemyType : MonoBehaviour
 
     public void Deactivate()
     {
-        EnemyController.inst.allEnemies_active.Remove(gameObject);
-        EnemyController.inst.allEnemies.Add(gameObject);
+        enemyController.allEnemies_active.Remove(gameObject);
+        enemyController.allEnemies.Add(gameObject);
         switch (type)
         {
             case Type.basic:
-                EnemyController.inst.basicEnemyList_active.Remove(gameObject);
-                EnemyController.inst.basicEnemyList.Add(gameObject);
+                enemyController.basicEnemyList_active.Remove(gameObject);
+                enemyController.basicEnemyList.Add(gameObject);
                 break;
             case Type.sniper:
-                EnemyController.inst.sniperList_active.Remove(gameObject);
-                EnemyController.inst.sniperList.Add(gameObject);
+                enemyController.sniperList_active.Remove(gameObject);
+                enemyController.sniperList.Add(gameObject);
                 break;
             case Type.MILO:
-                EnemyController.inst.MILOList_active.Remove(gameObject);
-                EnemyController.inst.MILOList.Add(gameObject);
+                enemyController.MILOList_active.Remove(gameObject);
+                enemyController.MILOList.Add(gameObject);
                 break;
         }
         
@@ -79,26 +102,5 @@ public class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
 
         transform.position = new Vector3(0, -500, 0);
-    }
-
-    private void OnDestroy()
-    {
-        switch (type)
-        {
-            case Type.basic:
-                EnemyController.inst.basicEnemyList.Remove(gameObject);
-                break;
-            case Type.sniper:
-                EnemyController.inst.sniperList.Remove(gameObject);
-                break;
-            case Type.MILO:
-                EnemyController.inst.MILOList.Remove(gameObject);
-                break;
-        }
-        
-        if (PlayerAttack.inst.enemies.Contains(gameObject))
-        {
-            PlayerAttack.inst.enemies.Remove(gameObject);
-        }
     }
 }

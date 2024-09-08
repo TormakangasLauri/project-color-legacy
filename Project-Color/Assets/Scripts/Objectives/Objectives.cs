@@ -116,16 +116,10 @@ public class Objectives : MonoBehaviour
         {
             Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
             GameObject enemy = enemyController.basicEnemyList[0];
-
-            // Change lists
-            enemyController.allEnemies_active.Add(enemy);
-            enemyController.basicEnemyList_active.Add(enemy);
-            enemyController.basicEnemyList.RemoveAt(0);
-
+            
             // Spawn
             enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate();
-            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<EnemyType>().Activate(killGroup);
             enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             yield return new WaitForSeconds(wait);
@@ -137,15 +131,9 @@ public class Objectives : MonoBehaviour
             Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
             GameObject enemy = enemyController.sniperList[0];
 
-            // Change lists
-            enemyController.allEnemies_active.Add(enemy);
-            enemyController.sniperList_active.Add(enemy);
-            enemyController.sniperList.RemoveAt(0);
-
             // Spawn
             enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate();
-            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<EnemyType>().Activate(killGroup);
             enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             yield return new WaitForSeconds(wait);
@@ -156,16 +144,10 @@ public class Objectives : MonoBehaviour
         {
             Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
             GameObject enemy = enemyController.MILOList[0];
-
-            // Change lists
-            enemyController.allEnemies_active.Add(enemy);
-            enemyController.MILOList_active.Add(enemy);
-            enemyController.MILOList.RemoveAt(0);
-
+            
             // Spawn
             enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate();
-            enemy.GetComponent<EnemyType>().killGroup = killGroup;
+            enemy.GetComponent<EnemyType>().Activate(killGroup);
             enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
             yield return new WaitForSeconds(wait);

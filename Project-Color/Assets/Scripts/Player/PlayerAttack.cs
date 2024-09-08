@@ -53,8 +53,6 @@ public class PlayerAttack : MonoBehaviour
     bool attackFromRight = true;
     float sideSwitchTimer = 0;
 
-    Transform normalTransform;
-    
     [Header("Attack")]
     public float attackDamage = 20;
     public Vector2 attackKB = new Vector2(300, 160);
@@ -81,8 +79,6 @@ public class PlayerAttack : MonoBehaviour
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
         CP1 = gameObject.transform.parent.GetChild(1).GetChild(4).GetComponent<CollisionPainter>();
         CP2 = gameObject.transform.parent.GetChild(1).GetChild(5).GetComponent<CollisionPainter>();
-
-        normalTransform = transform;
     }
 
     private void Update()

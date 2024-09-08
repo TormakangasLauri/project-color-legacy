@@ -10,26 +10,29 @@ public class EnemyController : MonoBehaviour
 {
     public List<GameObject> enemies = new List<GameObject>();
 
+    [Header("Inactive")]
     public List<GameObject> allEnemies = new List<GameObject>();
     public List<GameObject> basicEnemyList = new List<GameObject>();
     public List<GameObject> sniperList = new List<GameObject>();
     public List<GameObject> MILOList = new List<GameObject>();
 
+    [Header("Active")]
     public List<GameObject> allEnemies_active = new List<GameObject>();
     public List<GameObject> basicEnemyList_active = new List<GameObject>();
     public List<GameObject> sniperList_active = new List<GameObject>();
     public List<GameObject> MILOList_active = new List<GameObject>();
 
-    public static EnemyController inst;
+    public static EnemyController enemyController;
     private GameObject player;
     private float t;
 
-    private void Awake() { inst = this; }
+    private void Awake() { enemyController = this; }
 
     private void Start()
     {
         player = GameObject.FindWithTag("Player");
 
+        // Spawn all enemies
 		for (int i = 0; i < 100; i++)
             Instantiate(enemies[0], Vector3.down * 500, Quaternion.identity);
         for (int i = 0; i < 30; i++)
@@ -42,14 +45,6 @@ public class EnemyController : MonoBehaviour
     {
         BasicEnemy();
         Milo();
-
-        allEnemies.Clear();
-        allEnemies.AddRange(basicEnemyList);
-        allEnemies.AddRange(sniperList);
-        allEnemies.AddRange(MILOList);
-        allEnemies.AddRange(basicEnemyList_active);
-        allEnemies.AddRange(sniperList_active);
-        allEnemies.AddRange(MILOList_active);
     }
 
     void BasicEnemy()
