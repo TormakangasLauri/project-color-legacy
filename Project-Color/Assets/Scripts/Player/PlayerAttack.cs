@@ -17,6 +17,7 @@ public class PlayerAttack : MonoBehaviour
     public List<GameObject> enemies;
 
     private playermovement PM;
+    private EnemyController enemyController;
     private SlamAreaCheck SAC;
     public AttackIndicator AI;
     public static PlayerAttack inst;
@@ -76,13 +77,14 @@ public class PlayerAttack : MonoBehaviour
     {
         hitbox = GetComponent<Collider>();
         PM = transform.parent.GetComponentInParent<playermovement>();
+        enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
         CP1 = gameObject.transform.parent.GetChild(1).GetChild(4).GetComponent<CollisionPainter>();
         CP2 = gameObject.transform.parent.GetChild(1).GetChild(5).GetComponent<CollisionPainter>();
     }
 
     private void Update()
-    {
+    {      
         if (lmbHeld || rmbHeld) holdTimer += Time.deltaTime;
         else holdTimer = 0;
         AI.SetValue(holdTimer);
@@ -317,13 +319,18 @@ public class PlayerAttack : MonoBehaviour
         CP4.brush.splatChannel = paintChannel;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (enemyLayer == (enemyLayer | (1 << other.gameObject.layer))) enemies.Add(other.gameObject);
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.gameObject.layer == enemyLayer) enemies.Add(other.gameObject);
+    //}
 
-    private void OnTriggerExit(Collider other)
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    enemies.Remove(other.gameObject);
+    //}
+
+    private void OnTriggerStay(Collider other)
     {
-        if (enemies.Contains(other.gameObject)) enemies.Remove(other.gameObject);
+        if (other.gameObject.layer == enemyLayer && !enemies.Contains(gameObject)) enemies.Add(gameObject);
     }
 }

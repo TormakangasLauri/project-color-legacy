@@ -25,7 +25,6 @@ public class EnemyHealth : MonoBehaviour
         healthAmount -= damage;
         if (healthAmount <= 0)
         {
-            gameObject.GetComponent<EnemyType>().Deactivate();
             OnDeath();
         }
         else StartCoroutine(FlashColor());
@@ -62,6 +61,8 @@ public class EnemyHealth : MonoBehaviour
 
     public void OnDeath()
     {
-        // Death
+        gameObject.GetComponent<EnemyType>().Deactivate();
+        PlayerAttack.inst.enemies.Remove(gameObject);
+        healthAmount = maxHealth;
     }
 }
