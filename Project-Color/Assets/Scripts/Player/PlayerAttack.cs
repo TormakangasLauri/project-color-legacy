@@ -126,16 +126,18 @@ public class PlayerAttack : MonoBehaviour
             {
                 foreach (GameObject enemy in enemies)
                 {
-                    Attack(enemy);
+                    Attack(enemy, false);
                 }
                 
                 PLayAttackParticle(false);
             }
             else if (holdTimer >= 1)
             {
-                foreach (GameObject enemy in enemies)
+                List<GameObject> enemies1 = new List<GameObject>();
+                enemies1.AddRange(enemies);
+                foreach (GameObject enemy in enemies1)
                 {
-                    ChargedAttack(enemy);
+                    Attack(enemy, true);
                 }
 
                 PLayAttackParticle(true);
@@ -165,23 +167,14 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private void Attack(GameObject enemy)
+    private void Attack(GameObject enemy, bool charged)
     {
         EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-        enemyHealth.TakeDamage(attackDamage);
+        enemyHealth.TakeDamage(!charged ? attackDamage: cAttackDamage);
 
-        Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * attackKB.x + Vector3.up * attackKB.y;
+        Vector2 KB = !charged ? attackKB : cAttackKB;
+        Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * KB.x + Vector3.up * KB.y;
         if (pushIsActive) // goofy lookin' ass knockback
-            enemyHealth.Knockback(KBdir, ForceMode.Force);
-    }
-
-    void ChargedAttack(GameObject enemy)
-    {
-        EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-        enemyHealth.TakeDamage(cAttackDamage);
-
-        Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * cAttackKB.x + Vector3.up * cAttackKB.y;
-        if (pushIsActive)
             enemyHealth.Knockback(KBdir, ForceMode.Force);
     }
 
@@ -319,18 +312,13 @@ public class PlayerAttack : MonoBehaviour
         CP4.brush.splatChannel = paintChannel;
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.gameObject.layer == enemyLayer) enemies.Add(other.gameObject);
-    //}
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    enemies.Remove(other.gameObject);
-    //}
-
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == enemyLayer && !enemies.Contains(gameObject)) enemies.Add(gameObject);
+        if (enemyLayer == (enemyLayer | (1 << other.gameObject.layer))) enemies.Add(other.gameObject);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        enemies.Remove(other.gameObject);
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine;
 public class SniperShooting : MonoBehaviour
 {
     public GameObject target;
+
+    private EnemyController enemyController;
     
     public GameObject bullet;
     public GameObject bulletTrail;
@@ -21,14 +23,20 @@ public class SniperShooting : MonoBehaviour
     {
         target = GetComponent<EnemyType>().target;
         t = shootCooldown;
+        target = GameObject.Find("PLayer");
+        enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
     }
 
     void Update()
     {
-        if (!Physics.Linecast(transform.position, target.transform.position, LayerMask.GetMask("Terrain")))
-            LOSToTarget = true;
-        else
-            LOSToTarget = false;
+        // if (!Physics.Linecast(transform.position, target.transform.position, LayerMask.GetMask("Terrain")))
+        //     LOSToTarget = true;
+        // else
+        //     LOSToTarget = false;
+
+        Vector3 position = transform.position;
+        Vector3 tPosition = GameObject.Find("Player").transform.position;
+        LOSToTarget = !Physics.Raycast(position, tPosition - position, Vector3.Distance(tPosition, position), LayerMask.GetMask("Terrain"));
 
         if (LOSToTarget && !moving) t -= Time.deltaTime;
         else t = shootCooldown;
@@ -57,13 +65,13 @@ public class SniperShooting : MonoBehaviour
 
     private IEnumerator Shoot2()
     {
+        target = GameObject.Find("Player");
         Vector3 targetDirection = (target.transform.position - shootPoint.position).normalized;
         yield return new WaitForSeconds(0.1f);
-        RaycastHit hit;
-        if (Physics.Raycast(shootPoint.position, targetDirection, out hit))
+        if (Physics.Raycast(shootPoint.position, targetDirection, out var hit))
         {
             GameObject hitObj = hit.transform.gameObject;
-            if (EnemyController.enemyController.allEnemies.Contains(hitObj))
+            if (enemyController.allEnemies_active.Contains(hitObj))
             {
                 // Enemy hit
                 StartCoroutine(BulletTrail(2));

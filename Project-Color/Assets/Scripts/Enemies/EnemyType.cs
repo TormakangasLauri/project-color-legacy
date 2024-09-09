@@ -22,7 +22,7 @@ public class EnemyType : MonoBehaviour
     
     void Start()
     {
-        target = GameObject.FindWithTag("Player");
+        target = GameObject.Find("Player");
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
 
         switch (type)
