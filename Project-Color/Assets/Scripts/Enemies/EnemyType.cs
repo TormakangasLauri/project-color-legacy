@@ -19,6 +19,9 @@ public class EnemyType : MonoBehaviour
     private EnemyController enemyController;
 
     public int killGroup;
+
+    bool active = false;
+    public float timeActive = 0;
     
     void Start()
     {
@@ -47,6 +50,11 @@ public class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void Update()
+    {
+        if (active) timeActive += Time.deltaTime;
+    }
+
     public void Activate(int group = -1)
     {
         enemyController.allEnemies.Remove(gameObject);
@@ -73,6 +81,8 @@ public class EnemyType : MonoBehaviour
         GetComponent<PaintTarget>().enabled = true;
         transform.Find("PathFinder").gameObject.SetActive(true);
         gameObject.SetActive(true);
+
+        active = true;
     }
 
     public void Deactivate()
@@ -102,5 +112,8 @@ public class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
 
         transform.position = new Vector3(0, -500, 0);
+
+        active = false;
+        timeActive = 0;
     }
 }

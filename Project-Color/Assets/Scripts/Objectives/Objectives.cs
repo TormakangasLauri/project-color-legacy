@@ -30,6 +30,17 @@ public class Objectives : MonoBehaviour
         enemyController = GetComponent<EnemyController>();
     }
 
+    private void Update()
+    {
+        if (activeObjectives.Contains(objectives.kill))
+        {
+            Debug.Log(enemyController.allEnemies_active.Count);
+            killObjectiveText.text = enemyController.allEnemies_active.Count.ToString();
+
+            if (enemyController.allEnemies_active.Count == 0 && !spawning) activeObjectives.Remove(objectives.kill);
+        }
+    }
+
     public IEnumerator Kill(int killGroup)
     {
         activeObjectives.Add(objectives.kill);
@@ -40,19 +51,25 @@ public class Objectives : MonoBehaviour
         StartCoroutine(StartWaves(killGroup));
 
         // Wait until all enemies in the objective are killed
-        yield return new WaitUntil(delegate
-        {
-            // Update list
-            enemiesInObjective.Clear();
-            foreach (GameObject enemy in enemyController.allEnemies_active)
-                if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
-                    enemiesInObjective.Add(enemy);
+        //yield return new WaitUntil(() =>
+        //{
+        //    // Update list
+        //    enemiesInObjective.Clear();
+        //    foreach (GameObject enemy in enemyController.allEnemies_active)
+        //    {
+        //        if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
+        //        {
+        //            enemiesInObjective.Add(enemy);
+        //        }
+        //    }
+        //    Debug.Log(enemiesInObjective.Count);
+        //    killObjectiveText.text = enemiesInObjective.Count.ToString();
+        //    return enemiesInObjective.Count == 0 && !spawning;
+        //});
 
-            killObjectiveText.text = enemiesInObjective.Count.ToString();
-            return enemiesInObjective.Count == 0 && !spawning;
-        });
+        yield return new WaitWhile(delegate { return activeObjectives.Contains(objectives.kill); }) ;
 
-        activeObjectives.Remove(objectives.kill);
+        //activeObjectives.Remove(objectives.kill);
         Debug.Log("Kill objective completed");
     }
     

@@ -77,7 +77,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void NavMeshMovement()
     {
-        if (path.corners.Length >= 2 && gameObject.activeSelf)
+        if (path.corners.Length >= 2 && gameObject.activeSelf && GetComponent<EnemyType>().timeActive > 0.1)
         {
             Vector3 targetPos = target.transform.position;
             Vector3 cornerPos = path.corners[1];
