@@ -9,6 +9,7 @@ public class EnemyType : MonoBehaviour
     {
         basic,
         sniper,
+        hanging,
         MILO
     };
     public Type type;
@@ -22,6 +23,8 @@ public class EnemyType : MonoBehaviour
 
     bool active = false;
     public float timeActive = 0;
+
+    public bool despawnEnemies = true;
     
     void Start()
     {
@@ -36,6 +39,9 @@ public class EnemyType : MonoBehaviour
             case Type.sniper:
                 enemyController.sniperList.Add(gameObject);
                 break;
+            case Type.hanging:
+                enemyController.hangingList.Add(gameObject);
+                break;
             case Type.MILO:
                 enemyController.MILOList.Add(gameObject);
                 break;
@@ -43,11 +49,14 @@ public class EnemyType : MonoBehaviour
         enemyController.allEnemies.Add(gameObject);
 
         // Deactivate
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshCollider>().enabled = false;
-        GetComponent<PaintTarget>().enabled = false;
-        transform.Find("PathFinder").gameObject.SetActive(false);
-        gameObject.SetActive(false);
+        if (despawnEnemies)
+        {
+            GetComponent<MeshRenderer>().enabled = false;
+            GetComponent<MeshCollider>().enabled = false;
+            GetComponent<PaintTarget>().enabled = false;
+            transform.Find("PathFinder").gameObject.SetActive(false);
+            gameObject.SetActive(false);
+        }
     }
 
     private void Update()
@@ -68,6 +77,10 @@ public class EnemyType : MonoBehaviour
             case Type.sniper:
                 enemyController.sniperList.Remove(gameObject);
                 enemyController.sniperList_active.Add(gameObject);
+                break;
+            case Type.hanging:
+                enemyController.hangingList.Remove(gameObject);
+                enemyController.hangingList_active.Add(gameObject);
                 break;
             case Type.MILO:
                 enemyController.MILOList.Remove(gameObject);
@@ -98,6 +111,10 @@ public class EnemyType : MonoBehaviour
             case Type.sniper:
                 enemyController.sniperList_active.Remove(gameObject);
                 enemyController.sniperList.Add(gameObject);
+                break;
+            case Type.hanging:
+                enemyController.hangingList_active.Add(gameObject);
+                enemyController.hangingList.Add(gameObject);
                 break;
             case Type.MILO:
                 enemyController.MILOList_active.Remove(gameObject);

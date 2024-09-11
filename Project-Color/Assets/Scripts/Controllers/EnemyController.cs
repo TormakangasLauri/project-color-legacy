@@ -15,12 +15,14 @@ public class EnemyController : MonoBehaviour
     public List<GameObject> basicEnemyList = new List<GameObject>();
     public List<GameObject> sniperList = new List<GameObject>();
     public List<GameObject> MILOList = new List<GameObject>();
+    public List<GameObject> hangingList = new List<GameObject>();
 
     [Header("Active")]
     public List<GameObject> allEnemies_active = new List<GameObject>();
     public List<GameObject> basicEnemyList_active = new List<GameObject>();
     public List<GameObject> sniperList_active = new List<GameObject>();
     public List<GameObject> MILOList_active = new List<GameObject>();
+    public List<GameObject> hangingList_active = new List<GameObject>();
 
     public static EnemyController enemyController;
     private GameObject player;

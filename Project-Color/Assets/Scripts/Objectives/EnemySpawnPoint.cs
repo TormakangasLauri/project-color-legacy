@@ -10,4 +10,5 @@ public class EnemySpawnPoint : MonoBehaviour
     public int basicCount;
     public int sniperCount;
     public int MILOCount;
+    public int hangingCount;
 }
