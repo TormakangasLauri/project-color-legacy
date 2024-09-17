@@ -144,7 +144,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9034387809337049613}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
   m_Name: 
@@ -161,7 +161,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9034387809337049613}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 232e80a258c500c44a96bc93096759fa, type: 3}
   m_Name: 
@@ -273,6 +273,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9034387810334742492}
+  - component: {fileID: 6237568351263175326}
+  - component: {fileID: 8084845060788358984}
   m_Layer: 0
   m_Name: Hanging Enemy
   m_TagString: Untagged
@@ -297,3 +299,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6237568351263175326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9034387810334742493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 232e80a258c500c44a96bc93096759fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  KBmult: 1
+  damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
+--- !u!114 &8084845060788358984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9034387810334742493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  target: {fileID: 0}
+  killGroup: 0
+  timeActive: 0
+  despawnEnemies: 1

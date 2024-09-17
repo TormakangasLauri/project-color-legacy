@@ -41,6 +41,8 @@ public class EnemyController : MonoBehaviour
             Instantiate(enemies[1], Vector3.down * 500, Quaternion.identity);
         for (int i = 0; i < 10; i++)
             Instantiate(enemies[2], Vector3.down * 500, Quaternion.identity);
+        for (int i = 0; i < 10; i++)
+            Instantiate(enemies[3], Vector3.down * 500, Quaternion.identity);
     }
 
     void Update()

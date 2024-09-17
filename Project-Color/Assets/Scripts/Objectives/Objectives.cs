@@ -156,6 +156,21 @@ public class Objectives : MonoBehaviour
             yield return new WaitForSeconds(wait);
         }
 
+        // Hanging
+        for (int i = 0; i < esp.hangingCount; i++)
+        {
+            Vector3 random = new Vector3(Random.Range(-spread, spread), 2, Random.Range(-spread, spread));
+            GameObject enemy = enemyController.hangingList[0];
+
+            // Spawn
+            enemy.transform.position = spawnPoint.transform.position + random;
+            enemy.GetComponent<EnemyType>().Activate(killGroup);
+            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+            yield return new WaitForSeconds(wait);
+        }
+
+        
         // Milo
         for (int i = 0; i < esp.MILOCount; i++)
         {
