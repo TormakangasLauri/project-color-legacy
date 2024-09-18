@@ -32,45 +32,53 @@ public class Objectives : MonoBehaviour
 
     private void Update()
     {
+        UpdateKillObj();
+        UpdatePaintObj();
+    }
+
+    void UpdateKillObj()
+    {
         if (activeObjectives.Contains(objectives.kill))
         {
-            Debug.Log(enemyController.allEnemies_active.Count);
             killObjectiveText.text = enemyController.allEnemies_active.Count.ToString();
 
-            if (enemyController.allEnemies_active.Count == 0 && !spawning) activeObjectives.Remove(objectives.kill);
+            if (enemyController.allEnemies_active.Count == 0 && !spawning)
+            {
+                activeObjectives.Remove(objectives.kill);
+                killObjectiveText.text = "OBJECTIVE COMPLETE";
+                StartCoroutine(ClearKillText());
+
+                IEnumerator ClearKillText()
+                {
+                    yield return new WaitForSeconds(3);
+                    killObjectiveText.text = "";
+                }
+                    
+            }
         }
     }
 
-    public IEnumerator Kill(int killGroup)
+    void UpdatePaintObj()
+    {
+        if (activeObjectives.Contains(objectives.paint))
+        {
+            // maalialueen tekstuuri pisteitten ja kaikkien pisteiden suhde, niiden avulla lasketaan kokonaispisteistä haluttu pistemäärä
+            PaintTarget.TallyScore();
+            float score = PaintTarget.scores.x + PaintTarget.scores.y + PaintTarget.scores.z + PaintTarget.scores.w;
+            
+            Debug.Log(score);
+            if (score > PaintTarget.textureCoordinatesInPaintArea/384 * 8)
+            {
+                Debug.Log("Vilho tee jotain joskus"); // Huono debug log ei vilho tänne kuitenkaan kato
+                activeObjectives.Remove(objectives.paint);
+            }
+        }
+    }
+    
+    public void KillObj(int killGroup)
     {
         activeObjectives.Add(objectives.kill);
-
-        List<GameObject> enemiesInObjective = new List<GameObject>();
-
-        // Starts the spawning system
         StartCoroutine(StartWaves(killGroup));
-
-        // Wait until all enemies in the objective are killed
-        //yield return new WaitUntil(() =>
-        //{
-        //    // Update list
-        //    enemiesInObjective.Clear();
-        //    foreach (GameObject enemy in enemyController.allEnemies_active)
-        //    {
-        //        if (enemy.GetComponent<EnemyType>().killGroup == killGroup)
-        //        {
-        //            enemiesInObjective.Add(enemy);
-        //        }
-        //    }
-        //    Debug.Log(enemiesInObjective.Count);
-        //    killObjectiveText.text = enemiesInObjective.Count.ToString();
-        //    return enemiesInObjective.Count == 0 && !spawning;
-        //});
-
-        yield return new WaitWhile(delegate { return activeObjectives.Contains(objectives.kill); }) ;
-
-        //activeObjectives.Remove(objectives.kill);
-        Debug.Log("Kill objective completed");
     }
     
     public IEnumerator Platform()
@@ -85,15 +93,10 @@ public class Objectives : MonoBehaviour
         Debug.Log("Platform objective completed");
     }
 
-	public IEnumerator Paint()
+	public void PaintObj(Collider paintArea)
     {
         activeObjectives.Add(objectives.paint);
-
-        // Paint objective requirements
-
-        activeObjectives.Remove(objectives.paint);
-        yield return null;
-        Debug.Log("Paint objective completed");
+        PaintTarget.paintArea = paintArea;
     }
 
     IEnumerator StartWaves(int killGroup)
@@ -115,8 +118,8 @@ public class Objectives : MonoBehaviour
             }
 
             wave++;
-            yield return new WaitForSeconds(5);
             if (!spawned) break;
+            yield return new WaitForSeconds(5);
         }
 
         spawning = false;

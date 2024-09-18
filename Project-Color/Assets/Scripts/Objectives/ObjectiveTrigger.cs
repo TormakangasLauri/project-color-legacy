@@ -17,6 +17,8 @@ public class ObjectiveTrigger : MonoBehaviour
     public bool destroyOnTrigger = true;
     public int killGroup;
 
+    public Collider paintArea;
+
     Objectives Objectives;
 
     private void Start()
@@ -31,7 +33,7 @@ public class ObjectiveTrigger : MonoBehaviour
             switch (objective)
             {
                 case Objective.kill:
-                    StartCoroutine(Objectives.Kill(killGroup));
+                    Objectives.KillObj(killGroup);
                     break;
                 case Objective.platform_start:
                     StartCoroutine(Objectives.Platform());
@@ -40,7 +42,7 @@ public class ObjectiveTrigger : MonoBehaviour
                     Objectives.platformActive = false;
                     break;
                 case Objective.paint:
-                    StartCoroutine(Objectives.Paint());
+                    Objectives.PaintObj(paintArea);
                     break;
             }
 

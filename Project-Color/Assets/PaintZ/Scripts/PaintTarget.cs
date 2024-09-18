@@ -40,6 +40,9 @@ public class PaintTarget : MonoBehaviour
     private RenderTexture splatTexAlt;
     public Texture2D splatTexPick;
 
+    public static Collider paintArea;
+    public static int textureCoordinatesInPaintArea;
+    
     private bool bPickDirty = true;
     private bool validTarget = false;
     private bool bHasMeshCollider = false;
@@ -273,9 +276,9 @@ public class PaintTarget : MonoBehaviour
             RT256.autoGenerateMips = true;
             RT256.useMipMap = true;
             RT256.Create();
-            RT4 = new RenderTexture(4, 4, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            RT4 = new RenderTexture(8, 8, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
             RT4.Create();
-            Tex4 = new Texture2D(4, 4, TextureFormat.ARGB32, false);
+            Tex4 = new Texture2D(8, 8, TextureFormat.ARGB32, false);
         }
 
         PaintTarget[] targets = GameObject.FindObjectsOfType<PaintTarget>() as PaintTarget[];
@@ -290,27 +293,28 @@ public class PaintTarget : MonoBehaviour
             Graphics.Blit(RT256, RT4);
 
             RenderTexture.active = RT4;
-            Tex4.ReadPixels(new Rect(0, 0, 4, 4), 0, 0);
+            Tex4.ReadPixels(new Rect(0, 0, 8, 8), 0, 0);
             Tex4.Apply();
 
             Color scoresColor = new Color(0, 0, 0, 0);
 
-            Collider col = GameObject.Find("Paintarea").GetComponent<Collider>();
-
-            for (int x = 0; x < 4; x++)
+            textureCoordinatesInPaintArea = 0;
+            
+            for (int x = 0; x < 8; x++)
             {
-                for (int y = 0; y < 4; y++)
+                for (int y = 0; y < 8; y++)
                 {
                     // Convert pixel coordinates to UV coordinates
-                    Vector2 uv = new Vector2((float)x / 4f, (float)y / 4f);
+                    Vector2 uv = new Vector2((float)x / 8f, (float)y / 8f);
 
                     // Assuming the texture is mapped on the target object, get the world position of the pixel
                     Vector3 worldPos = UVToWorldPosition(target, uv);
 
                     // Check if the world position is inside the collider
-                    if (col.bounds.Contains(worldPos))
+                    if (paintArea.bounds.Contains(worldPos))
                     {
                         scoresColor += Tex4.GetPixel(x, y);
+                        textureCoordinatesInPaintArea++;
                     }
                 }
             }
