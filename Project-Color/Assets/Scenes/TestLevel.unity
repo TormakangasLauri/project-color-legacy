@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -129,7 +129,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28932
+  m_Name: pb_Mesh46970
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -300,6 +300,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: enemies.Array.data[3]
+      value: 
+      objectReference: {fileID: 9034387810334742493, guid: 446e25db5153600449f1f4d244735c77, type: 3}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: enemyPrefabs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: enemyPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: enemyPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: enemyPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: enemyPrefabs.Array.data[3]
       value: 
       objectReference: {fileID: 9034387810334742493, guid: 446e25db5153600449f1f4d244735c77, type: 3}
     - target: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
@@ -2006,7 +2026,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 695720750}
 --- !u!33 &322006133
@@ -4791,7 +4811,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28504
+  m_Name: pb_Mesh46510
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5956,7 +5976,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28714
+  m_Name: pb_Mesh46744
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -8238,8 +8258,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8035120818263276475, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
+      propertyPath: hulkCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8035120818263276475, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
       propertyPath: basicCount
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8298501660750521375, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
       propertyPath: m_RootOrder
@@ -11944,7 +11968,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 800593164}
 --- !u!33 &1161178849
@@ -17657,11 +17681,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 445a49779cab74848a9d067f212719f4, type: 2}
     - target: {fileID: 8035120818263276475, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
       propertyPath: MILOCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8035120818263276475, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
       propertyPath: basicCount
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8035120818263276475, guid: 44491c4dbdfa7a241beb3df4320f3b19, type: 3}
       propertyPath: sniperCount
@@ -19830,7 +19854,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 16204131}
 --- !u!33 &1719355843

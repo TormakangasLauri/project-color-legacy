@@ -22,7 +22,7 @@ public class EnemyMovement : MonoBehaviour
     public bool LOSToTarget;
     public bool grounded;
 
-    public enum State { idle, navmesh, los, attack };
+    public enum State { inactive, idle, navmesh, los, attack };
     public State state;
 
     private void Start()
@@ -47,32 +47,34 @@ public class EnemyMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // States
+        //  inactive: while enemy is inactive (not spawned / dead)
         //  idle: not moving / wandering, will finish later
         //  Move: move with force towards the next corner of NavMeshPath
         //  attack: attacking
         switch (state)
         {
-            case State.idle:
-                Idle();
-                break;
-            case State.navmesh:
-                NavMeshMovement();
-                break;
-            case State.los:
-                LOSMovement();
-                break;
-            case State.attack:
-                Attack();
-                break;
+            case State.inactive: Inactive(); break;
+            case State.idle: Idle(); break;
+            case State.navmesh: NavMeshMovement(); break;
+            case State.los: LOSMovement(); break;
+            case State.attack: Attack(); break;
         }
+        
+        // Change to inactive
+        if (!ET.active) state = State.inactive;
 
         // Gravity
         if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
     }
 
+    private void Inactive()
+    {
+        if (ET.active) state = State.navmesh;
+    }
+
     private void Idle()
     {
-
+        
     }
 
     private void NavMeshMovement()

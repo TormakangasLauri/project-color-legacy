@@ -152,6 +152,7 @@ MonoBehaviour:
   type: 2
   target: {fileID: 0}
   killGroup: 0
+  active: 0
   timeActive: 0
   despawnEnemies: 0
 --- !u!114 &9034387809337049611
@@ -326,8 +327,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 3
   target: {fileID: 0}
   killGroup: 0
+  active: 0
   timeActive: 0
   despawnEnemies: 1

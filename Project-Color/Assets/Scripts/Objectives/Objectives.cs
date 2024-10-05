@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Controllers;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -40,9 +41,9 @@ public class Objectives : MonoBehaviour
     {
         if (activeObjectives.Contains(objectives.kill))
         {
-            killObjectiveText.text = enemyController.allEnemies_active.Count.ToString();
+            killObjectiveText.text = enemyController.all.activeList.Count.ToString();
 
-            if (enemyController.allEnemies_active.Count == 0 && !spawning)
+            if (enemyController.all.activeList.Count == 0 && !spawning)
             {
                 activeObjectives.Remove(objectives.kill);
                 killObjectiveText.text = "OBJECTIVE COMPLETE";
@@ -53,8 +54,10 @@ public class Objectives : MonoBehaviour
                     yield return new WaitForSeconds(3);
                     killObjectiveText.text = "";
                 }
-                    
             }
+            killObjectiveText.text = enemyController.all.activeList.Count.ToString();
+
+            if (enemyController.all.activeList.Count == 0 && !spawning) activeObjectives.Remove(objectives.kill);
         }
     }
 
@@ -131,61 +134,20 @@ public class Objectives : MonoBehaviour
 
         float spread = 2;
         float wait = 0.05f;
-        // Basic enemy
-        for (int i = 0; i < esp.basicCount; i++)
-        {
-            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-            GameObject enemy = enemyController.basicEnemyList[0];
-            
-            // Spawn
-            enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate(killGroup);
-            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
-
-            yield return new WaitForSeconds(wait);
-        }
-
-        // Sniper
-        for (int i = 0; i < esp.sniperCount; i++)
-        {
-            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-            GameObject enemy = enemyController.sniperList[0];
-
-            // Spawn
-            enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate(killGroup);
-            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
-
-            yield return new WaitForSeconds(wait);
-        }
-
-        // Hanging
-        for (int i = 0; i < esp.hangingCount; i++)
-        {
-            Vector3 random = new Vector3(Random.Range(-spread, spread), 2, Random.Range(-spread, spread));
-            GameObject enemy = enemyController.hangingList[0];
-
-            // Spawn
-            enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate(killGroup);
-            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
-
-            yield return new WaitForSeconds(wait);
-        }
-
         
-        // Milo
-        for (int i = 0; i < esp.MILOCount; i++)
-        {
-            Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-            GameObject enemy = enemyController.MILOList[0];
-            
-            // Spawn
-            enemy.transform.position = spawnPoint.transform.position + random;
-            enemy.GetComponent<EnemyType>().Activate(killGroup);
-            enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        for (int type = 0; type < enemyController.typeLists.Count; type++)
+            for (int j = 0; j < esp.enemiesToSpawn[type]; j++)
+            {
+                Debug.Log("Spawn");
+                Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
+                GameObject enemy = enemyController.typeLists[type].inactiveList[0];
+                
+                // Spawn
+                enemy.transform.position = spawnPoint.transform.position + random;
+                enemy.GetComponent<EnemyType>().Activate(killGroup);
+                enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
-            yield return new WaitForSeconds(wait);
-        }
+                yield return new WaitForSeconds(wait);
+            }
     }
 }
