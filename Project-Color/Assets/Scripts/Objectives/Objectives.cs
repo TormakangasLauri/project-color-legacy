@@ -138,7 +138,6 @@ public class Objectives : MonoBehaviour
         for (int type = 0; type < enemyController.typeLists.Count; type++)
             for (int j = 0; j < esp.enemiesToSpawn[type]; j++)
             {
-                Debug.Log("Spawn");
                 Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
                 GameObject enemy = enemyController.typeLists[type].inactiveList[0];
                 
