@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Objectives2 : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private List<Objective> objectives = new List<Objective>();
+    private List<Objective> activeObjectives = new List<Objective>();
+    
     void Start()
     {
-        
+        objectives.AddRange(GameObject.FindObjectsOfType<Objective>());
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         
