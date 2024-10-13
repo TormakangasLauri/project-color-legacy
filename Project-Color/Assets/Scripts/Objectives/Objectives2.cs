@@ -10,6 +10,12 @@ public class Objectives2 : MonoBehaviour
     void Start()
     {
         objectives.AddRange(GameObject.FindObjectsOfType<Objective>());
+        int i = 0;
+        foreach (KillObjective ko in GameObject.FindObjectsOfType<KillObjective>())
+        {
+            ko.group = i;
+            i++;
+        }
     }
     
     void Update()
