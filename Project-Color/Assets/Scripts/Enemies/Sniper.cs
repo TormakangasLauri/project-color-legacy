@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicEnemy : EnemyType
+public class Sniper : EnemyType
 {
-    void Awake()
+    private void Awake()
     {
-        type = Type.basic;
+        type = Type.sniper;
     }
 }

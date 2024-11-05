@@ -5,7 +5,7 @@ using Controllers;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyType : MonoBehaviour
+public abstract class EnemyType : MonoBehaviour
 {
     public enum Type
     {
@@ -45,28 +45,22 @@ public class EnemyType : MonoBehaviour
         // Add enemy to correct lists in enemycontroller
         enemyController.all.inactiveList.Add(gameObject);
         enemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
-        
-        // Deactivate
-        if (despawnEnemies)
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-            GetComponent<MeshCollider>().enabled = false;
-            GetComponent<PaintTarget>().enabled = false;
-            transform.Find("PathFinder").gameObject.SetActive(false);
-            gameObject.SetActive(false);
-        }
-        
-        // Deactivate on start
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshCollider>().enabled = false;
-        GetComponent<PaintTarget>().enabled = false;
-        transform.Find("PathFinder").gameObject.SetActive(false);
-        gameObject.SetActive(false);
+
+        if (despawnEnemies) DeactivateOnStart();
     }
 
     private void Update()
     {
         if (active) timeActive += Time.deltaTime;
+    }
+
+    protected void DeactivateOnStart()
+    {
+        GetComponent<MeshRenderer>().enabled = false;
+        GetComponent<MeshCollider>().enabled = false;
+        GetComponent<PaintTarget>().enabled = false;
+        transform.Find("PathFinder").gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     public void Activate(int group = -1)
