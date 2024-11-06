@@ -410,7 +410,7 @@ GameObject:
   - component: {fileID: 2579234994773169901}
   - component: {fileID: 8256769091064229477}
   - component: {fileID: 4686222180001089621}
-  - component: {fileID: 8594405485110631424}
+  - component: {fileID: 7856792309098927345}
   - component: {fileID: 129741967588987255}
   - component: {fileID: 4349320011856611247}
   m_Layer: 8
@@ -570,7 +570,7 @@ MonoBehaviour:
   t: 0
   LOSToTarget: 0
   moving: 0
---- !u!114 &8594405485110631424
+--- !u!114 &7856792309098927345
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -579,12 +579,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8245528752783580106}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c600c8c76b8f35a4ea8d24bea4c2a3d4, type: 3}
+  m_Script: {fileID: 11500000, guid: 4bbf06bb9241c724b99ba1f2802446f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
   target: {fileID: 0}
   killGroup: 0
+  active: 0
+  timeActive: 0
+  despawnEnemies: 1
 --- !u!114 &129741967588987255
 MonoBehaviour:
   m_ObjectHideFlags: 0

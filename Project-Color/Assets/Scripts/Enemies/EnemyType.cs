@@ -7,14 +7,14 @@ using UnityEngine.AI;
 
 public abstract class EnemyType : MonoBehaviour
 {
-    public enum Type
+    protected enum Type
     {
         basic,
         sniper,
         hulk,
         hanging
     };
-    public Type type;
+    protected Type type;
     private int typeIndex;
 
     public GameObject target;
@@ -27,7 +27,7 @@ public abstract class EnemyType : MonoBehaviour
     public bool active = false;
     public float timeActive = 0;
 
-    public bool despawnEnemies = true;
+    public bool deactivateOnStart = true;
     
     void Start()
     {
@@ -46,7 +46,7 @@ public abstract class EnemyType : MonoBehaviour
         enemyController.all.inactiveList.Add(gameObject);
         enemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
 
-        if (despawnEnemies) DeactivateOnStart();
+        if (deactivateOnStart) DeactivateOnStart();
     }
 
     private void Update()
@@ -68,24 +68,6 @@ public abstract class EnemyType : MonoBehaviour
         enemyController.all.MoveToActive(gameObject);
         enemyController.typeLists[typeIndex].MoveToActive(gameObject);
         
-        // enemyController.allEnemies.Remove(gameObject);
-        // enemyController.allEnemies_active.Add(gameObject);
-        // switch (type)
-        // {
-        //     case Type.basic:
-        //         enemyController.basicEnemyList.Remove(gameObject);
-        //         enemyController.basicEnemyList_active.Add(gameObject);
-        //         break;
-        //     case Type.sniper:
-        //         enemyController.sniperList.Remove(gameObject);
-        //         enemyController.sniperList_active.Add(gameObject);
-        //         break;
-        //     case Type.hulk:
-        //         enemyController.hulkList.Remove(gameObject);
-        //         enemyController.hulkList_active.Add(gameObject);
-        //         break;
-        // }
-        
         killGroup = group;
         
         GetComponent<MeshRenderer>().enabled = true;
@@ -95,30 +77,14 @@ public abstract class EnemyType : MonoBehaviour
         gameObject.SetActive(true);
 
         active = true;
+        
+        OnActivate();
     }
 
     public void Deactivate()
     {
         enemyController.all.MoveToInactive(gameObject);
         enemyController.typeLists[typeIndex].MoveToInactive(gameObject);
-        
-        // enemyController.allEnemies_active.Remove(gameObject);
-        // enemyController.allEnemies.Add(gameObject);
-        // switch (type)
-        // {
-        //     case Type.basic:
-        //         enemyController.basicEnemyList_active.Remove(gameObject);
-        //         enemyController.basicEnemyList.Add(gameObject);
-        //         break;
-        //     case Type.sniper:
-        //         enemyController.sniperList_active.Remove(gameObject);
-        //         enemyController.sniperList.Add(gameObject);
-        //         break;
-        //     case Type.hulk:
-        //         enemyController.hulkList_active.Remove(gameObject);
-        //         enemyController.hulkList.Add(gameObject);
-        //         break;
-        // }
 
         GetComponent<MeshRenderer>().enabled = false;
         GetComponent<MeshCollider>().enabled = false;
@@ -130,5 +96,17 @@ public abstract class EnemyType : MonoBehaviour
 
         active = false;
         timeActive = 0;
+        
+        OnDeactivate();
+    }
+
+    protected void OnActivate()
+    {
+        
+    }
+
+    protected void OnDeactivate()
+    {
+        
     }
 }

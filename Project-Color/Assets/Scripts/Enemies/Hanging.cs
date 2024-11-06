@@ -8,9 +8,6 @@ public class Hanging : EnemyType
     {
         type = Type.hanging;
     }
-
-    private void Start()
-    {
-        DeactivateOnStart();
-    }
+    
+    
 }

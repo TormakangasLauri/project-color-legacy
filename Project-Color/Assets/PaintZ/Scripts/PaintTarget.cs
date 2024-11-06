@@ -41,6 +41,7 @@ public class PaintTarget : MonoBehaviour
     public Texture2D splatTexPick;
 
     public static Collider paintArea;
+    public static List<Vector3> paintWorldPositions;
     public static int textureCoordinatesInPaintArea;
     
     private bool bPickDirty = true;
@@ -282,6 +283,8 @@ public class PaintTarget : MonoBehaviour
         }
 
         PaintTarget[] targets = GameObject.FindObjectsOfType<PaintTarget>() as PaintTarget[];
+        
+        paintWorldPositions.Clear();
 
         foreach (PaintTarget target in targets)
         {
@@ -309,13 +312,15 @@ public class PaintTarget : MonoBehaviour
 
                     // Assuming the texture is mapped on the target object, get the world position of the pixel
                     Vector3 worldPos = UVToWorldPosition(target, uv);
+                    
+                    paintWorldPositions.Add(worldPos);
 
                     // Check if the world position is inside the collider
-                    if (paintArea.bounds.Contains(worldPos))
-                    {
-                        scoresColor += Tex4.GetPixel(x, y);
-                        textureCoordinatesInPaintArea++;
-                    }
+                    // if (paintArea.bounds.Contains(worldPos))
+                    // {
+                    //     scoresColor += Tex4.GetPixel(x, y);
+                    //     textureCoordinatesInPaintArea++;
+                    // }
                 }
             }
 
