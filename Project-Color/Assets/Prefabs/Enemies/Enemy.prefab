@@ -318,12 +318,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c30cf65adcb3d5458432de7a3b2a237, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
   target: {fileID: 0}
   killGroup: 0
   active: 0
   timeActive: 0
-  despawnEnemies: 1
+  deactivateOnStart: 1
 --- !u!114 &9110505115261770114
 MonoBehaviour:
   m_ObjectHideFlags: 0

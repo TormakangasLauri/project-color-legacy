@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 621487367663589414}
   - component: {fileID: 621487367663589416}
   m_Layer: 8
-  m_Name: enemy
+  m_Name: HangingEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

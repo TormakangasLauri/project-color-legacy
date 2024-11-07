@@ -41,7 +41,7 @@ public class PaintTarget : MonoBehaviour
     public Texture2D splatTexPick;
 
     public static Collider paintArea;
-    public static List<Vector3> paintWorldPositions;
+    public static List<Vector3> paintWorldPositions = new List<Vector3>();
     public static int textureCoordinatesInPaintArea;
     
     private bool bPickDirty = true;

@@ -28,7 +28,7 @@ public abstract class EnemyType : MonoBehaviour
     public float timeActive = 0;
 
     public bool deactivateOnStart = true;
-    
+
     void Start()
     {
         target = GameObject.Find("Player");
@@ -54,12 +54,12 @@ public abstract class EnemyType : MonoBehaviour
         if (active) timeActive += Time.deltaTime;
     }
 
-    protected void DeactivateOnStart()
+    protected virtual void DeactivateOnStart()
     {
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshCollider>().enabled = false;
-        GetComponent<PaintTarget>().enabled = false;
-        transform.Find("PathFinder").gameObject.SetActive(false);
+        // GetComponent<MeshRenderer>().enabled = false;
+        // GetComponent<MeshCollider>().enabled = false;
+        // GetComponent<PaintTarget>().enabled = false;
+        // transform.Find("PathFinder").gameObject.SetActive(false);
         gameObject.SetActive(false);
     }
 
@@ -100,7 +100,7 @@ public abstract class EnemyType : MonoBehaviour
         OnDeactivate();
     }
 
-    protected void OnActivate()
+    protected virtual void OnActivate()
     {
         
     }

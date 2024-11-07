@@ -7,7 +7,6 @@ public class Hanging : EnemyType
     private void Awake()
     {
         type = Type.hanging;
+        deactivateOnStart = false;
     }
-    
-    
 }
