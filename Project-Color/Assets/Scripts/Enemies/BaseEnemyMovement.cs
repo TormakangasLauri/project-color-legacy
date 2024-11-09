@@ -5,9 +5,14 @@ using OpenCover.Framework.Model;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyMovementState
+public class EnemyMovementState : Method
 {
-    public virtual void StateUpdate(){}
+    public Action StateAction;
+    public Action EnterState;
+    public Action ExitState;
+    public void Update(){StateAction?.Invoke();}
+    public void Enter(){EnterState?.Invoke();}
+    public void Exit(){ExitState?.Invoke();}
 }
 
 public abstract class BaseEnemyMovement : MonoBehaviour
@@ -40,18 +45,22 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     private void Update()
     {
         GroundCheck();
+    }
 
-        currentState.StateUpdate();
+    private void FixedUpdate()
+    {
+        currentState.Update();
     }
     
     protected void SwitchStates(EnemyMovementState nextState, float delay = 0f)
     {
         StartCoroutine(s());
-
         IEnumerator s()
         {
             yield return new WaitForSeconds(delay);
+            currentState.Exit();
             currentState = nextState;
+            currentState.Enter();
         }
     }
     
