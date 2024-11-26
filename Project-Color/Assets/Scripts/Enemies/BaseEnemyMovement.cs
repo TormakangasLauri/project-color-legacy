@@ -2,66 +2,45 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using OpenCover.Framework.Model;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AI;
-
-public class EnemyMovementState : Method
-{
-    public Action StateAction;
-    public Action EnterState;
-    public Action ExitState;
-    public void Update(){StateAction?.Invoke();}
-    public void Enter(){EnterState?.Invoke();}
-    public void Exit(){ExitState?.Invoke();}
-}
 
 public abstract class BaseEnemyMovement : MonoBehaviour
 {
     protected Rigidbody rb;
     protected EnemyType _enemyType;
-    public NavMeshPath path = new NavMeshPath();
+    public NavMeshPath path;
     
     protected GameObject target;
     
     public float speed;
+    [HideInInspector] public float stopDistance;
 
-    protected LayerMask terrainLayer = LayerMask.GetMask("Terrain");
+    protected LayerMask terrainLayer;
     
     public bool LOSToTarget;
     public bool grounded;
-    
-    protected List<EnemyMovementState> movementStates;
-    protected EnemyMovementState currentState;
+
+    private void Awake()
+    {
+        path = new NavMeshPath();
+        terrainLayer = LayerMask.GetMask("Terrain");
+    }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         _enemyType = GetComponent<EnemyType>();
         target = GameObject.FindWithTag("Player");
-
-        currentState = movementStates[0];
     }
     
     private void Update()
     {
         GroundCheck();
-    }
+        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
-    private void FixedUpdate()
-    {
-        currentState.Update();
-    }
-    
-    protected void SwitchStates(EnemyMovementState nextState, float delay = 0f)
-    {
-        StartCoroutine(s());
-        IEnumerator s()
-        {
-            yield return new WaitForSeconds(delay);
-            currentState.Exit();
-            currentState = nextState;
-            currentState.Enter();
-        }
+        path = _enemyType.path;
     }
     
     private void GroundCheck()

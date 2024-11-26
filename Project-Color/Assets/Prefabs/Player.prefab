@@ -1260,6 +1260,7 @@ GameObject:
   - component: {fileID: 5792234534002109464}
   - component: {fileID: 5792234534002109465}
   - component: {fileID: 5792234534002109443}
+  - component: {fileID: 2709761408171424671}
   - component: {fileID: 891123135056075187}
   - component: {fileID: 2057886765}
   - component: {fileID: 4908406319276477480}
@@ -1529,6 +1530,50 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  walled: 0
+  wallColList: []
+  gravity: 20
+  underTerrain: 0
+  attacking: 0
+--- !u!114 &2709761408171424671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5792234534002109460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c271c5ff2385b54aa56da7059d4ab06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  move: {fileID: 0}
+  rightStick: {fileID: 0}
+  camera: {fileID: 0}
+  acceleration: 100
+  maxSpeed: 10
+  maxSlopeAngle: 45
+  onSlope: 0
+  jumpForce: 12
+  landingGracePeriod: 0.2
+  pressingJump: 0
+  wallRunning: 0
+  wallRunDirection: 0
+  maxSlideSpeed: 30
+  sliding: 0
+  pressingSlide: 0
+  canDash: 1
+  dashing: 0
+  dashDistance: 5
+  mouseSensitivity: 2
+  groundCheck: {fileID: 0}
+  terrainLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  grounded: 0
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 0
   walled: 0
   wallColList: []
   gravity: 20

@@ -17,7 +17,7 @@ public class PlayerAttack : MonoBehaviour
     public LayerMask enemyLayer;
     public List<GameObject> enemies;
 
-    private playermovement PM;
+    private PlayerMovement2 PM;
     private EnemyController enemyController;
     private SlamAreaCheck SAC;
     public AttackIndicator AI;
@@ -77,7 +77,7 @@ public class PlayerAttack : MonoBehaviour
     private void Start()
     {
         hitbox = GetComponent<Collider>();
-        PM = transform.parent.GetComponentInParent<playermovement>();
+        PM = transform.parent.GetComponentInParent<PlayerMovement2>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
         CP1 = gameObject.transform.parent.GetChild(1).GetChild(4).GetComponent<CollisionPainter>();
@@ -123,7 +123,7 @@ public class PlayerAttack : MonoBehaviour
         else if (action.canceled && canAttack)
         {
             lmbHeld = false;
-            if (holdTimer < 0.3 && !PM.attacking)
+            if (holdTimer < 0.3 && !PM.slamming)
             {
                 foreach (GameObject enemy in enemies)
                 {
@@ -157,7 +157,7 @@ public class PlayerAttack : MonoBehaviour
         else if (action.canceled && canAttack)
         {
             rmbHeld = false;
-            if (holdTimer < 0.3 && !PM.grounded && !PM.attacking)
+            if (holdTimer < 0.3 && !PM.grounded && !PM.slamming)
             {
                 StartCoroutine(Slam());
             }
@@ -181,7 +181,7 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator Slam()
     {
-        PM.attacking = true;
+        PM.slamming = true;
         yield return new WaitUntil(delegate { return PM.grounded; });
 
         foreach (GameObject enemy in SAC.enemies)
@@ -197,7 +197,7 @@ public class PlayerAttack : MonoBehaviour
 
         PlaySLamParticle();
 
-        PM.attacking = false;
+        PM.slamming = false;
     }
 
     void Bounce()

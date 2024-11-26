@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Serialization;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -73,7 +74,7 @@ public class playermovement : MonoBehaviour
     
     public float gravity = 20;
     public bool underTerrain;
-    public bool attacking;
+    public bool slamming;
 
 
     void Start()
@@ -95,7 +96,7 @@ public class playermovement : MonoBehaviour
 
         moveDirection = move.action.ReadValue<Vector2>();
         // BigAssBall() making a comeback 2024
-
+        
         // Dash
         dashCoolDown -= Time.deltaTime;
         if ((grounded || wallRunning) && !dashing && dashCoolDown < 0) canDash = true;
@@ -104,10 +105,10 @@ public class playermovement : MonoBehaviour
     private void FixedUpdate()
     {
         if (!wallRunning && !sliding) Movement(); // If wallrunning, disable base movement
-        else if (!sliding && !attacking) WallRun();
+        else if (!sliding && !slamming) WallRun();
         
         // Extra gravity
-        if (!wallRunning) rb.AddForce(0, !attacking ? -gravity: -gravity*5f, 0);
+        if (!wallRunning) rb.AddForce(0, !slamming ? -gravity: -gravity*5f, 0);
         else rb.useGravity = false;
         if (onSlope)
         {
@@ -337,7 +338,7 @@ public class playermovement : MonoBehaviour
 
     public void DashInput(InputAction.CallbackContext action)
     {
-        if (action.performed && canDash && !dashing && !grounded && !walled && !attacking)
+        if (action.performed && canDash && !dashing && !grounded && !walled && !slamming)
         {
             StartCoroutine(Dash());
         }

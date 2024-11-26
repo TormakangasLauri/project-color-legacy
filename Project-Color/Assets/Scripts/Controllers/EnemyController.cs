@@ -106,7 +106,7 @@ namespace Controllers
                         enemiesOnLayer += stopDist;
                     }
 
-                    basic.activeList[i].GetComponent<EnemyMovement>().stopDistance = stopDist;
+                    basic.activeList[i].GetComponent<BaseEnemyMovement>().stopDistance = stopDist;
                 }
             }
         }
