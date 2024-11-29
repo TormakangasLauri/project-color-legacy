@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Serialization;
@@ -12,143 +13,60 @@ using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class MovementState
-{
-    public virtual void EnterState(){}
-    public virtual void Update(){}
-    public virtual void ExitState(){}
-}
-
-public class GroundMovement : MovementState
-{
-    public override void EnterState()
-    {
-        
-    }
-    public override void Update()
-    {
-        
-    }
-    public override void ExitState()
-    {
-        
-    }
-}
-public class AirMovement : MovementState
-{
-    public override void EnterState()
-    {
-        
-    }
-    public override void Update()
-    {
-        
-    }
-    public override void ExitState()
-    {
-        
-    }
-}
-public class WallMovement : MovementState
-{
-    public override void EnterState()
-    {
-        
-    }
-    public override void Update()
-    {
-        
-    }
-    public override void ExitState()
-    {
-        
-    }
-}
-public class CrouchMovement : MovementState
-{
-    public override void EnterState()
-    {
-        
-    }
-    public override void Update()
-    {
-        
-    }
-    public override void ExitState()
-    {
-        
-    }
-}
-public class SlideMovement : MovementState
-{
-    public override void EnterState()
-    {
-        
-    }
-    public override void Update()
-    {
-        
-    }
-    public override void ExitState()
-    {
-        
-    }
-}
-
 public class PlayerMovement2 : MonoBehaviour
 {
     public InputActionReference move;
     public InputActionReference rightStick;
 
-    private GroundMovement Ground = new GroundMovement();
-    private AirMovement Air = new AirMovement();
-    private WallMovement Wallrun = new WallMovement();
-    private CrouchMovement Crouch = new CrouchMovement();
-    private SlideMovement Slide = new SlideMovement();
-    private enum movementState { ground, air, wallrun, crouch, slide }
-    // private movementState currentState = movementState.ground;
-    // private movementState previousState = movementState.ground;
-    private MovementState currentState;
-    private MovementState previousState;
-    
+    private enum movementState
+    {
+        ground,
+        air,
+        wallrun,
+        crouch,
+        slide
+    }
+
+    private movementState currentState = movementState.ground;
+    private movementState previousState = movementState.ground;
+
     private Rigidbody rb;
     new public Camera camera;
 
     [Header("Movement")]
     public float acceleration = 70;
     public float maxSpeed = 10;
-    private Vector2 moveDirection;
+    private Vector2 moveInputDirection;
+    
     [Header("Slope movement")]
     public float maxSlopeAngle = 45;
     public bool onSlope;
-    private RaycastHit slopeHit;
+    private RaycastHit groundHit;
     private Vector3 slopeMoveDir;
-    
+
     [Header("Crouch")]
     public float crouchAcc = 70;
     public float maxCrouchSpeed = 10;
     private bool crouching;
-    
+    public bool pressingCrouch;
+
     [Header("Jump")]
     public float jumpForce = 12;
     public float landingGracePeriod = 0.2f;
     private float landingGrace;
     public bool pressingJump;
+    private bool waitingToJump;
     private bool hasJumped;
     private float timeSinceJump;
-    
+
     [Header("Wallrun")]
     public bool wallRunning;
     public int wallRunDirection;
-    private bool firstWallRunCall = true;
     private Vector3 wallRunForce;
-    
+
     [Header("Slide")]
     public float maxSlideSpeed = 30;
-
     public bool sliding;
-    [FormerlySerializedAs("pressingSlide")] public bool pressingCrouch;
-    private bool firstSlideCall;
     private float slideForceTimer;
     private Vector3 slideDirection;
 
@@ -162,7 +80,7 @@ public class PlayerMovement2 : MonoBehaviour
     public float mouseSensitivity = 2f;
     private float cameraVerticalRotation;
     private float cameraHorizontalRotation;
-    
+
     [Header("Checks")]
     public GameObject groundCheck;
     public LayerMask terrainLayer;
@@ -173,23 +91,32 @@ public class PlayerMovement2 : MonoBehaviour
     private Vector3 dirToWall;
 
     // Other
-    
+
     public float gravity = 20;
+    public bool enterState = true;
     public bool underTerrain;
     public bool slamming;
+
+    private void Start()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        rb = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {
         GroundCheck();
+        rb.useGravity = !grounded; // Disable gravity when grounded
         Walled();
         SlopeCheck();
-        RoofCheck();
-        
+        if (crouching || sliding) RoofCheck();
+
         CameraRotation();
 
-        moveDirection = move.action.ReadValue<Vector2>();
+        moveInputDirection = move.action.ReadValue<Vector2>();
         // BigAssBall is real?!?!?!
-        
+
         // Dash
         dashCoolDown -= Time.deltaTime;
         if ((grounded || wallRunning) && !dashing && dashCoolDown < 0) canDash = true;
@@ -197,93 +124,128 @@ public class PlayerMovement2 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // if (grounded) { // Grounded
-        //     if (pressingCrouch) {
-        //         if (rb.velocity.magnitude < maxSpeed * 0.5) currentState = movementState.crouch; // Crouch
-        //         else currentState = movementState.slide; // Slide
-        //     }else currentState = movementState.ground; // Ground
-        // }
-        // else { // Not grounded
-        //     if (walled) {
-        //         if (pressingJump && !pressingCrouch && !slamming) currentState = movementState.wallrun; // Wallrun
-        //         else currentState = movementState.air; // Air
-        //     }else currentState = movementState.air;
-        // }
-        
-        if (grounded) { // Grounded
+        // Define movement state
+        if (grounded) {
+            // Grounded
             if (pressingCrouch) {
-                if (rb.velocity.magnitude < maxSpeed * 0.5) currentState = Crouch; // Crouch
-                else currentState = Slide; // Slide
-            }else currentState = Ground; // Ground
+                if (rb.velocity.magnitude < maxSpeed * 0.5) currentState = movementState.crouch; // Crouch
+                else currentState = movementState.slide; // Slide
+            }else currentState = movementState.ground; // Ground
         }
-        else { // Not grounded
+        else {
+            // Not grounded
             if (walled) {
-                if (pressingJump && !pressingCrouch && !slamming) currentState = Wallrun; // Wallrun
-                else currentState = Air; // Air
-            }else currentState = Air;
+                if (pressingJump && !pressingCrouch && !slamming) currentState = movementState.wallrun; // Wallrun
+                else currentState = movementState.air; // Air
+            }else currentState = movementState.air;
         }
+
+        // When switching movement states
+        if (currentState != previousState) enterState = true;
         
-        // State change
-        if (currentState != previousState)
-        {
-            previousState.ExitState();
-            currentState.EnterState();
+        switch (currentState) {
+            case movementState.ground: GroundMovement(); break;
+            case movementState.air: AirMovement(); break;
+            case movementState.wallrun: Wallrun(); break;
+            case movementState.crouch: Crouchmovement(); break;
+            case movementState.slide: SlideMovement(); break;
         }
-        previousState = currentState;
-        
-        currentState.Update(); // Movement update
-        
-        // Movement();
     }
 
-    void Movement()
+    /*
+     __  __                                            _
+    |  \/  |                                          | |
+    | \  / |  ___ __   __ ___  _ __ ___    ___  _ __  | |_
+    | |\/| | / _ \\ \ / // _ \| '_ ` _ \  / _ \| '_ \ | __|
+    | |  | || (_) |\ V /|  __/| | | | | ||  __/| | | || |_
+    |_|  |_| \___/  \_/  \___||_| |_| |_| \___||_| |_| \__|
+    */
+
+    void GroundMovement()
     {
-        if (currentState != previousState)
+        if (enterState)
         {
-            previousState.ExitState();
-            currentState.EnterState();
+            // rb.useGravity = false;
+            enterState = false;
         }
-        previousState = currentState;
         
-        currentState.Update();
-            
-        // switch (currentState)
-        // {
-        //     case movementState.ground: // Basic ground movement
-        //     {
-        //         Ground.Update();
-        //         break;
-        //     }
-        //     case movementState.air: // Aerial movement
-        //     {
-        //         Air.Update();
-        //         break;
-        //     }
-        //     case movementState.crouch: // Crouching
-        //     {
-        //         Crouch.Update();
-        //         break;
-        //     }
-        //     case movementState.slide: // Slide
-        //     {
-        //         Slide.Update();
-        //         break;
-        //     }
-        //     case movementState.wallrun: // Wallrun
-        //     {
-        //         Wallrun.Update();
-        //         break;
-        //     }
-        // }
+        Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
+
+        // Movement direction on flat ground
+        Vector3 flatMovementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        // Movement direction projected onto the ground
+        Vector3 movementDirection = Vector3.ProjectOnPlane(flatMovementDirection, groundHit.normal);
+
+        // Velocity on x and z-axes projected onto the ground
+        Vector3 velocityAlongGround = Vector3.ProjectOnPlane(new Vector3(rb.velocity.x, 0, rb.velocity.z), groundHit.normal);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongGround, movementDirection);
+        
+        // Movement force
+        rb.AddForce(movementDirection * acceleration);
+        // Speed limit
+        if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration);
     }
 
+    void AirMovement()
+    {
+        Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
+        
+        // Apply movement force normally when below speed limit or if moving in a way that would not increase speed
+        if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
+        // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
+        else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, velocityAlongXZ) * acceleration);
+    }
+
+    void Wallrun()
+    {
+        
+    }
+
+    void Crouchmovement()
+    {
+        
+    }
+
+    void SlideMovement()
+    {
+        
+    }
+    
+    void Jump()
+    {
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+    
+    void WallJump()
+    {
+        Vector3 velocity = rb.velocity;
+        
+        // Walljumping makes the player jump away from the wall regardless of directional movement inputs
+        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
+        
+        hasJumped = true;
+    }
+    
+    /*
+     _____                       _        
+    |_   _|                     | |       
+      | |   _ __   _ __   _   _ | |_  ___ 
+      | |  | '_ \ | '_ \ | | | || __|/ __|
+     _| |_ | | | || |_) || |_| || |_ \__ \
+    |_____||_| |_|| .__/  \__,_| \__||___/
+                  | |
+                  |_|
+    */
+    
     // Call path: player (object in scene hierarchy) -> Player Input (component) -> Events -> player
     public void JumpInput(InputAction.CallbackContext action)
     {
-        // Sets landingGrace to determine wheter to jump in Jump()
         if (action.performed)
         {
-            landingGrace = Time.realtimeSinceStartup + landingGracePeriod;
+            if (!waitingToJump) StartCoroutine(WaitToJump());
             pressingJump = true;
         }
         else if (action.canceled)
@@ -292,22 +254,19 @@ public class PlayerMovement2 : MonoBehaviour
             if (wallRunning) WallJump();
             wallRunning = false;
         }
-    }
-
-    void Jump()
-    {
         
-    }
-    
-    void WallJump()
-    {
-        Vector3 velocity = rb.velocity;
-        
-        // Walljumping makes the player jump away from the wall regardless of directional movement inputs
-        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall.normalized * 8 + Vector3.up * jumpForce * 0.6f;
-        
-        hasJumped = true;
-        firstWallRunCall = true;
+        IEnumerator WaitToJump() // Wait until the player is grounded to jump
+        {
+            waitingToJump = true;
+            float i = landingGracePeriod;
+            yield return new WaitUntil(() =>
+            {
+                if (grounded) Jump();
+                i -= Time.deltaTime;
+                return i <= 0 || grounded;
+            });
+            waitingToJump = false;
+        }
     }
     
     public void CrouchInput(InputAction.CallbackContext action)
@@ -322,6 +281,7 @@ public class PlayerMovement2 : MonoBehaviour
     
     public void DashInput(InputAction.CallbackContext action)
     {
+        // Dash if not touching terrain or performing dash or slam
         if (action.performed && canDash && !dashing && !grounded && !walled && !slamming)
         {
             StartCoroutine(Dash());
@@ -344,7 +304,9 @@ public class PlayerMovement2 : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         yield return new WaitUntil(delegate
         {
+            // Slow down when reaching max dash distance or touching terrain
             if (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled) rb.velocity *= 0.9f;
+            // Return when slowing down and velocity is the same as before dashing
             return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.velocity.magnitude < startVelocity;
         });
         
@@ -382,13 +344,10 @@ public class PlayerMovement2 : MonoBehaviour
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, terrainLayer).Length > 0)
         {
             grounded = true;
-            
             wallRunning = false;
-            firstWallRunCall = true;
-
             dashing = false;
         }
-        else
+        else // Not grounded
         {
             grounded = false;
             hasJumped = false;
@@ -397,7 +356,7 @@ public class PlayerMovement2 : MonoBehaviour
 
     void SlopeCheck()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, terrainLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
+        if (Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer) && Vector3.Angle(Vector3.up, groundHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, groundHit.normal) > 0)
             onSlope = true;
         else onSlope = false;
     }
@@ -420,7 +379,7 @@ public class PlayerMovement2 : MonoBehaviour
     {
         if (walled)
         {
-            dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
+            dirToWall = (wallColList[0].ClosestPoint(transform.position) - transform.position).normalized;
 
             dashing = false;
         }
