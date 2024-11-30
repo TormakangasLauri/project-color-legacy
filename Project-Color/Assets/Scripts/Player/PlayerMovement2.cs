@@ -175,6 +175,9 @@ public class PlayerMovement2 : MonoBehaviour
         Vector3 velocityAlongGround = Vector3.ProjectOnPlane(new Vector3(rb.velocity.x, 0, rb.velocity.z), groundHit.normal);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongGround, movementDirection);
         
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
+        
         // Movement force
         rb.AddForce(movementDirection * acceleration);
         // Speed limit - apply force to the opposite direction of velocity
@@ -190,6 +193,9 @@ public class PlayerMovement2 : MonoBehaviour
         Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
+        
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
         
         // Apply movement force normally when below speed limit or if moving in a way that would not increase speed
         if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
