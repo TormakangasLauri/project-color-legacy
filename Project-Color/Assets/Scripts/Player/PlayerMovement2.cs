@@ -36,6 +36,7 @@ public class PlayerMovement2 : MonoBehaviour
     [Header("Movement")]
     public float acceleration = 70;
     public float maxSpeed = 10;
+    public float deceleration = 20;
     private Vector2 moveInputDirection;
     
     [Header("Slope movement")]
@@ -163,12 +164,6 @@ public class PlayerMovement2 : MonoBehaviour
 
     void GroundMovement()
     {
-        if (enterState)
-        {
-            // rb.useGravity = false;
-            enterState = false;
-        }
-        
         Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
 
         // Movement direction on flat ground
@@ -182,8 +177,12 @@ public class PlayerMovement2 : MonoBehaviour
         
         // Movement force
         rb.AddForce(movementDirection * acceleration);
-        // Speed limit
-        if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration);
+        // Speed limit - apply force to the opposite direction of velocity
+        if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration
+        * (1 + velocityAlongGround.magnitude - maxSpeed) * 0.2f);
+        // Slow down when no movement inputs or if trying to move against the direction of velocity
+        else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
+        else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
     }
 
     void AirMovement()
