@@ -79,9 +79,9 @@ public class PlayerAttack : MonoBehaviour
         hitbox = GetComponent<Collider>();
         PM = transform.parent.GetComponentInParent<PlayerMovement2>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
-        SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
-        CP1 = gameObject.transform.parent.GetChild(1).GetChild(4).GetComponent<CollisionPainter>();
-        CP2 = gameObject.transform.parent.GetChild(1).GetChild(5).GetComponent<CollisionPainter>();
+        SAC = transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
+        CP1 = transform.parent.GetChild(2).GetChild(4).GetComponent<CollisionPainter>();
+        CP2 = transform.parent.GetChild(2).GetChild(5).GetComponent<CollisionPainter>();
     }
 
     private void Update()

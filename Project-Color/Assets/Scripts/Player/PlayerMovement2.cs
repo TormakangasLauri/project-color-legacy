@@ -31,13 +31,14 @@ public class PlayerMovement2 : MonoBehaviour
     private movementState previousState = movementState.ground;
 
     private Rigidbody rb;
-    new public Camera camera;
+    public GameObject head;
 
     [Header("Movement")]
     public float acceleration = 70;
     public float maxSpeed = 10;
     public float deceleration = 20;
     private Vector2 moveInputDirection;
+    private Vector3 lastFrameVel;
     
     [Header("Slope movement")]
     public float maxSlopeAngle = 45;
@@ -79,13 +80,14 @@ public class PlayerMovement2 : MonoBehaviour
 
     [Header("Camera")]
     public float mouseSensitivity = 2f;
-    private float cameraVerticalRotation;
-    private float cameraHorizontalRotation;
+    private float headVerticalRotation;
+    private float headHorizontalRotation;
 
     [Header("Checks")]
     public GameObject groundCheck;
     public LayerMask terrainLayer;
     public bool grounded;
+    public float timeSinceGrounded;
     public LayerMask wallLayer;
     public bool walled;
     [HideInInspector] public List<Collider> wallColList = new List<Collider>();
@@ -136,7 +138,7 @@ public class PlayerMovement2 : MonoBehaviour
         else {
             // Not grounded
             if (walled) {
-                if (pressingJump && !pressingCrouch && !slamming) currentState = movementState.wallrun; // Wallrun
+                if (pressingJump && !pressingCrouch && !slamming && timeSinceGrounded > 0.2) currentState = movementState.wallrun; // Wallrun
                 else currentState = movementState.air; // Air
             }else currentState = movementState.air;
         }
@@ -164,6 +166,8 @@ public class PlayerMovement2 : MonoBehaviour
 
     void GroundMovement()
     {
+        Debug.Log("GROUND");
+        
         Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
 
         // Movement direction on flat ground
@@ -190,6 +194,8 @@ public class PlayerMovement2 : MonoBehaviour
 
     void AirMovement()
     {
+        Debug.Log("AIR");
+        
         Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
@@ -201,11 +207,29 @@ public class PlayerMovement2 : MonoBehaviour
         if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
         // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
         else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, velocityAlongXZ) * acceleration);
+        
+        // Prevent walls from stopping vertical velocity
+        if (walled && Vector3.Angle(dirToWall, lastFrameVel) < 90) rb.velocity = new Vector3(rb.velocity.x, 
+            Vector3.ProjectOnPlane(lastFrameVel, dirToWall).y, rb.velocity.z);
+
+        lastFrameVel = rb.velocity;
     }
 
     void Wallrun()
     {
+        Debug.Log("WALLRUN");
         
+        Vector3 dirToRight = (Quaternion.Euler(0,90,0) * dirToWall).normalized;
+        
+        if (enterState)
+        {
+            // Wallrundirection 1 = right and -1 = left
+            wallRunDirection = Vector3.Angle(rb.velocity, dirToRight) < 90 ? 1 : -1;
+            enterState = false;
+        }
+        
+        if (rb.velocity.magnitude < maxSpeed) rb.AddForce(dirToRight * acceleration * wallRunDirection);
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
     void Crouchmovement()
@@ -256,7 +280,7 @@ public class PlayerMovement2 : MonoBehaviour
         else if (action.canceled)
         {
             pressingJump = false;
-            if (wallRunning) WallJump();
+            if (currentState == movementState.wallrun) WallJump();
             wallRunning = false;
         }
         
@@ -301,7 +325,7 @@ public class PlayerMovement2 : MonoBehaviour
         dashCoolDown = 0.1f;
 
         Vector3 startPos = transform.position;
-        Vector3 dashDirection = camera.transform.rotation * Vector3.forward;
+        Vector3 dashDirection = head.transform.rotation * Vector3.forward;
         float startVelocity = rb.velocity.magnitude;
         
         rb.AddForce(dashDirection * (dashDistance * 10), ForceMode.Impulse);
@@ -323,23 +347,23 @@ public class PlayerMovement2 : MonoBehaviour
     {
         // Rotate the Camera around its local X axis
         float inputY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-        cameraVerticalRotation -= inputY;
-        cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, -90f, 90f);
-        camera.transform.localRotation = Quaternion.Euler(cameraVerticalRotation, 0f, 0f);
+        headVerticalRotation -= inputY;
+        headVerticalRotation = Mathf.Clamp(headVerticalRotation, -90f, 90f);
+        head.transform.localRotation = Quaternion.Euler(headVerticalRotation, 0f, 0f);
         
         // Rotate the Player Object around its Y axis
         float inputX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        cameraHorizontalRotation += inputX;
-        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
+        headHorizontalRotation += inputX;
+        transform.rotation = Quaternion.Euler(0f, headHorizontalRotation, 0f);
 
         // Gamepad input
         Vector2 input = rightStick.action.ReadValue<Vector2>();
-        cameraVerticalRotation -= input.y;
-        cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, -90f, 90f);
-        camera.transform.localRotation = Quaternion.Euler(cameraVerticalRotation, 0, 0);
+        headVerticalRotation -= input.y;
+        headVerticalRotation = Mathf.Clamp(headVerticalRotation, -90f, 90f);
+        head.transform.localRotation = Quaternion.Euler(headVerticalRotation, 0, 0);
 
-        cameraHorizontalRotation += input.x;
-        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
+        headHorizontalRotation += input.x;
+        transform.rotation = Quaternion.Euler(0f, headHorizontalRotation, 0f);
     }
     
     // ENVIROMENT CHECKS
@@ -351,11 +375,13 @@ public class PlayerMovement2 : MonoBehaviour
             grounded = true;
             wallRunning = false;
             dashing = false;
+            timeSinceGrounded = 0;
         }
         else // Not grounded
         {
             grounded = false;
             hasJumped = false;
+            timeSinceGrounded += Time.deltaTime;
         }
     }
 
