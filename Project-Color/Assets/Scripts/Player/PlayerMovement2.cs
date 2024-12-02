@@ -110,7 +110,7 @@ public class PlayerMovement2 : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        rb.useGravity = !grounded; // Disable gravity when grounded
+        //rb.useGravity = !grounded; // Disable gravity when grounded
         Walled();
         SlopeCheck();
         if (crouching || sliding) RoofCheck();
@@ -143,9 +143,10 @@ public class PlayerMovement2 : MonoBehaviour
             }else currentState = movementState.air;
         }
 
-        // When switching movement states
-        if (currentState != previousState) enterState = true;
-        
+        // Reset enterState when switching movement states
+        enterState = currentState != previousState;
+        previousState = currentState;
+
         switch (currentState) {
             case movementState.ground: GroundMovement(); break;
             case movementState.air: AirMovement(); break;
@@ -166,7 +167,11 @@ public class PlayerMovement2 : MonoBehaviour
 
     void GroundMovement()
     {
-        Debug.Log("GROUND");
+        if (enterState)
+        {
+            Debug.Log("GROUND");
+            enterState = false;
+        }
         
         Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
 
@@ -194,8 +199,12 @@ public class PlayerMovement2 : MonoBehaviour
 
     void AirMovement()
     {
-        Debug.Log("AIR");
-        
+        if (enterState)
+        {
+            Debug.Log("AIR");
+            enterState = false;
+        }
+
         Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
@@ -207,39 +216,43 @@ public class PlayerMovement2 : MonoBehaviour
         if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
         // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
         else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, velocityAlongXZ) * acceleration);
-        
-        // Prevent walls from stopping vertical velocity
-        if (walled && Vector3.Angle(dirToWall, lastFrameVel) < 90) rb.velocity = new Vector3(rb.velocity.x, 
-            Vector3.ProjectOnPlane(lastFrameVel, dirToWall).y, rb.velocity.z);
 
-        lastFrameVel = rb.velocity;
+        // Prevent walls from stopping vertical velocity
+        if (rb.velocity.y == 0 && walled) rb.velocity = new Vector3(rb.velocity.x, lastFrameVel.y, rb.velocity.z);
+        
+        if (rb.velocity.y != 0) lastFrameVel = rb.velocity;
     }
 
     void Wallrun()
     {
-        Debug.Log("WALLRUN");
-        
-        Vector3 dirToRight = (Quaternion.Euler(0,90,0) * dirToWall).normalized;
+        Vector3 rightFromWall = (Quaternion.Euler(0,90,0) * dirToWall).normalized;
         
         if (enterState)
         {
+            Debug.Log("WALLRUN");
             // Wallrundirection 1 = right and -1 = left
-            wallRunDirection = Vector3.Angle(rb.velocity, dirToRight) < 90 ? 1 : -1;
+            wallRunDirection = Vector3.Angle(rb.velocity, rightFromWall) < 90 ? 1 : -1;
             enterState = false;
         }
         
-        if (rb.velocity.magnitude < maxSpeed) rb.AddForce(dirToRight * acceleration * wallRunDirection);
+        if (rb.velocity.magnitude < maxSpeed) rb.AddForce(rightFromWall * acceleration * wallRunDirection);
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
     void Crouchmovement()
     {
-        
+        if (enterState)
+        {
+            enterState = false;
+        }
     }
 
     void SlideMovement()
     {
-        
+        if (enterState)
+        {
+            enterState = false;
+        }
     }
     
     void Jump()
