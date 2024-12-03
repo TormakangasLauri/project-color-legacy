@@ -31,7 +31,8 @@ public class PlayerMovement2 : MonoBehaviour
     private movementState previousState = movementState.ground;
 
     private Rigidbody rb;
-    public GameObject head;
+    private GameObject body;
+    private GameObject head;
 
     [Header("Movement")]
     public float acceleration = 70;
@@ -100,11 +101,19 @@ public class PlayerMovement2 : MonoBehaviour
     public bool underTerrain;
     public bool slamming;
 
+    private Vector3 originalBodyScale;
+    private float originalHeadHeight;
+
     private void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
+        body = transform.GetChild(0).gameObject;
+        head = transform.GetChild(1).gameObject;
+
+        originalBodyScale = body.transform.localScale;
+        originalHeadHeight = head.transform.localPosition.y;
     }
 
     private void Update()
@@ -130,10 +139,8 @@ public class PlayerMovement2 : MonoBehaviour
         // Define movement state
         if (grounded) {
             // Grounded
-            if (pressingCrouch) {
-                if (rb.velocity.magnitude < maxSpeed * 0.5) currentState = movementState.crouch; // Crouch
-                else currentState = movementState.slide; // Slide
-            }else currentState = movementState.ground; // Ground
+            if (crouching && rb.velocity.magnitude > maxSpeed * 0.5) currentState = movementState.slide; // Slide
+            else currentState = movementState.ground; // Ground
         }
         else {
             // Not grounded
@@ -144,7 +151,11 @@ public class PlayerMovement2 : MonoBehaviour
         }
 
         // Reset enterState when switching movement states
-        enterState = currentState != previousState;
+        if (currentState != previousState)
+        {
+            enterState = true;
+            if (previousState == movementState.crouch || previousState == movementState.slide) ExitCrouch();
+        }
         previousState = currentState;
 
         switch (currentState) {
@@ -169,8 +180,8 @@ public class PlayerMovement2 : MonoBehaviour
     {
         if (enterState)
         {
-            Debug.Log("GROUND");
             enterState = false;
+            Debug.Log("GROUND");
         }
         
         Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
@@ -201,8 +212,8 @@ public class PlayerMovement2 : MonoBehaviour
     {
         if (enterState)
         {
-            Debug.Log("AIR");
             enterState = false;
+            Debug.Log("AIR");
         }
 
         Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
@@ -216,11 +227,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
         // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
         else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, velocityAlongXZ) * acceleration);
-
-        // Prevent walls from stopping vertical velocity
-        if (rb.velocity.y == 0 && walled) rb.velocity = new Vector3(rb.velocity.x, lastFrameVel.y, rb.velocity.z);
-        
-        if (rb.velocity.y != 0) lastFrameVel = rb.velocity;
     }
 
     void Wallrun()
@@ -229,10 +235,10 @@ public class PlayerMovement2 : MonoBehaviour
         
         if (enterState)
         {
+            enterState = false;
             Debug.Log("WALLRUN");
             // Wallrundirection 1 = right and -1 = left
             wallRunDirection = Vector3.Angle(rb.velocity, rightFromWall) < 90 ? 1 : -1;
-            enterState = false;
         }
         
         if (rb.velocity.magnitude < maxSpeed) rb.AddForce(rightFromWall * acceleration * wallRunDirection);
@@ -244,6 +250,8 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
+            body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
+            head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
         }
     }
 
@@ -252,7 +260,15 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
+            body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
+            head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
         }
+    }
+
+    void ExitCrouch()
+    {
+        body.transform.localScale = originalBodyScale;
+        head.transform.localPosition = new Vector3(0, originalHeadHeight, 0);
     }
     
     void Jump()
