@@ -23,7 +23,6 @@ public class PlayerMovement2 : MonoBehaviour
         ground,
         air,
         wallrun,
-        crouch,
         slide
     }
 
@@ -50,7 +49,7 @@ public class PlayerMovement2 : MonoBehaviour
     [Header("Crouch")]
     public float crouchAcc = 70;
     public float maxCrouchSpeed = 10;
-    private bool crouching;
+    public bool crouching;
     public bool pressingCrouch;
 
     [Header("Jump")]
@@ -139,7 +138,12 @@ public class PlayerMovement2 : MonoBehaviour
         // Define movement state
         if (grounded) {
             // Grounded
-            if (crouching && rb.velocity.magnitude > maxSpeed * 0.5) currentState = movementState.slide; // Slide
+            if (pressingCrouch && rb.velocity.magnitude > maxCrouchSpeed * 1.5) currentState = movementState.slide; // Slide
+            else if (pressingCrouch)
+            {
+                crouching = true;
+                currentState = movementState.ground;
+            }
             else currentState = movementState.ground; // Ground
         }
         else {
@@ -154,7 +158,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (currentState != previousState)
         {
             enterState = true;
-            if (previousState == movementState.crouch || previousState == movementState.slide) ExitCrouch();
         }
         previousState = currentState;
 
@@ -162,7 +165,6 @@ public class PlayerMovement2 : MonoBehaviour
             case movementState.ground: GroundMovement(); break;
             case movementState.air: AirMovement(); break;
             case movementState.wallrun: Wallrun(); break;
-            case movementState.crouch: Crouchmovement(); break;
             case movementState.slide: SlideMovement(); break;
         }
     }
@@ -197,15 +199,27 @@ public class PlayerMovement2 : MonoBehaviour
         
         // Adjust movement direction to avoid getting stuck to walls
         if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
+
         
-        // Movement force
-        rb.AddForce(movementDirection * acceleration);
-        // Speed limit - apply force to the opposite direction of velocity
-        if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration
-        * (1 + velocityAlongGround.magnitude - maxSpeed) * 0.2f);
-        // Slow down when no movement inputs or if trying to move against the direction of velocity
-        else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
-        else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
+        if (!crouching) // Normal movement
+        {
+            rb.AddForce(movementDirection * acceleration);
+            // Speed limit - apply force to the opposite direction of velocity
+            if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration
+            * (1 + velocityAlongGround.magnitude - maxSpeed) * 0.15f);
+            // Slow down when no movement inputs or if trying to move against the direction of velocity
+            else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
+            else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
+        }
+        else // Crouching
+        {
+            rb.AddForce(movementDirection * crouchAcc);
+            // Speed limit
+            if (velocityAlongGround.magnitude > maxCrouchSpeed) rb.AddForce(-velocityAlongGround.normalized * crouchAcc);
+            // Slow down when no movement inputs or if trying to move against the direction of velocity
+            else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
+            else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
+        }
     }
 
     void AirMovement()
@@ -245,30 +259,29 @@ public class PlayerMovement2 : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
-    void Crouchmovement()
-    {
-        if (enterState)
-        {
-            enterState = false;
-            body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
-            head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
-        }
-    }
-
     void SlideMovement()
     {
         if (enterState)
         {
             enterState = false;
-            body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
-            head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
+            Debug.Log("SLIDE");
         }
+    }
+
+    void EnterCrouch()
+    {
+        crouching = true;
+        body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
+        head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
+        if (!grounded) transform.position = transform.position + Vector3.up * 0.75f;
     }
 
     void ExitCrouch()
     {
+        crouching = false;
         body.transform.localScale = originalBodyScale;
         head.transform.localPosition = new Vector3(0, originalHeadHeight, 0);
+        if (!grounded) transform.position = transform.position + Vector3.down * 0.75f;
     }
     
     void Jump()
@@ -290,7 +303,7 @@ public class PlayerMovement2 : MonoBehaviour
     /*
      _____                       _        
     |_   _|                     | |       
-      | |   _ __   _ __   _   _ | |_  ___ 
+      | |   _ __   _ __   _   _ | |_   ___ 
       | |  | '_ \ | '_ \ | | | || __|/ __|
      _| |_ | | | || |_) || |_| || |_ \__ \
     |_____||_| |_|| .__/  \__,_| \__||___/
@@ -329,11 +342,22 @@ public class PlayerMovement2 : MonoBehaviour
     
     public void CrouchInput(InputAction.CallbackContext action)
     {
-        if (action.performed) pressingCrouch = true;
+        if (action.performed)
+        {
+            pressingCrouch = true;
+            EnterCrouch();
+        }
         else if (action.canceled)
         {
             pressingCrouch = false;
-            if (!underTerrain) sliding = false;
+            if (!underTerrain) ExitCrouch();
+            else StartCoroutine(Exit());
+            
+            IEnumerator Exit()
+            {
+                yield return new WaitUntil(() => { return !underTerrain; });
+                ExitCrouch();
+            }
         }
     }
     
@@ -424,7 +448,7 @@ public class PlayerMovement2 : MonoBehaviour
     void RoofCheck()
     {
         bool checkTrue = false;
-        Vector3 rayPos = new Vector3(0.5f,-transform.localScale.y,0);
+        Vector3 rayPos = new Vector3(0.5f,0,0);
         for (int i = 0; i < 8; i++)
         {
             Quaternion rotation = Quaternion.Euler(0,45 * i,0);
