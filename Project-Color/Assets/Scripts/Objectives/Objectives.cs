@@ -72,7 +72,7 @@ public class Objectives : MonoBehaviour
             Debug.Log(score);
             if (score > PaintTarget.textureCoordinatesInPaintArea/384 * 8)
             {
-                Debug.Log("Vilho tee jotain joskus"); // Huono debug log ei vilho tänne kuitenkaan kato
+                Debug.Log("Vilho tee jotain joskus"); // Huono debug log ei vilho tänne kuitenkaan kato  -- Katonpas T. Vilho (enkä tee)
                 activeObjectives.Remove(objectives.paint);
             }
         }
