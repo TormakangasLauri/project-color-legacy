@@ -37,6 +37,8 @@ public class PlayerMovement2 : MonoBehaviour
     public float acceleration = 70;
     public float maxSpeed = 10;
     public float deceleration = 20;
+    public float airMovementVectorRotation = 50;
+    private Vector3 initialAirVelocity;
     private Vector2 moveInputDirection;
     private Vector3 lastFrameVel;
     
@@ -139,8 +141,7 @@ public class PlayerMovement2 : MonoBehaviour
         if (grounded) {
             // Grounded
             if (pressingCrouch && rb.velocity.magnitude > maxCrouchSpeed * 1.5) currentState = movementState.slide; // Slide
-            else if (pressingCrouch)
-            {
+            else if (pressingCrouch){
                 crouching = true;
                 currentState = movementState.ground;
             }
@@ -228,19 +229,22 @@ public class PlayerMovement2 : MonoBehaviour
         {
             enterState = false;
             Debug.Log("AIR");
+            initialAirVelocity = rb.velocity;
         }
 
-        Vector3 movementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 initialVelocityAlongXZ = new Vector3(initialAirVelocity.x, 0, initialAirVelocity.z);
+        Vector3 movementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, airMovementVectorRotation * Time.fixedDeltaTime);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
-        
+
         // Adjust movement direction to avoid getting stuck to walls
         if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
-        
+
         // Apply movement force normally when below speed limit or if moving in a way that would not increase speed
-        if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
+        //if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
         // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
-        else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, velocityAlongXZ) * acceleration);
+        //else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, initialVelocityAlongXZ) * acceleration
     }
 
     void Wallrun()
