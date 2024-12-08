@@ -232,19 +232,17 @@ public class PlayerMovement2 : MonoBehaviour
             initialAirVelocity = rb.velocity;
         }
 
-        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
-        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         Vector3 initialVelocityAlongXZ = new Vector3(initialAirVelocity.x, 0, initialAirVelocity.z);
-        Vector3 movementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, airMovementVectorRotation * Time.fixedDeltaTime);
+        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        Vector3 movementDirection = Vector3.Slerp(velocityAlongXZ.normalized, inputDirection, airMovementVectorRotation * Time.fixedDeltaTime);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
 
         // Adjust movement direction to avoid getting stuck to walls
         if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
 
-        // Apply movement force normally when below speed limit or if moving in a way that would not increase speed
-        //if (velocityAlongXZ.magnitude < maxSpeed || velocityMovementDirAngle > 90) rb.AddForce(movementDirection * acceleration);
-        // Apply only the relative sideways movement when over the speed limit to not speed up without assistance
-        //else rb.AddForce(Vector3.ProjectOnPlane(movementDirection, initialVelocityAlongXZ) * acceleration
+        if (velocityMovementDirAngle < 130 && velocityAlongXZ.magnitude < maxSpeed) rb.AddForce(movementDirection * acceleration);
+        if (velocityMovementDirAngle > 130) rb.AddForce(-velocityAlongXZ.normalized * acceleration/10);
     }
 
     void Wallrun()

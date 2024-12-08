@@ -1476,10 +1476,12 @@ MonoBehaviour:
   acceleration: 200
   maxSpeed: 10
   deceleration: 20
+  airMovementVectorRotation: 50
   maxSlopeAngle: 45
   onSlope: 0
   crouchAcc: 70
-  maxCrouchSpeed: 10
+  maxCrouchSpeed: 5
+  crouching: 0
   pressingCrouch: 0
   jumpForce: 12
   landingGracePeriod: 0.2
@@ -1787,7 +1789,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8232697654473289743}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 329909de42bb01542a89394498a06045, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
