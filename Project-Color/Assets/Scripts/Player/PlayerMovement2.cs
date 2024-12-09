@@ -37,16 +37,16 @@ public class PlayerMovement2 : MonoBehaviour
     public float acceleration = 70;
     public float maxSpeed = 10;
     public float deceleration = 20;
-    public float airMovementVectorRotation = 50;
-    private Vector3 initialAirVelocity;
+    public float airAcc = 20;
+    public float airDeceleration = 100;
+    public float airTurnSpeed = 50;
+    private Vector3 airMovementDirection;
     private Vector2 moveInputDirection;
-    private Vector3 lastFrameVel;
     
     [Header("Slope movement")]
     public float maxSlopeAngle = 45;
     public bool onSlope;
     private RaycastHit groundHit;
-    private Vector3 slopeMoveDir;
 
     [Header("Crouch")]
     public float crouchAcc = 70;
@@ -57,22 +57,19 @@ public class PlayerMovement2 : MonoBehaviour
     [Header("Jump")]
     public float jumpForce = 12;
     public float landingGracePeriod = 0.2f;
-    private float landingGrace;
     public bool pressingJump;
     private bool waitingToJump;
-    private bool hasJumped;
-    private float timeSinceJump;
 
     [Header("Wallrun")]
     public bool wallRunning;
     public int wallRunDirection;
-    private Vector3 wallRunForce;
 
     [Header("Slide")]
+    public float slideAcc = 10;
     public float maxSlideSpeed = 30;
+    public float slideTurnSpeed = 50;
     public bool sliding;
     private float slideForceTimer;
-    private Vector3 slideDirection;
 
     [Header("Dash")]
     public bool canDash = true;
@@ -120,7 +117,6 @@ public class PlayerMovement2 : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        //rb.useGravity = !grounded; // Disable gravity when grounded
         Walled();
         SlopeCheck();
         if (crouching || sliding) RoofCheck();
@@ -229,20 +225,27 @@ public class PlayerMovement2 : MonoBehaviour
         {
             enterState = false;
             Debug.Log("AIR");
-            initialAirVelocity = rb.velocity;
+            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
         }
 
-        Vector3 initialVelocityAlongXZ = new Vector3(initialAirVelocity.x, 0, initialAirVelocity.z);
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
-        Vector3 movementDirection = Vector3.Slerp(velocityAlongXZ.normalized, inputDirection, airMovementVectorRotation * Time.fixedDeltaTime);
-        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, movementDirection);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
+        float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
+
 
         // Adjust movement direction to avoid getting stuck to walls
-        if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
+        if (walled && Vector3.Angle(dirToWall, airMovementDirection) < 90) airMovementDirection = Vector3.ProjectOnPlane(airMovementDirection, dirToWall);
 
-        if (velocityMovementDirAngle < 130 && velocityAlongXZ.magnitude < maxSpeed) rb.AddForce(movementDirection * acceleration);
-        if (velocityMovementDirAngle > 130) rb.AddForce(-velocityAlongXZ.normalized * acceleration/10);
+        // Movement
+        if (inputMovementAngle < 130 || velocityAlongXZ.magnitude < 2)
+        {
+            if (velocityAlongXZ.magnitude >= 2) airMovementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, airTurnSpeed * Time.fixedDeltaTime);
+            else airMovementDirection = inputDirection;
+
+            if (velocityAlongXZ.magnitude < maxSpeed) rb.AddForce(airMovementDirection * inputDirection.magnitude * airAcc);
+            else rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, velocityAlongXZ) * inputDirection.magnitude * airAcc);
+        }else rb.AddForce(-velocityAlongXZ.normalized * airDeceleration * Mathf.Clamp01((velocityAlongXZ.magnitude - maxSpeed)/maxSpeed + 1) * 0.05f);
     }
 
     void Wallrun()
@@ -261,13 +264,34 @@ public class PlayerMovement2 : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
-    void SlideMovement()
+    void SlideMovement() // Base for this is literally copied from AirMovement and this uses some variables meant for air movement
     {
         if (enterState)
         {
             enterState = false;
             Debug.Log("SLIDE");
+            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
         }
+
+        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
+        float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
+
+
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, airMovementDirection) < 90) airMovementDirection = Vector3.ProjectOnPlane(airMovementDirection, dirToWall);
+
+        // Movement
+        if (inputMovementAngle < 130 || velocityAlongXZ.magnitude < 1)
+        {
+            if (velocityAlongXZ.magnitude >= 1) airMovementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, slideTurnSpeed * Time.fixedDeltaTime);
+            else airMovementDirection = inputDirection;
+
+            if (groundHit.normal != Vector3.up && rb.velocity.magnitude < maxSlideSpeed) rb.AddForce(-Vector3.ProjectOnPlane(Vector3.up, groundHit.normal).normalized * slideAcc);
+            rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, velocityAlongXZ) * inputDirection.magnitude * airAcc);
+        }
+        else rb.AddForce(-velocityAlongXZ.normalized * airDeceleration * Mathf.Clamp01((velocityAlongXZ.magnitude - maxSpeed) / maxSpeed + 1) * 0.05f);
     }
 
     void EnterCrouch()
@@ -298,8 +322,6 @@ public class PlayerMovement2 : MonoBehaviour
         
         // Walljumping makes the player jump away from the wall regardless of directional movement inputs
         rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
-        
-        hasJumped = true;
     }
     
     /*
@@ -435,7 +457,6 @@ public class PlayerMovement2 : MonoBehaviour
         else // Not grounded
         {
             grounded = false;
-            hasJumped = false;
             timeSinceGrounded += Time.deltaTime;
         }
     }

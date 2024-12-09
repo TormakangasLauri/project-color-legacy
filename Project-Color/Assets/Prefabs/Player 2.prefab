@@ -1476,7 +1476,7 @@ MonoBehaviour:
   acceleration: 200
   maxSpeed: 10
   deceleration: 20
-  airMovementVectorRotation: 50
+  airMovementVectorRotation: 2
   maxSlopeAngle: 45
   onSlope: 0
   crouchAcc: 70
