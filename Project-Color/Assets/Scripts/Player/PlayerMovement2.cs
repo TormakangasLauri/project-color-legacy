@@ -68,8 +68,8 @@ public class PlayerMovement2 : MonoBehaviour
     public float slideAcc = 10;
     public float maxSlideSpeed = 30;
     public float slideTurnSpeed = 50;
+    public float slideForce = 20;
     public bool sliding;
-    private float slideForceTimer;
 
     [Header("Dash")]
     public bool canDash = true;
@@ -164,9 +164,11 @@ public class PlayerMovement2 : MonoBehaviour
             case movementState.wallrun: Wallrun(); break;
             case movementState.slide: SlideMovement(); break;
         }
+
+        if (currentState == movementState.air) rb.AddForce(Vector3.down * gravity);
     }
 
-    /*
+    /* Movement
      __  __                                            _
     |  \/  |                                          | |
     | \  / |  ___ __   __ ___  _ __ ___    ___  _ __  | |_
@@ -271,6 +273,7 @@ public class PlayerMovement2 : MonoBehaviour
             enterState = false;
             Debug.Log("SLIDE");
             airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
+            rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, groundHit.normal).normalized * slideForce, ForceMode.Impulse);
         }
 
         Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -324,7 +327,7 @@ public class PlayerMovement2 : MonoBehaviour
         rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
     }
     
-    /*
+    /* Inputs
      _____                       _        
     |_   _|                     | |       
       | |   _ __   _ __   _   _ | |_   ___ 
