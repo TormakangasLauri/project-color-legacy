@@ -58,7 +58,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c436419f485089541a8c365c07416597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectiveList: []
+  enemySpawnPointGroups: []
+  killObjectiveText: {fileID: 0}
+  platformActive: 0
 --- !u!114 &565114066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,11 +73,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32cc41499a364784cb3870382267bb47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies:
+  enemyPrefabs:
   - {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
   - {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
   - {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
-  AllEnemies: []
-  basicEnemyList: []
-  SniperList: []
-  MILOList: []
+  - {fileID: 621487367663589408, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}

@@ -1006,6 +1006,7 @@ MonoBehaviour:
   cAttackKB: {x: 700, y: 200}
   slamDamage: 20
   slamKB: {x: 100, y: 600}
+  bounceRange: 5
   bounceForceOnPlayer: 30
   enemyBounceMult: 0.5
   bounceForceOnEnemy: 20
@@ -1476,7 +1477,9 @@ MonoBehaviour:
   acceleration: 200
   maxSpeed: 10
   deceleration: 20
-  airMovementVectorRotation: 2
+  airAcc: 20
+  airDeceleration: 100
+  airTurnSpeed: 50
   maxSlopeAngle: 45
   onSlope: 0
   crouchAcc: 70
@@ -1488,7 +1491,10 @@ MonoBehaviour:
   pressingJump: 0
   wallRunning: 0
   wallRunDirection: 0
+  slideAcc: 10
   maxSlideSpeed: 30
+  slideTurnSpeed: 50
+  slideForce: 10
   sliding: 0
   canDash: 1
   dashing: 0

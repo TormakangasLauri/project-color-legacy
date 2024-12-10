@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -329,6 +330,13 @@ public class PaintTarget : MonoBehaviour
             scores.z += scoresColor.b;
             scores.w += scoresColor.a;
         }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach (Vector3 pos in paintWorldPositions)
+            Gizmos.DrawSphere(pos, 0.1f);
     }
 
     // Helper function to convert UV coordinates to world position

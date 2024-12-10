@@ -14,6 +14,7 @@ using UnityEngine.UIElements;
 public class PlayerAttack : MonoBehaviour
 {
     private Collider hitbox;
+    private Rigidbody rb;
     public LayerMask enemyLayer;
     public List<GameObject> enemies;
 
@@ -65,6 +66,7 @@ public class PlayerAttack : MonoBehaviour
     public float slamDamage = 20;
     public Vector2 slamKB = new Vector2(100, 600);
     [Header("Bounce")]
+    public float bounceRange = 2;
     public float bounceForceOnPlayer = 30;
     public float enemyBounceMult = 1;
     public float bounceForceOnEnemy = 20;
@@ -77,11 +79,12 @@ public class PlayerAttack : MonoBehaviour
     private void Start()
     {
         hitbox = GetComponent<Collider>();
-        PM = transform.parent.GetComponentInParent<PlayerMovement2>();
+        rb = gameObject.transform.parent.GetComponentInParent<Rigidbody>();
+        PM = gameObject.transform.parent.GetComponentInParent<PlayerMovement2>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
-        SAC = transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
-        CP1 = transform.parent.GetChild(2).GetChild(4).GetComponent<CollisionPainter>();
-        CP2 = transform.parent.GetChild(2).GetChild(5).GetComponent<CollisionPainter>();
+        SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
+        CP1 = gameObject.transform.parent.GetChild(2).GetChild(4).GetComponent<CollisionPainter>();
+        CP2 = gameObject.transform.parent.GetChild(2).GetChild(5).GetComponent<CollisionPainter>();
     }
 
     private void Update()
@@ -206,16 +209,17 @@ public class PlayerAttack : MonoBehaviour
 
         RaycastHit hit;
         Transform cam = transform.parent;
-        Physics.Raycast(cam.position, cam.forward, out hit, 2, LayerMask.GetMask("Terrain"));
+        Physics.Raycast(cam.position, cam.forward, out hit, bounceRange, LayerMask.GetMask("Terrain"));
 
         RaycastHit enemyHit;
-        Physics.Raycast(cam.position, cam.forward, out enemyHit, 2, LayerMask.GetMask("Enemy"));
+        Physics.Raycast(cam.position, cam.forward, out enemyHit, bounceRange, LayerMask.GetMask("Enemy"));
 
         // If bounce hits an enemy, add force to enemy and the player away from each other
         // Hitting terrain only adds force to the player but more than when hitting enemies
         if (enemyHit.collider != null)
         {
             StartCoroutine(PlayBounceTrail());
+            rb.velocity = new Vector3(rb.velocity.x / 2, 0, rb.velocity.z / 2);
 
             // Add force to player when hitting an enemy
             Vector3 dir = -cam.forward;
@@ -224,7 +228,7 @@ public class PlayerAttack : MonoBehaviour
                 dir.y = 0;
                 dir.Normalize();
             }
-            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnPlayer * enemyBounceMult, ForceMode.Impulse);
+            rb.AddForce(dir * bounceForceOnPlayer * enemyBounceMult, ForceMode.Impulse);
             
             // Add force to targeted enemy
             dir = cam.forward;
@@ -239,13 +243,14 @@ public class PlayerAttack : MonoBehaviour
             foreach (GameObject enemy in enemies)
             {
                 Vector3 dir2 = (enemy.transform.position - transform.parent.parent.position).normalized;
-                enemy.GetComponent<EnemyHealth>().Knockback(dir2 * bounceForceOnEnemy/4, ForceMode.Impulse);
+                enemy.GetComponent<EnemyHealth>().Knockback(dir2 * bounceForceOnEnemy/2, ForceMode.Impulse);
             }
         }
         else if (hit.collider != null)
         {
             PlayBounceParticle();
             StartCoroutine(PlayBounceTrail());
+            rb.velocity = new Vector3(rb.velocity.x / 2, 0, rb.velocity.z / 2);
             
             // Add force to player when hitting terrain
             Vector3 dir = -cam.forward;
@@ -254,7 +259,7 @@ public class PlayerAttack : MonoBehaviour
                 dir.y = 0;
                 dir.Normalize();
             }
-            transform.parent.parent.GetComponent<Rigidbody>().AddForce(dir * bounceForceOnPlayer, ForceMode.Impulse);
+            rb.AddForce(dir * bounceForceOnPlayer, ForceMode.Impulse);
         }
     }
 
