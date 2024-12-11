@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class PaintObjective : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public List<PaintTarget.PaintPoint> paintPoints = new List<PaintTarget.PaintPoint>();
+    
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        paintPoints = PaintTarget.paintWorldPositions;
     }
 }

@@ -42,7 +42,18 @@ public class PaintTarget : MonoBehaviour
     public Texture2D splatTexPick;
 
     public static Collider paintArea;
-    public static List<Vector3> paintWorldPositions = new List<Vector3>();
+
+    public class PaintPoint
+    {
+        public Vector3 point;
+        public float scale;
+        public PaintPoint(Vector3 point, float scale)
+        {
+            this.point = point;
+            this.scale = scale;
+        }
+    }
+    public static List<PaintPoint> paintWorldPositions = new List<PaintPoint>();
     public static int textureCoordinatesInPaintArea;
     
     private bool bPickDirty = true;
@@ -234,7 +245,7 @@ public class PaintTarget : MonoBehaviour
             splatObject.name = "splatObject";
             splatObject.hideFlags = HideFlags.HideInHierarchy;
         }
-
+        
         splatObject.transform.position = point;
 
         Vector3 leftVec = Vector3.Cross(normal, Vector3.up);
@@ -248,6 +259,8 @@ public class PaintTarget : MonoBehaviour
         splatObject.transform.RotateAround(point, normal, Random.Range(-brush.splatRandomRotation, brush.splatRandomRotation));
         splatObject.transform.localScale = new Vector3(randScale, randScale, randScale) * brush.splatScale;
 
+        paintWorldPositions.Add(new PaintPoint(point, randScale * brush.splatScale)); // Store all paint points
+        
         Paint newPaint = new Paint();
         newPaint.paintMatrix = splatObject.transform.worldToLocalMatrix;
         newPaint.channelMask = brush.getMask();
@@ -284,8 +297,6 @@ public class PaintTarget : MonoBehaviour
         }
 
         PaintTarget[] targets = GameObject.FindObjectsOfType<PaintTarget>() as PaintTarget[];
-        
-        paintWorldPositions.Clear();
 
         foreach (PaintTarget target in targets)
         {
@@ -314,7 +325,7 @@ public class PaintTarget : MonoBehaviour
                     // Assuming the texture is mapped on the target object, get the world position of the pixel
                     Vector3 worldPos = UVToWorldPosition(target, uv);
                     
-                    paintWorldPositions.Add(worldPos);
+                    // paintWorldPositions.Add(worldPos);
 
                     // Check if the world position is inside the collider
                     // if (paintArea.bounds.Contains(worldPos))
@@ -330,13 +341,6 @@ public class PaintTarget : MonoBehaviour
             scores.z += scoresColor.b;
             scores.w += scoresColor.a;
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        foreach (Vector3 pos in paintWorldPositions)
-            Gizmos.DrawSphere(pos, 0.1f);
     }
 
     // Helper function to convert UV coordinates to world position

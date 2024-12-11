@@ -40,6 +40,7 @@ public class Brush
         splatRandomRotation = brush.splatRandomRotation;
 
         splatChannel = brush.splatChannel;
+        Vector5 x = new Vector5(1, 0, 1, 0, 1);
     }
 
     public Vector4 getMask()
