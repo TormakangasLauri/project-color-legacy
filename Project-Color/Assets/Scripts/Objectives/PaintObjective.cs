@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PaintObjective : MonoBehaviour
@@ -32,19 +33,40 @@ public class PaintObjective : MonoBehaviour
         int newPaint = paint - paintLastFrame;
         foreach (PaintTarget.PaintPoint p in paintPoints.GetRange(paintPoints.Count - newPaint, newPaint))
         {
-            BoxCollider pCol = paintColliders.AddComponent<BoxCollider>(); // Create a collider for the paint splat
-            pCol.center = p.point;
-            pCol.size = Vector3.one * p.scale;
+            GameObject paintObj = new GameObject("PaintObj"); // Paint splat object
+            paintObj.transform.position = p.point;
+            paintObj.transform.rotation = Quaternion.LookRotation(p.normal);
             
-            uncheckedPaintColliders.Add(pCol);
+            // paintObj.hideFlags = HideFlags.HideInHierarchy;
+
+            BoxCollider paintCol = paintObj.AddComponent<BoxCollider>(); // Create a collider for the paint splat
+            paintCol.isTrigger = true;
+            paintCol.size = new Vector3(p.scale, p.scale, 0.2f);
+            
+            uncheckedPaintColliders.Add(paintCol);
+            
+            StartCoroutine(DestroyCollider(paintObj)); // Destroy paintObj if it's not in the paint area
+        }
+        IEnumerator DestroyCollider(GameObject paint)
+        {
+            float t = 1f;
+            bool destroy = true;
+            yield return new WaitUntil(() =>
+            {
+                if (paint.name == "PaintOnObjective") destroy = false;
+                t -= Time.deltaTime;
+                return t <= 0;
+            });
+            if (destroy) Destroy(paint); // Destroy object if it's not in the paint area
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other.gameObject);
         if (uncheckedPaintColliders.Contains(other))
         {
-            
+            other.gameObject.name = "PaintOnObjective";
         }
     }
 }

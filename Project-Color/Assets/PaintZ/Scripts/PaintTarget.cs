@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Rendering;
 
 public enum PaintDebug
@@ -46,10 +47,12 @@ public class PaintTarget : MonoBehaviour
     public class PaintPoint
     {
         public Vector3 point;
+        public Vector3 normal;
         public float scale;
-        public PaintPoint(Vector3 point, float scale)
+        public PaintPoint(Vector3 point, Vector3 normal,float scale)
         {
             this.point = point;
+            this.normal = normal;
             this.scale = scale;
         }
     }
@@ -259,7 +262,7 @@ public class PaintTarget : MonoBehaviour
         splatObject.transform.RotateAround(point, normal, Random.Range(-brush.splatRandomRotation, brush.splatRandomRotation));
         splatObject.transform.localScale = new Vector3(randScale, randScale, randScale) * brush.splatScale;
 
-        paintWorldPositions.Add(new PaintPoint(point, randScale * brush.splatScale)); // Store all paint points
+        paintWorldPositions.Add(new PaintPoint(point, normal, randScale * brush.splatScale)); // Store all paint points
         
         Paint newPaint = new Paint();
         newPaint.paintMatrix = splatObject.transform.worldToLocalMatrix;
