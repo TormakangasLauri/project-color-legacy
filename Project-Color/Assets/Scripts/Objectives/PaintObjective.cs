@@ -4,21 +4,35 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PaintObjective : MonoBehaviour
+public class PaintObjective : Objective
 {
     private Collider paintArea;
     private GameObject paintColliders;
     public List<PaintTarget.PaintPoint> paintPoints = new List<PaintTarget.PaintPoint>();
     private List<Collider> uncheckedPaintColliders = new List<Collider>();
+    
+    private List<Vector3> paintAreaPoints = new List<Vector3>();
+    private List<Vector3> paintAreaPointsCovered = new List<Vector3>();
 
     private int paint;
     private int paintLastFrame;
+
+    public int paintPercentage;
     
     void Start()
     {
         paintArea = GetComponent<Collider>();
         paintColliders = GameObject.Find("PaintColliders");
         paintPoints = PaintTarget.paintWorldPositions;
+
+        // Create paint check points for the paint area
+        Vector3 scale = transform.localScale;
+        for (float y = -scale.y/2; y <= scale.y/2; y += 0.2f)
+            for (float x = -scale.x/2; x <= scale.x/2; x += 0.2f)
+            {
+                Vector3 point = transform.position + transform.up * y + transform.right * x;
+                paintAreaPoints.Add(point);
+            }
     }
 
     private void Update()
@@ -37,36 +51,32 @@ public class PaintObjective : MonoBehaviour
             paintObj.transform.position = p.point;
             paintObj.transform.rotation = Quaternion.LookRotation(p.normal);
             
-            // paintObj.hideFlags = HideFlags.HideInHierarchy;
+            paintObj.hideFlags = HideFlags.HideInHierarchy;
 
             BoxCollider paintCol = paintObj.AddComponent<BoxCollider>(); // Create a collider for the paint splat
             paintCol.isTrigger = true;
             paintCol.size = new Vector3(p.scale, p.scale, 0.2f);
             
             uncheckedPaintColliders.Add(paintCol);
-            
-            StartCoroutine(DestroyCollider(paintObj)); // Destroy paintObj if it's not in the paint area
-        }
-        IEnumerator DestroyCollider(GameObject paint)
-        {
-            float t = 1f;
+
+            List<Vector3> pointsInCol = new List<Vector3>();
             bool destroy = true;
-            yield return new WaitUntil(() =>
-            {
-                if (paint.name == "PaintOnObjective") destroy = false;
-                t -= Time.deltaTime;
-                return t <= 0;
-            });
-            if (destroy) Destroy(paint); // Destroy object if it's not in the paint area
+            foreach (Vector3 point in paintAreaPoints) // Check wheter the collider is in the paint area
+                if (paintCol.bounds.Contains(point))
+                {
+                    destroy = false;
+                    pointsInCol.Add(point);
+                }
+            if (destroy) Destroy(paintObj);
+            else UpdatePaintArea(pointsInCol);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void UpdatePaintArea(List<Vector3> points)
     {
-        Debug.Log(other.gameObject);
-        if (uncheckedPaintColliders.Contains(other))
-        {
-            other.gameObject.name = "PaintOnObjective";
-        }
+        foreach (Vector3 point in points)
+            if (!paintAreaPointsCovered.Contains(point))
+                paintAreaPointsCovered.Add(point);
+        paintPercentage = (int)((float)(paintAreaPointsCovered.Count)/(float)(paintAreaPoints.Count) * 100);
     }
 }
