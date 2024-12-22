@@ -1493,7 +1493,7 @@ MonoBehaviour:
   wallRunDirection: 0
   slideAcc: 10
   maxSlideSpeed: 30
-  slideTurnSpeed: 50
+  slideTurnSpeed: 30
   slideForce: 10
   sliding: 0
   canDash: 1

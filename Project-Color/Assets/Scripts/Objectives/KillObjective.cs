@@ -45,12 +45,14 @@ public class KillObjective : Objective
     IEnumerator Objective()
     {
         active = true;
+        Debug.Log("Kill objective started");
         
         StartCoroutine(StartSpawnWaves());
         
         yield return new WaitUntil(() => !spawning);
         Debug.Log("Kill objective complete");
         active = false;
+        completed = true;
     }
     
     IEnumerator StartSpawnWaves()
