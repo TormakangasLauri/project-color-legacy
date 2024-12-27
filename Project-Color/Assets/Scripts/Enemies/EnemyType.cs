@@ -29,9 +29,13 @@ public abstract class EnemyType : MonoBehaviour
 
     public bool deactivateOnStart = true;
 
+    private void Awake()
+    {
+        target = GameObject.Find("Player 2");
+    }
+
     void Start()
     {
-        target = GameObject.Find("Player");
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
 
         switch (type)

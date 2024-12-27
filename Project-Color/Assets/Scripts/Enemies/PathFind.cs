@@ -19,16 +19,15 @@ public class PathFind : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         ET = GetComponentInParent<EnemyType>();
         terrainLayer = LayerMask.GetMask("Terrain");
+        target = ET.target;
     }
 
     void Update()
     {
-        target = ET.target;
-
         transform.localPosition = Vector3.zero;
         
         RaycastHit hit;
-        Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
+        Physics.Raycast(target.transform.position + Vector3.up, Vector3.down, out hit, 100, terrainLayer);
         
         NavMeshPath path = new NavMeshPath();
         agent.enabled = true;

@@ -158,4 +158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   completed: 0
+  pointIndicator: {fileID: 3558233713970852140, guid: 55abe973e65740c45ae83fdaf034a7b4, type: 3}
+  mat: {fileID: 2100000, guid: 6d90c0d808b681649ae25aa30ee6ba27, type: 2}
+  paintAreaColliders: []
   paintPercentage: 0
