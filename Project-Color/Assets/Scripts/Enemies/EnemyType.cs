@@ -31,7 +31,8 @@ public abstract class EnemyType : MonoBehaviour
 
     private void Awake()
     {
-        target = GameObject.Find("Player 2");
+        // target = GameObject.Find("Player 2");
+        target = GameObject.FindWithTag("PlayerRoot");
     }
 
     void Start()

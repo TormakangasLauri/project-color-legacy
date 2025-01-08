@@ -6,6 +6,7 @@ public class BasicEnemy : EnemyType
 {
     void Awake()
     {
+        target = GameObject.FindWithTag("PlayerRoot");
         type = Type.basic;
     }
 }

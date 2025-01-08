@@ -22,6 +22,7 @@ public class PaintObjective : Objective
     private int paintLastFrame;
 
     public int paintPercentage;
+    public int percentageToComplete = 90;
     
     void Start()
     {
@@ -80,7 +81,7 @@ public class PaintObjective : Objective
     {
         active = true;
         Debug.Log("Paint objective started");
-        yield return new WaitUntil(() => paintPercentage > 90);
+        yield return new WaitUntil(() => paintPercentage > percentageToComplete);
         active = false;
         completed = true;
         Debug.Log("Paint objective complete");

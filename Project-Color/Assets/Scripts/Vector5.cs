@@ -11,6 +11,10 @@ namespace UnityEngine
   /// <summary>
   ///   <para>Representation of five-dimensional vectors.</para>
   /// </summary>
+  // [Il2CppEagerStaticClassConstruction]
+  // [NativeHeader("Runtime/Math/Vector5.h")]
+  // [NativeClass("Vector5f")]
+  // [RequiredByNativeCode(Optional = true, GenerateProxy = true)]
   public struct Vector5
   {
     public const float kEpsilon = 1E-05f;
@@ -158,339 +162,349 @@ namespace UnityEngine
       this.v = 0.0f;
     }
     
-  //   
-  //   /// <summary>
-  //   ///   <para>Set x, y, z and w components of an existing Vector4.</para>
-  //   /// </summary>
-  //   /// <param name="newX"></param>
-  //   /// <param name="newY"></param>
-  //   /// <param name="newZ"></param>
-  //   /// <param name="newW"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public void Set(float newX, float newY, float newZ, float newW)
-  //   {
-  //     this.x = newX;
-  //     this.y = newY;
-  //     this.z = newZ;
-  //     this.w = newW;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Linearly interpolates between two vectors.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   /// <param name="t"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Lerp(Vector4 a, Vector4 b, float t)
-  //   {
-  //     t = Mathf.Clamp01(t);
-  //     return new Vector4(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Linearly interpolates between two vectors.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   /// <param name="t"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 LerpUnclamped(Vector4 a, Vector4 b, float t)
-  //   {
-  //     return new Vector4(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Moves a point current towards target.</para>
-  //   /// </summary>
-  //   /// <param name="current"></param>
-  //   /// <param name="target"></param>
-  //   /// <param name="maxDistanceDelta"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 MoveTowards(Vector4 current, Vector4 target, float maxDistanceDelta)
-  //   {
-  //     float num1 = target.x - current.x;
-  //     float num2 = target.y - current.y;
-  //     float num3 = target.z - current.z;
-  //     float num4 = target.w - current.w;
-  //     float d = (float) ((double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3 + (double) num4 * (double) num4);
-  //     if ((double) d == 0.0 || (double) maxDistanceDelta >= 0.0 && (double) d <= (double) maxDistanceDelta * (double) maxDistanceDelta)
-  //       return target;
-  //     float num5 = (float) Math.Sqrt((double) d);
-  //     return new Vector4(current.x + num1 / num5 * maxDistanceDelta, current.y + num2 / num5 * maxDistanceDelta, current.z + num3 / num5 * maxDistanceDelta, current.w + num4 / num5 * maxDistanceDelta);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Multiplies two vectors component-wise.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Scale(Vector4 a, Vector4 b)
-  //   {
-  //     return new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Multiplies every component of this vector by the same component of scale.</para>
-  //   /// </summary>
-  //   /// <param name="scale"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public void Scale(Vector4 scale)
-  //   {
-  //     this.x *= scale.x;
-  //     this.y *= scale.y;
-  //     this.z *= scale.z;
-  //     this.w *= scale.w;
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public override int GetHashCode()
-  //   {
-  //     return this.x.GetHashCode() ^ this.y.GetHashCode() << 2 ^ this.z.GetHashCode() >> 2 ^ this.w.GetHashCode() >> 1;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns true if the given vector is exactly equal to this vector.</para>
-  //   /// </summary>
-  //   /// <param name="other"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public override bool Equals(object other) => other is Vector4 other1 && this.Equals(other1);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public bool Equals(Vector4 other)
-  //   {
-  //     return (double) this.x == (double) other.x && (double) this.y == (double) other.y && (double) this.z == (double) other.z && (double) this.w == (double) other.w;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para></para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Normalize(Vector4 a)
-  //   {
-  //     float num = Vector4.Magnitude(a);
-  //     return (double) num > 9.999999747378752E-06 ? a / num : Vector4.zero;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Makes this vector have a magnitude of 1.</para>
-  //   /// </summary>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public void Normalize()
-  //   {
-  //     float num = Vector4.Magnitude(this);
-  //     if ((double) num > 9.999999747378752E-06)
-  //       this = this / num;
-  //     else
-  //       this = Vector4.zero;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns this vector with a magnitude of 1 (Read Only).</para>
-  //   /// </summary>
-  //   public Vector4 normalized
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.Normalize(this);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Dot Product of two vectors.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static float Dot(Vector4 a, Vector4 b)
-  //   {
-  //     return (float) ((double) a.x * (double) b.x + (double) a.y * (double) b.y + (double) a.z * (double) b.z + (double) a.w * (double) b.w);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Projects a vector onto another vector.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Project(Vector4 a, Vector4 b)
-  //   {
-  //     return b * (Vector4.Dot(a, b) / Vector4.Dot(b, b));
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns the distance between a and b.</para>
-  //   /// </summary>
-  //   /// <param name="a"></param>
-  //   /// <param name="b"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static float Distance(Vector4 a, Vector4 b) => Vector4.Magnitude(a - b);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static float Magnitude(Vector4 a) => (float) Math.Sqrt((double) Vector4.Dot(a, a));
-  //
-  //   /// <summary>
-  //   ///   <para>Returns the length of this vector (Read Only).</para>
-  //   /// </summary>
-  //   public float magnitude
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get
-  //     {
-  //       return (float) Math.Sqrt((double) Vector4.Dot(this, this));
-  //     }
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns the squared length of this vector (Read Only).</para>
-  //   /// </summary>
-  //   public float sqrMagnitude
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.Dot(this, this);
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns a vector that is made from the smallest components of two vectors.</para>
-  //   /// </summary>
-  //   /// <param name="lhs"></param>
-  //   /// <param name="rhs"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Min(Vector4 lhs, Vector4 rhs)
-  //   {
-  //     return new Vector4(Mathf.Min(lhs.x, rhs.x), Mathf.Min(lhs.y, rhs.y), Mathf.Min(lhs.z, rhs.z), Mathf.Min(lhs.w, rhs.w));
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Returns a vector that is made from the largest components of two vectors.</para>
-  //   /// </summary>
-  //   /// <param name="lhs"></param>
-  //   /// <param name="rhs"></param>
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 Max(Vector4 lhs, Vector4 rhs)
-  //   {
-  //     return new Vector4(Mathf.Max(lhs.x, rhs.x), Mathf.Max(lhs.y, rhs.y), Mathf.Max(lhs.z, rhs.z), Mathf.Max(lhs.w, rhs.w));
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Shorthand for writing Vector4(0,0,0,0).</para>
-  //   /// </summary>
-  //   public static Vector4 zero
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.zeroVector;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Shorthand for writing Vector4(1,1,1,1).</para>
-  //   /// </summary>
-  //   public static Vector4 one
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.oneVector;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Shorthand for writing Vector4(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity).</para>
-  //   /// </summary>
-  //   public static Vector4 positiveInfinity
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.positiveInfinityVector;
-  //   }
-  //
-  //   /// <summary>
-  //   ///   <para>Shorthand for writing Vector4(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity).</para>
-  //   /// </summary>
-  //   public static Vector4 negativeInfinity
-  //   {
-  //     [MethodImpl((MethodImplOptions) 256)] get => Vector4.negativeInfinityVector;
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator +(Vector4 a, Vector4 b)
-  //   {
-  //     return new Vector4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator -(Vector4 a, Vector4 b)
-  //   {
-  //     return new Vector4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator -(Vector4 a) => new Vector4(-a.x, -a.y, -a.z, -a.w);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator *(Vector4 a, float d)
-  //   {
-  //     return new Vector4(a.x * d, a.y * d, a.z * d, a.w * d);
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator *(float d, Vector4 a)
-  //   {
-  //     return new Vector4(a.x * d, a.y * d, a.z * d, a.w * d);
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static Vector4 operator /(Vector4 a, float d)
-  //   {
-  //     return new Vector4(a.x / d, a.y / d, a.z / d, a.w / d);
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static bool operator ==(Vector4 lhs, Vector4 rhs)
-  //   {
-  //     float num1 = lhs.x - rhs.x;
-  //     float num2 = lhs.y - rhs.y;
-  //     float num3 = lhs.z - rhs.z;
-  //     float num4 = lhs.w - rhs.w;
-  //     return (double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3 + (double) num4 * (double) num4 < 9.999999439624929E-11;
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static bool operator !=(Vector4 lhs, Vector4 rhs) => !(lhs == rhs);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static implicit operator Vector4(Vector3 v) => new Vector4(v.x, v.y, v.z, 0.0f);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static implicit operator Vector3(Vector4 v) => new Vector3(v.x, v.y, v.z);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static implicit operator Vector4(Vector2 v) => new Vector4(v.x, v.y, 0.0f, 0.0f);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static implicit operator Vector2(Vector4 v) => new Vector2(v.x, v.y);
-  //
-  //   /// <summary>
-  //   ///   <para>Returns a formatted string for this vector.</para>
-  //   /// </summary>
-  //   /// <param name="format">A numeric format string.</param>
-  //   /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
-  //   public override string ToString() => this.ToString((string) null, (IFormatProvider) null);
-  //
-  //   /// <summary>
-  //   ///   <para>Returns a formatted string for this vector.</para>
-  //   /// </summary>
-  //   /// <param name="format">A numeric format string.</param>
-  //   /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
-  //   public string ToString(string format) => this.ToString(format, (IFormatProvider) null);
-  //
-  //   /// <summary>
-  //   ///   <para>Returns a formatted string for this vector.</para>
-  //   /// </summary>
-  //   /// <param name="format">A numeric format string.</param>
-  //   /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
-  //   public string ToString(string format, IFormatProvider formatProvider)
-  //   {
-  //     if (string.IsNullOrEmpty(format))
-  //       format = "F2";
-  //     if (formatProvider == null)
-  //       formatProvider = (IFormatProvider) CultureInfo.InvariantCulture.NumberFormat;
-  //     return UnityString.Format("({0}, {1}, {2}, {3})", (object) this.x.ToString(format, formatProvider), (object) this.y.ToString(format, formatProvider), (object) this.z.ToString(format, formatProvider), (object) this.w.ToString(format, formatProvider));
-  //   }
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public static float SqrMagnitude(Vector4 a) => Vector4.Dot(a, a);
-  //
-  //   [MethodImpl((MethodImplOptions) 256)]
-  //   public float SqrMagnitude() => Vector4.Dot(this, this);
+    
+    /// <summary>
+    ///   <para>Set x, y, z, w and v components of an existing Vector5.</para>
+    /// </summary>
+    /// <param name="newX"></param>
+    /// <param name="newY"></param>
+    /// <param name="newZ"></param>
+    /// <param name="newW"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public void Set(float newX, float newY, float newZ, float newW, float newV)
+    {
+      this.x = newX;
+      this.y = newY;
+      this.z = newZ;
+      this.w = newW;
+      this.v = newV;
+    }
+    
+    /// <summary>
+    ///   <para>Linearly interpolates between two vectors.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="t"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Lerp(Vector5 a, Vector5 b, float t)
+    {
+      t = Mathf.Clamp01(t);
+      return new Vector5(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t, a.v + (b.v - a.v) * t);
+    }
+    
+    /// <summary>
+    ///   <para>Linearly interpolates between two vectors.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="t"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 LerpUnclamped(Vector5 a, Vector5 b, float t)
+    {
+      return new Vector5(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t, a.v + (b.v - a.v) * t);
+    }
+    
+    /// <summary>
+    ///   <para>Moves a point current towards target.</para>
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="target"></param>
+    /// <param name="maxDistanceDelta"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 MoveTowards(Vector5 current, Vector5 target, float maxDistanceDelta)
+    {
+      float num1 = target.x - current.x;
+      float num2 = target.y - current.y;
+      float num3 = target.z - current.z;
+      float num4 = target.w - current.w;
+      float num5 = target.v - current.v;
+      float d = (float) ((double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3 + (double) num4 * (double) num4 + (double) num5 * (double) num5);
+      if ((double) d == 0.0 || (double) maxDistanceDelta >= 0.0 && (double) d <= (double) maxDistanceDelta * (double) maxDistanceDelta)
+        return target;
+      float num6 = (float) Math.Sqrt((double) d);
+      return new Vector5(current.x + num1 / num6 * maxDistanceDelta, current.y + num2 / num6 * maxDistanceDelta, current.z + num3 / num6 * maxDistanceDelta, current.w + num4 / num6 * maxDistanceDelta, current.v + num5 / num6 * maxDistanceDelta);
+    }
+    
+    /// <summary>
+    ///   <para>Multiplies two vectors component-wise.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Scale(Vector5 a, Vector5 b)
+    {
+      return new Vector5(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w, a.v * b.v);
+    }
+    
+    /// <summary>
+    ///   <para>Multiplies every component of this vector by the same component of scale.</para>
+    /// </summary>
+    /// <param name="scale"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public void Scale(Vector5 scale)
+    {
+      this.x *= scale.x;
+      this.y *= scale.y;
+      this.z *= scale.z;
+      this.w *= scale.w;
+      this.v *= scale.v;
+    }
+    
+    // [MethodImpl((MethodImplOptions) 256)]
+    // public override int GetHashCode()
+    // {
+    //   return this.x.GetHashCode() ^ this.y.GetHashCode() << 2 ^ this.z.GetHashCode() >> 2 ^ this.w.GetHashCode() >> 1;
+    // }
+    
+    /// <summary>
+    ///   <para>Returns true if the given vector is exactly equal to this vector.</para>
+    /// </summary>
+    /// <param name="other"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public override bool Equals(object other) => other is Vector5 other1 && this.Equals(other1);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public bool Equals(Vector5 other)
+    {
+      return (double) this.x == (double) other.x && (double) this.y == (double) other.y && (double) this.z == (double) other.z && (double) this.w == (double) other.w && (double) this.v == (double) other.v;
+    }
+    
+    /// <summary>
+    ///   <para></para>
+    /// </summary>
+    /// <param name="a"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Normalize(Vector5 a)
+    {
+      float num = Vector5.Magnitude(a);
+      return (double) num > 9.999999747378752E-06 ? a / num : Vector5.zero;
+    }
+    
+    /// <summary>
+    ///   <para>Makes this vector have a magnitude of 1.</para>
+    /// </summary>
+    [MethodImpl((MethodImplOptions) 256)]
+    public void Normalize()
+    {
+      float num = Vector5.Magnitude(this);
+      if ((double) num > 9.999999747378752E-06)
+        this = this / num;
+      else
+        this = Vector5.zero;
+    }
+    
+    /// <summary>
+    ///   <para>Returns this vector with a magnitude of 1 (Read Only).</para>
+    /// </summary>
+    public Vector4 normalized
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.Normalize(this);
+    }
+    
+    /// <summary>
+    ///   <para>Dot Product of two vectors.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static float Dot(Vector5 a, Vector5 b)
+    {
+      return (float) ((double) a.x * (double) b.x + (double) a.y * (double) b.y + (double) a.z * (double) b.z + (double) a.w * (double) b.w+ (double) a.v * (double) b.v);
+    }
+    
+    /// <summary>
+    ///   <para>Projects a vector onto another vector.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Project(Vector5 a, Vector5 b)
+    {
+      return b * (Vector5.Dot(a, b) / Vector5.Dot(b, b));
+    }
+    
+    /// <summary>
+    ///   <para>Returns the distance between a and b.</para>
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static float Distance(Vector5 a, Vector5 b) => Vector5.Magnitude(a - b);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static float Magnitude(Vector5 a) => (float) Math.Sqrt((double) Vector5.Dot(a, a));
+    
+    /// <summary>
+    ///   <para>Returns the length of this vector (Read Only).</para>
+    /// </summary>
+    public float magnitude
+    {
+      [MethodImpl((MethodImplOptions) 256)] get
+      {
+        return (float) Math.Sqrt((double) Vector5.Dot(this, this));
+      }
+    }
+    
+    /// <summary>
+    ///   <para>Returns the squared length of this vector (Read Only).</para>
+    /// </summary>
+    public float sqrMagnitude
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.Dot(this, this);
+    }
+    
+    /// <summary>
+    ///   <para>Returns a vector that is made from the smallest components of two vectors.</para>
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Min(Vector5 lhs, Vector5 rhs)
+    {
+      return new Vector5(Mathf.Min(lhs.x, rhs.x), Mathf.Min(lhs.y, rhs.y), Mathf.Min(lhs.z, rhs.z), Mathf.Min(lhs.w, rhs.w), Mathf.Min(lhs.v, rhs.v));
+    }
+    
+    /// <summary>
+    ///   <para>Returns a vector that is made from the largest components of two vectors.</para>
+    /// </summary>
+    /// <param name="lhs"></param>
+    /// <param name="rhs"></param>
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 Max(Vector5 lhs, Vector5 rhs)
+    {
+      return new Vector5(Mathf.Max(lhs.x, rhs.x), Mathf.Max(lhs.y, rhs.y), Mathf.Max(lhs.z, rhs.z), Mathf.Max(lhs.w, rhs.w), Mathf.Max(lhs.v, rhs.v));
+    }
+    
+    /// <summary>
+    ///   <para>Shorthand for writing Vector4(0,0,0,0).</para>
+    /// </summary>
+    public static Vector5 zero
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.zeroVector;
+    }
+    
+    /// <summary>
+    ///   <para>Shorthand for writing Vector4(1,1,1,1).</para>
+    /// </summary>
+    public static Vector5 one
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.oneVector;
+    }
+    
+    /// <summary>
+    ///   <para>Shorthand for writing Vector4(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity).</para>
+    /// </summary>
+    public static Vector4 positiveInfinity
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.positiveInfinityVector;
+    }
+    
+    /// <summary>
+    ///   <para>Shorthand for writing Vector4(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity).</para>
+    /// </summary>
+    public static Vector4 negativeInfinity
+    {
+      [MethodImpl((MethodImplOptions) 256)] get => Vector5.negativeInfinityVector;
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator +(Vector5 a, Vector5 b)
+    {
+      return new Vector5(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w, a.v + b.v);
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator -(Vector5 a, Vector5 b)
+    {
+      return new Vector5(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w, a.v - b.v);
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator -(Vector5 a) => new Vector5(-a.x, -a.y, -a.z, -a.w, -a.v);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator *(Vector5 a, float d)
+    {
+      return new Vector5(a.x * d, a.y * d, a.z * d, a.w * d, a.v * d);
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator *(float d, Vector5 a)
+    {
+      return new Vector5(a.x * d, a.y * d, a.z * d, a.w * d, a.v * d);
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static Vector5 operator /(Vector5 a, float d)
+    {
+      return new Vector5(a.x / d, a.y / d, a.z / d, a.w / d, a.v / d);
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static bool operator ==(Vector5 lhs, Vector5 rhs)
+    {
+      float num1 = lhs.x - rhs.x;
+      float num2 = lhs.y - rhs.y;
+      float num3 = lhs.z - rhs.z;
+      float num4 = lhs.w - rhs.w;
+      float num5 = lhs.v - rhs.v;
+      return (double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3 + (double) num4 * (double) num4 + (double) num5 * (double) num5 < 9.999999439624929E-11;
+    }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static bool operator !=(Vector5 lhs, Vector5 rhs) => !(lhs == rhs);
+    
+    [MethodImpl((MethodImplOptions)256)]
+    public static implicit operator Vector5(Vector4 v) => new Vector5(v.x, v.y, v.z, v.w, 0.0f);
+    
+    [MethodImpl((MethodImplOptions)256)]
+    public static implicit operator Vector4(Vector5 v) => new Vector4(v.x, v.y, v.z, v.w);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static implicit operator Vector5(Vector3 v) => new Vector5(v.x, v.y, v.z, 0.0f);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static implicit operator Vector3(Vector5 v) => new Vector3(v.x, v.y, v.z);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static implicit operator Vector5(Vector2 v) => new Vector5(v.x, v.y, 0.0f, 0.0f);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static implicit operator Vector2(Vector5 v) => new Vector2(v.x, v.y);
+    
+    // /// <summary>
+    // ///   <para>Returns a formatted string for this vector.</para>
+    // /// </summary>
+    // /// <param name="format">A numeric format string.</param>
+    // /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
+    // public override string ToString() => this.ToString((string) null, (IFormatProvider) null);
+    //
+    // /// <summary>
+    // ///   <para>Returns a formatted string for this vector.</para>
+    // /// </summary>
+    // /// <param name="format">A numeric format string.</param>
+    // /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
+    // public string ToString(string format) => this.ToString(format, (IFormatProvider) null);
+    //
+    // /// <summary>
+    // ///   <para>Returns a formatted string for this vector.</para>
+    // /// </summary>
+    // /// <param name="format">A numeric format string.</param>
+    // /// <param name="formatProvider">An object that specifies culture-specific formatting.</param>
+    // public string ToString(string format, IFormatProvider formatProvider)
+    // {
+    //   if (string.IsNullOrEmpty(format))
+    //     format = "F2";
+    //   if (formatProvider == null)
+    //     formatProvider = (IFormatProvider) CultureInfo.InvariantCulture.NumberFormat;
+    //   return UnityString.Format("({0}, {1}, {2}, {3}, {4})", (object) this.x.ToString(format, formatProvider), (object) this.y.ToString(format, formatProvider), (object) this.z.ToString(format, formatProvider), (object) this.w.ToString(format, formatProvider), this.v.ToString(format, formatProvider));
+    // }
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public static float SqrMagnitude(Vector5 a) => Vector5.Dot(a, a);
+    
+    [MethodImpl((MethodImplOptions) 256)]
+    public float SqrMagnitude() => Vector5.Dot(this, this);
   }
 }

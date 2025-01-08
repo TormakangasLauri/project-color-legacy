@@ -36,7 +36,7 @@ public class SniperShooting : MonoBehaviour
         //     LOSToTarget = false;
 
         Vector3 position = transform.position;
-        Vector3 tPosition = GameObject.Find("Player").transform.position;
+        Vector3 tPosition = GameObject.FindWithTag("PlayerRoot").transform.position;
         LOSToTarget = !Physics.Raycast(position, tPosition - position, Vector3.Distance(tPosition, position), LayerMask.GetMask("Terrain"));
 
         if (LOSToTarget && !moving) t -= Time.deltaTime;
