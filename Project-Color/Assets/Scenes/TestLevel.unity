@@ -706,34 +706,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemies.Array.data[3]
-      value: 
-      objectReference: {fileID: 9034387810334742493, guid: 446e25db5153600449f1f4d244735c77, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemyPrefabs.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemyPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 7073502008848142263, guid: 03c2d8516daca1e4688ea8868ee6db75, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemyPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemyPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
-    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemyPrefabs.Array.data[3]
-      value: 
-      objectReference: {fileID: 621487367663589408, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}
     - target: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: m_Name
       value: GameController
@@ -782,22 +754,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: killObjectiveText
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemySpawnPointGroups.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-      propertyPath: enemySpawnPointGroups.Array.data[0]
-      value: 
-      objectReference: {fileID: 2055032782}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
 --- !u!114 &140274234 stripped
@@ -805,8 +761,8 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8828409690634108385, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
   m_PrefabInstance: {fileID: 140274233}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1378589882}
-  m_Enabled: 0
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c436419f485089541a8c365c07416597, type: 3}
   m_Name: 
@@ -13762,28 +13718,6 @@ Transform:
   m_Father: {fileID: 238326126}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1378589882 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
-  m_PrefabInstance: {fileID: 140274233}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1378589886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1378589882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d4d7c7b46fd4a44816bb1889daa037, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  updateSpeed: 1
-  player1: {fileID: 0}
-  player2: {fileID: 0}
-  player3: {fileID: 0}
-  player4: {fileID: 0}
 --- !u!1 &1399911823
 GameObject:
   m_ObjectHideFlags: 0

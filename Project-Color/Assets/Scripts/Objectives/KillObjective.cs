@@ -45,6 +45,7 @@ public class KillObjective : Objective
     IEnumerator Objective()
     {
         active = true;
+        objectives.NewObjective(this);
         Debug.Log("Kill objective started");
         
         StartCoroutine(StartSpawnWaves());

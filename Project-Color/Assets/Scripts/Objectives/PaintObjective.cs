@@ -80,6 +80,7 @@ public class PaintObjective : Objective
     IEnumerator Objective()
     {
         active = true;
+        objectives.NewObjective(this);
         Debug.Log("Paint objective started");
         yield return new WaitUntil(() => paintPercentage > percentageToComplete);
         active = false;

@@ -24,6 +24,7 @@ public class PlatformObjective : Objective
                 endTrigger.enabled = true;
 
                 active = true;
+                objectives.NewObjective(this);
                 Debug.Log("Platform objective started");
             }
             else

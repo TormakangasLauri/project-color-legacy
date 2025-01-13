@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1302738677871118287}
   - component: {fileID: 8828409690634108385}
   - component: {fileID: 565114066}
+  - component: {fileID: 1378589886}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -58,9 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c436419f485089541a8c365c07416597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemySpawnPointGroups: []
-  killObjectiveText: {fileID: 0}
-  platformActive: 0
+  activeObjectives: []
 --- !u!114 &565114066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,3 +77,20 @@ MonoBehaviour:
   - {fileID: 8245528752783580106, guid: f9f8dbb4e1617bd48a67d178074f9712, type: 3}
   - {fileID: 7073502008848142263, guid: e0d879d9512325b4e93637a73ad56a95, type: 3}
   - {fileID: 621487367663589408, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}
+--- !u!114 &1378589886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302738677871118280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d4d7c7b46fd4a44816bb1889daa037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateSpeed: 1
+  player1: {fileID: 0}
+  player2: {fileID: 0}
+  player3: {fileID: 0}
+  player4: {fileID: 0}
