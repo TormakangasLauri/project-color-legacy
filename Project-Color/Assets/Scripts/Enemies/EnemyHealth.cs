@@ -13,16 +13,21 @@ public class EnemyHealth : MonoBehaviour
     private Renderer enemyRenderer;
     Rigidbody rb;
 
+    [SerializeField] private FloatingHealthBar healthBar;
+
     void Start()
     {
         enemyRenderer = GetComponent<Renderer>();
         rb = GetComponent<Rigidbody>();
         healthAmount = maxHealth;
+        healthBar = GetComponentInChildren<FloatingHealthBar>();   // kommentoi tämä rivi jos health barit halutaan pois
+        
     }
 
     public void TakeDamage(float damage)
     {
         healthAmount -= damage;
+        healthBar.UpdateHealthBar(healthAmount, maxHealth);
         if (healthAmount <= 0)
         {
             OnDeath();
@@ -59,7 +64,7 @@ public class EnemyHealth : MonoBehaviour
         healthAmount = Mathf.Clamp(healthAmount, 0, maxHealth);
     }
 
-    public void OnDeath()
+    private void OnDeath()
     {
         gameObject.GetComponent<EnemyType>().Deactivate();
         PlayerAttack.inst.enemies.Remove(gameObject);
