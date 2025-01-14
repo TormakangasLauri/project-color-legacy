@@ -32,6 +32,7 @@ public class PlatformObjective : Objective
                 active = false;
                 completed = true;
                 Debug.Log("Platform objective complete");
+                objectives.RemoveObjective(this);
             }
         }
     }

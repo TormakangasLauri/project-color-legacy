@@ -9,31 +9,24 @@ using UnityEngine;
 
 public class Objectives : MonoBehaviour
 {
+    private ObjectiveDisplay objectiveDisplay;
+    
     public List<Objective> activeObjectives = new List<Objective>();
 
-    private float t;
-    private float x = 0.2f;
+    private void Start()
+    {
+        objectiveDisplay = GameObject.FindWithTag("PlayerRoot").transform.GetChild(6).GetChild(1).gameObject.GetComponent<ObjectiveDisplay>(); // Player > HUD > Objectives
+    }
 
     public void NewObjective(Objective objective)
     {
         activeObjectives.Add(objective);
+        objectiveDisplay.NewObjective(objective);
     }
 
-    private void Update()
-    {
-        t += Time.deltaTime;
-        if (t > x)
-        {
-            t = 0;
-            foreach (Objective objective in activeObjectives)
-            {
-                if (objective.completed) RemoveObjective(objective);
-            }
-        }
-    }
-
-    void RemoveObjective(Objective objective)
+    public void RemoveObjective(Objective objective)
     {
         activeObjectives.Remove(objective);
+        objectiveDisplay.ObjectiveComplete(objective);
     }
 }

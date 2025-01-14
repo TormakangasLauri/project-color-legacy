@@ -14,7 +14,7 @@ public class KillObjective : Objective
     private List<GameObject> enemiesInObjective = new List<GameObject>();
 
     private bool spawning;
-    private int waves;
+    [HideInInspector] public int waves;
 
     [HideInInspector] public int group;
     
@@ -51,9 +51,10 @@ public class KillObjective : Objective
         StartCoroutine(StartSpawnWaves());
         
         yield return new WaitUntil(() => !spawning);
-        Debug.Log("Kill objective complete");
         active = false;
         completed = true;
+        Debug.Log("Kill objective complete");
+        objectives.RemoveObjective(this);
     }
     
     IEnumerator StartSpawnWaves()

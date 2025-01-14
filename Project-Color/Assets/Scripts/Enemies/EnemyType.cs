@@ -83,7 +83,7 @@ public abstract class EnemyType : MonoBehaviour
 
         active = true;
         
-        if (type == Type.hanging) OnActivate();
+        OnActivate();
     }
 
     public void Deactivate()
@@ -110,7 +110,7 @@ public abstract class EnemyType : MonoBehaviour
         
     }
 
-    protected void OnDeactivate()
+    protected virtual void OnDeactivate()
     {
         
     }

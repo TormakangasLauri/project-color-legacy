@@ -86,6 +86,7 @@ public class PaintObjective : Objective
         active = false;
         completed = true;
         Debug.Log("Paint objective complete");
+        objectives.RemoveObjective(this);
     }
 
     private void Update()
