@@ -80,7 +80,7 @@ namespace Controllers
         void Update()
         {
             BasicEnemy();
-            Milo();
+            Hulk();
         }
 
         void BasicEnemy()
@@ -111,11 +111,11 @@ namespace Controllers
             }
         }
     
-        void Milo()
+        void Hulk()
         {
-            foreach (GameObject milo in hulk.activeList)
+            foreach (GameObject h in hulk.activeList)
             {
-                milo.GetComponent<EnemyMovement>().stopDistance = 3;
+                h.GetComponent<EnemyMovement>().stopDistance = 3;
             }
         }
     }
