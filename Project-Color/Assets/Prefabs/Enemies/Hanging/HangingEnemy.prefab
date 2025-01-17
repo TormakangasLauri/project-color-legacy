@@ -134,7 +134,9 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
-  despawnEnemies: 1
+  deactivateOnStart: 1
+  hangPointPrefab: {fileID: 9108745315837387002, guid: 1fbcad01d0757f043b94b9cb32753899, type: 3}
+  hangPoint: {fileID: 0}
 --- !u!114 &621487367663589414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +152,7 @@ MonoBehaviour:
   maxHealth: 100
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
+  healthBar: {fileID: 0}
 --- !u!114 &621487367663589416
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -107,9 +107,7 @@ public class KillObjective : Objective
                 GameObject enemy = enemyController.typeLists[type].inactiveList[0];
                     
                 // Spawn
-                enemy.transform.position = spawnpoint.transform.position + random;
-                enemy.GetComponent<EnemyType>().Activate(group);
-                enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                enemy.GetComponent<EnemyType>().Activate(spawnpoint.transform.position + random, group);
   
                 yield return new WaitForSeconds(wait);
             }

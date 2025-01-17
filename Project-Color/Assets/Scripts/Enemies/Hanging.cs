@@ -18,7 +18,10 @@ public class Hanging : EnemyType
 
     void HangPoint()
     {
-        hangPoint = Instantiate(hangPointPrefab, transform.position + Vector3.up * 15, Quaternion.identity);
+        hangPoint = Instantiate(hangPointPrefab, transform.position, Quaternion.identity); // Replace with some kind of rope or whatever
+        Joint joint = hangPoint.GetComponent<Joint>();
+        joint.connectedBody = GetComponent<Rigidbody>();
+        hangPoint.transform.position += Vector3.up * 10;
     }
 
     protected override void OnActivate()

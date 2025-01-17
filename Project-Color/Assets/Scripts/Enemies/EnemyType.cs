@@ -16,6 +16,8 @@ public abstract class EnemyType : MonoBehaviour
     };
     protected Type type;
     private int typeIndex;
+    
+    private Rigidbody rb;
 
     public GameObject target;
     public NavMeshPath path;
@@ -68,8 +70,11 @@ public abstract class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Activate(int group = -1)
+    public void Activate(Vector3 position, int group = -1)
     {
+        transform.position = position;
+        rb.velocity = Vector3.zero;
+        
         enemyController.all.MoveToActive(gameObject);
         enemyController.typeLists[typeIndex].MoveToActive(gameObject);
         
