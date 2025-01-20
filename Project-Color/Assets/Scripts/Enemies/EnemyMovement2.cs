@@ -34,7 +34,12 @@ public class EnemyMovement2 : BaseEnemyMovement
 
     private void Inactive()
     {
-        if (_enemyType.active) currentState = states.navmesh;
+        if (_enemyType.active) StartCoroutine(StateToNav());
+        IEnumerator StateToNav()
+        {
+            yield return new WaitForSeconds(0.1f);
+            currentState = states.navmesh;
+        }
     }
 
     private void Idle()
@@ -44,7 +49,7 @@ public class EnemyMovement2 : BaseEnemyMovement
 
     private void NavMeshMovement()
     {
-        if (path.corners.Length >= 2 && gameObject.activeSelf && _enemyType.timeActive > 0.1)
+        if (gameObject.activeSelf && _enemyType.timeActive > 0.1 && path.corners.Length >= 2)
         {
             Vector3 targetPos = target.transform.position;
             Vector3 cornerPos = path.corners[1];

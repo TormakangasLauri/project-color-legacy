@@ -40,6 +40,7 @@ public abstract class EnemyType : MonoBehaviour
     void Start()
     {
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
+        rb = GetComponent<Rigidbody>();
 
         switch (type)
         {
