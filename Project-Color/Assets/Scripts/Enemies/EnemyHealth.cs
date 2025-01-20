@@ -27,7 +27,7 @@ public class EnemyHealth : MonoBehaviour
     public void TakeDamage(float damage)
     {
         healthAmount -= damage;
-        healthBar.UpdateHealthBar(healthAmount, maxHealth);
+        if (healthBar != null) healthBar.UpdateHealthBar(healthAmount, maxHealth);
         if (healthAmount <= 0)
         {
             OnDeath();
