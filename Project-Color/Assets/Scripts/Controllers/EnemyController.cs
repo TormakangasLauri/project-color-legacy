@@ -42,6 +42,7 @@ namespace Controllers
         public EnemyList sniper = new EnemyList();
         public EnemyList hulk = new EnemyList();
         public EnemyList hanging = new EnemyList();
+        public EnemyList copter = new EnemyList();
 
         public List<EnemyList> typeLists;
 
@@ -58,7 +59,8 @@ namespace Controllers
                 basic,
                 sniper,
                 hulk,
-                hanging
+                hanging,
+                copter
             };
         }
 
@@ -73,6 +75,8 @@ namespace Controllers
                 Instantiate(enemyPrefabs[1], Vector3.down * 500, Quaternion.identity);
             for (int i = 0; i < 10; i++)
                 Instantiate(enemyPrefabs[2], Vector3.down * 500, Quaternion.identity);
+            for (int i = 0; i < 10; i++)
+                Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
             for (int i = 0; i < 10; i++)
                 Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
         }

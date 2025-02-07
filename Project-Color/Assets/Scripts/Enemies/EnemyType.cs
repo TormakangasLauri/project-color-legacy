@@ -12,7 +12,8 @@ public abstract class EnemyType : MonoBehaviour
         basic,
         sniper,
         hulk,
-        hanging
+        hanging,
+        copter
     };
     protected Type type;
     private int typeIndex;
@@ -48,6 +49,7 @@ public abstract class EnemyType : MonoBehaviour
             case Type.sniper: typeIndex = 1; break;
             case Type.hulk: typeIndex = 2; break;
             case Type.hanging: typeIndex = 3; break;
+            case Type.copter: typeIndex = 4; break;
         }
         
         // Add enemy to correct lists in enemycontroller

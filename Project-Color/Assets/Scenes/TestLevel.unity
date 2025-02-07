@@ -5147,10 +5147,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player 2
       objectReference: {fileID: 0}
-    - target: {fileID: 5792234534002109460, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
-      propertyPath: m_TagString
-      value: PlayerRoot
-      objectReference: {fileID: 0}
     - target: {fileID: 5792234534002109468, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -5194,18 +5190,6 @@ PrefabInstance:
     - target: {fileID: 5792234534002109468, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8232697654473289743, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8251923137470428490, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
-      propertyPath: attackDamage
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8251923137470428490, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
-      propertyPath: cAttackDamage
-      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
@@ -6721,51 +6705,6 @@ Transform:
   m_Father: {fileID: 238326126}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &824183118
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 824183119}
-  - component: {fileID: 824183120}
-  m_Layer: 0
-  m_Name: PaintObjectiveArea (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &824183119
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 824183118}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.074, y: 0.421, z: -0.431}
-  m_LocalScale: {x: 1, y: 1.9, z: 0.33}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1014252987}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &824183120
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 824183118}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &827151153
 GameObject:
   m_ObjectHideFlags: 0
@@ -8158,11 +8097,6 @@ Transform:
   m_Father: {fileID: 238326126}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 28.53}
---- !u!4 &1014252987 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8742034919794970689, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-  m_PrefabInstance: {fileID: 838086516702411082}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1014596106
 Mesh:
   m_ObjectHideFlags: 0
@@ -21930,26 +21864,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1126078770, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2.67
-      objectReference: {fileID: 0}
-    - target: {fileID: 1126078770, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.67
-      objectReference: {fileID: 0}
-    - target: {fileID: 1126078770, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.33
-      objectReference: {fileID: 0}
-    - target: {fileID: 1126078770, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.431
-      objectReference: {fileID: 0}
-    - target: {fileID: 3723159560604047664, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
-      propertyPath: m_Materials.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8188440578420642256, guid: 2c105c4596feab646b3ad9832e22e437, type: 3}
       propertyPath: m_Name
       value: PaintObjective

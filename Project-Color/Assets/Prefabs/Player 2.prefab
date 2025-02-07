@@ -1001,9 +1001,9 @@ MonoBehaviour:
   bounceTrail: {fileID: 7255392833574676431}
   pushIsActive: 1
   canAttack: 1
-  attackDamage: 0
+  attackDamage: 10
   attackKB: {x: 300, y: 160}
-  cAttackDamage: 0
+  cAttackDamage: 100
   cAttackKB: {x: 700, y: 200}
   slamDamage: 20
   slamKB: {x: 100, y: 600}
@@ -1300,7 +1300,7 @@ GameObject:
   - component: {fileID: 1204033842}
   m_Layer: 7
   m_Name: Player 2
-  m_TagString: Player
+  m_TagString: PlayerRoot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1768,7 +1768,7 @@ GameObject:
   - component: {fileID: 8047433838862040158}
   m_Layer: 7
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
