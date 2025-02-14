@@ -8,6 +8,8 @@ public class PaintObjective : Objective
 {
     public GameObject pointIndicator;
     public Material mat;
+
+    private PaintController paintController;
     
     public List<Collider> paintAreaColliders = new List<Collider>();
     private GameObject paintColliders;
@@ -26,6 +28,7 @@ public class PaintObjective : Objective
     
     void Start()
     {
+        paintController = GameObject.Find("GameController").GetComponent<PaintController>();
         paintAreaColliders.AddRange(GetComponentsInChildren<Collider>());
         paintAreaColliders.Remove(GetComponent<Collider>()); // Remove objective trigger
         paintColliders = GameObject.Find("PaintColliders");
@@ -92,33 +95,29 @@ public class PaintObjective : Objective
     private void Update()
     {
         paint = paintPoints.Count;
-        if (paint > paintLastFrame) CheckCollision();
+        if (paint > paintLastFrame) CheckCollision(paint - paintLastFrame);
         paintLastFrame = paint;
     }
 
-    void CheckCollision()
+    void CheckCollision(int newPaint)
     {
-        int newPaint = paint - paintLastFrame;
-        foreach (PaintTarget.PaintPoint p in paintPoints.GetRange(paintPoints.Count - newPaint, newPaint))
+        //foreach (GameObject paintObj in paintController.paintObjects.GetRange(paintController.paintObjects.Count-1-newPaint, newPaint)) // Go through all new paint objects
+        foreach (GameObject paintObj in paintController.paintObjects)
         {
-            GameObject paintObj = new GameObject("PaintObj"); // Paint splat object
-            paintObj.transform.position = p.point;
-            paintObj.transform.rotation = Quaternion.LookRotation(p.normal);
-            paintObj.hideFlags = HideFlags.HideInHierarchy;
+            if (paintObj.IsDestroyed() || paintObj == null) continue; // Skip non-valid paint objects
 
-            BoxCollider paintCol = paintObj.AddComponent<BoxCollider>(); // Create a collider for the paint splat
-            paintCol.isTrigger = true;
-            paintCol.size = new Vector3(p.scale, p.scale, 0.2f);
-            
             List<Vector3> pointsInCol = new List<Vector3>();
-                
+
             bool destroy = true;
             foreach (Vector3 point in paintAreaPoints) // Check whether the collider is in the paint area
+            {
+                Collider paintCol = paintObj.GetComponent<Collider>();
                 if (paintCol.bounds.Contains(point))
                 {
                     destroy = false;
                     pointsInCol.Add(point);
                 }
+            }
             if (destroy) Destroy(paintObj);
             else UpdatePaintArea(pointsInCol);
         }

@@ -85,6 +85,7 @@ namespace Controllers
         {
             BasicEnemy();
             Hulk();
+            Hanging();
         }
 
         void BasicEnemy()
@@ -121,6 +122,10 @@ namespace Controllers
             {
                 h.GetComponent<EnemyMovement>().stopDistance = 3;
             }
+        }
+
+        void Hanging(){
+            
         }
     }
 }

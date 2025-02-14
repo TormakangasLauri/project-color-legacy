@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9108745315837386757}
   - component: {fileID: 9108745315837386759}
-  - component: {fileID: 8167824344394775236}
+  - component: {fileID: 3516037004994440581}
   m_Layer: 0
   m_Name: hangingPoint
   m_TagString: Untagged
@@ -49,8 +49,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!59 &8167824344394775236
-HingeJoint:
+--- !u!145 &3516037004994440581
+SpringJoint:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -59,26 +59,14 @@ HingeJoint:
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
-  m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
-  m_UseSpring: 0
-  m_Spring:
-    spring: 0
-    damper: 0
-    targetPosition: 0
-  m_UseMotor: 0
-  m_Motor:
-    targetVelocity: 0
-    force: 0
-    freeSpin: 0
-  m_UseLimits: 0
-  m_Limits:
-    min: 0
-    max: 0
-    bounciness: 0
-    bounceMinVelocity: 0.2
-    contactDistance: 0
+  serializedVersion: 2
+  m_Spring: 100
+  m_Damper: 50
+  m_MinDistance: 0
+  m_MaxDistance: 0
+  m_Tolerance: 0.025
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
