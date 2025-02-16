@@ -8,8 +8,8 @@ public class PaintController : MonoBehaviour
 
     public List<GameObject> paintObjects = new List<GameObject>();
 
-    private int paint;
-    private int paintLastFrame;
+    public int paint;
+    public int paintLastFrame;
 
     float t = 0;
 
@@ -20,9 +20,14 @@ public class PaintController : MonoBehaviour
 
     void Update()
     {
-        paint = paintPoints.Count;
-        if (paint > paintLastFrame) CreatePaintObjects(); // Check for new paint
-        paintLastFrame = paint;
+        t += Time.deltaTime;
+        if (t > 0.2)
+        {
+            t = 0;
+            paint = paintPoints.Count;
+            if (paint > paintLastFrame) CreatePaintObjects(); // Check for new paint
+            paintLastFrame = paint;
+        }
     }
 
     public void CreatePaintObjects()
@@ -40,6 +45,8 @@ public class PaintController : MonoBehaviour
             paintCol.size = new Vector3(p.scale, p.scale, 0.2f);
 
             paintObjects.Add(paintObj);
+
+            paintObj.SetActive(false); // Optimization shit
         }
     }
 }

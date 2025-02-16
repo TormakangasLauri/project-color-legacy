@@ -37,7 +37,8 @@ public class PaintObjective : Objective
         // Create paint check points for the paint area
         foreach (Collider col in paintAreaColliders)
         {
-            Vector3 scale = col.transform.lossyScale;
+            Vector3 scale = col.bounds.size;
+            
             bool sphere = col is SphereCollider;
             
             for (float y = -scale.y / 2; y <= scale.y / 2; y += 0.2f)
@@ -63,13 +64,6 @@ public class PaintObjective : Objective
         }
     }
 
-    // private void OnDrawGizmos()
-    // {
-    //     Gizmos.color = Color.red;
-    //     foreach (Vector3 point in paintAreaPoints)
-    //         Gizmos.DrawSphere(point, 0.05f);
-    // }
-
     private void OnTriggerEnter(Collider other)
     {
         // Start objective on trigger collision
@@ -85,6 +79,9 @@ public class PaintObjective : Objective
         active = true;
         objectives.NewObjective(this);
         Debug.Log("Paint objective started");
+
+        foreach (GameObject paintObj in paintController.paintObjects) CheckPaintCollision(paintObj); // Check all existing paint splats at the start
+
         yield return new WaitUntil(() => paintPercentage > percentageToComplete);
         active = false;
         completed = true;
@@ -94,33 +91,34 @@ public class PaintObjective : Objective
 
     private void Update()
     {
-        paint = paintPoints.Count;
-        if (paint > paintLastFrame) CheckCollision(paint - paintLastFrame);
+        paint = paintController.paintObjects.Count; // Get paintobjects from paintcontroller
+        if (paint > paintLastFrame) CheckNewPaint(paint - paintLastFrame);
         paintLastFrame = paint;
     }
 
-    void CheckCollision(int newPaint)
+    void CheckNewPaint(int newPaint) // Go through all new paint objects
     {
-        //foreach (GameObject paintObj in paintController.paintObjects.GetRange(paintController.paintObjects.Count-1-newPaint, newPaint)) // Go through all new paint objects
-        foreach (GameObject paintObj in paintController.paintObjects)
+        foreach (GameObject paintObj in paintController.paintObjects.GetRange(paintController.paintObjects.Count-newPaint, newPaint))
         {
-            if (paintObj.IsDestroyed() || paintObj == null) continue; // Skip non-valid paint objects
-
-            List<Vector3> pointsInCol = new List<Vector3>();
-
-            bool destroy = true;
-            foreach (Vector3 point in paintAreaPoints) // Check whether the collider is in the paint area
-            {
-                Collider paintCol = paintObj.GetComponent<Collider>();
-                if (paintCol.bounds.Contains(point))
-                {
-                    destroy = false;
-                    pointsInCol.Add(point);
-                }
-            }
-            if (destroy) Destroy(paintObj);
-            else UpdatePaintArea(pointsInCol);
+            CheckPaintCollision(paintObj);
         }
+    }
+
+    void CheckPaintCollision(GameObject paintObj) // Check whether the collider is in the paint area (or whether any of the area points are inside the collider)
+    {
+        paintObj.SetActive(true);
+
+        List<Vector3> pointsInCol = new List<Vector3>();
+        foreach (Vector3 point in paintAreaPoints)
+        {
+            Collider paintCol = paintObj.GetComponent<Collider>();
+            if (paintCol.bounds.Contains(point))
+            {
+                pointsInCol.Add(point);
+            }
+        }
+        paintObj.SetActive(false);
+        UpdatePaintArea(pointsInCol);
     }
 
     private void UpdatePaintArea(List<Vector3> points)
