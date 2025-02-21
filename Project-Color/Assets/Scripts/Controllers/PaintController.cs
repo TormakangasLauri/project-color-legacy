@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PaintController : MonoBehaviour
 {
-    private List<PaintTarget.PaintPoint> paintPoints = new List<PaintTarget.PaintPoint>();
+    private List<PaintPoint> paintPoints = new List<PaintPoint>();
 
     public List<GameObject> paintObjects = new List<GameObject>();
+    private List<GameObject> newPaintbjects = new List<GameObject>();
+    public List<GameObject> paintGroups = new List<GameObject>();
 
-    public int paint;
-    public int paintLastFrame;
+    [HideInInspector] public int paint;
+    [HideInInspector] public int paintLastFrame;
+
+    private float paintGroupRadius = 3;
 
     float t = 0;
 
@@ -25,7 +30,11 @@ public class PaintController : MonoBehaviour
         {
             t = 0;
             paint = paintPoints.Count;
-            if (paint > paintLastFrame) CreatePaintObjects(); // Check for new paint
+            if (paint > paintLastFrame)
+            {
+                CreatePaintObjects(); // Check for new paint
+                UpdatePaintGroups();
+            }
             paintLastFrame = paint;
         }
     }
@@ -33,7 +42,7 @@ public class PaintController : MonoBehaviour
     public void CreatePaintObjects()
     {
         int newPaint = paint - paintLastFrame;
-        foreach (PaintTarget.PaintPoint p in paintPoints.GetRange(paintPoints.Count - newPaint, newPaint))
+        foreach (PaintPoint p in paintPoints.GetRange(paintPoints.Count - newPaint, newPaint))
         {
             GameObject paintObj = new GameObject("PaintObj"); // Paint splat object
             paintObj.transform.position = p.point;
@@ -45,8 +54,56 @@ public class PaintController : MonoBehaviour
             paintCol.size = new Vector3(p.scale, p.scale, 0.2f);
 
             paintObjects.Add(paintObj);
+            newPaintbjects.Add(paintObj);
 
             paintObj.SetActive(false); // Optimization shit
+        }
+    }
+
+    void UpdatePaintGroups()
+    {
+        foreach (GameObject p in newPaintbjects)
+        {
+            bool inGroup = false;
+            foreach (GameObject group in paintGroups)
+                if (Vector3.Distance(p.transform.position, group.transform.position) <= paintGroupRadius)
+                {
+                    p.transform.parent = group.transform; // Add paintobject to an existing group
+                    p.hideFlags = HideFlags.None;
+                    inGroup = true;
+                    break;
+                }
+
+            if (!inGroup) CreatePaintGroup(p);
+        }
+
+        newPaintbjects.Clear();
+    }
+
+    void CreatePaintGroup(GameObject paintObj)
+    {
+        GameObject group = new GameObject();
+        group.transform.position = paintObj.transform.position;
+        group.name = "PaintGroup";
+
+        paintObj.transform.parent = group.transform;
+        paintObj.hideFlags = HideFlags.None;
+
+        SphereCollider col = group.AddComponent<SphereCollider>();
+        col.radius = paintGroupRadius;
+        col.isTrigger = true;
+
+        paintGroups.Add(group);
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (GameObject group in paintGroups)
+        {
+            Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
+            Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(group.transform.position, 0.2f);
         }
     }
 }

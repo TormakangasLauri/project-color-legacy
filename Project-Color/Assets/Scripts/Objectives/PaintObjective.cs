@@ -13,7 +13,7 @@ public class PaintObjective : Objective
     
     public List<Collider> paintAreaColliders = new List<Collider>();
     private GameObject paintColliders;
-    private List<PaintTarget.PaintPoint> paintPoints = new List<PaintTarget.PaintPoint>();
+    private List<PaintPoint> paintPoints = new List<PaintPoint>();
     private List<Collider> uncheckedPaintColliders = new List<Collider>();
     
     private List<Vector3> paintAreaPoints = new List<Vector3>();

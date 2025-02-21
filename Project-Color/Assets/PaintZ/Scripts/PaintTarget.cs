@@ -24,6 +24,19 @@ public enum TextureSize
     Texture4096x4096 = 4096
 }
 
+public class PaintPoint
+{
+    public Vector3 point;
+    public Vector3 normal;
+    public float scale;
+    public PaintPoint(Vector3 point, Vector3 normal, float scale)
+    {
+        this.point = point;
+        this.normal = normal;
+        this.scale = scale;
+    }
+}
+
 public class PaintTarget : MonoBehaviour
 {
     public TextureSize paintTextureSize = TextureSize.Texture256x256;
@@ -44,18 +57,6 @@ public class PaintTarget : MonoBehaviour
 
     public static Collider paintArea;
 
-    public class PaintPoint
-    {
-        public Vector3 point;
-        public Vector3 normal;
-        public float scale;
-        public PaintPoint(Vector3 point, Vector3 normal,float scale)
-        {
-            this.point = point;
-            this.normal = normal;
-            this.scale = scale;
-        }
-    }
     public static List<PaintPoint> paintWorldPositions = new List<PaintPoint>();
     public static int textureCoordinatesInPaintArea;
     
