@@ -101,7 +101,7 @@ namespace Controllers
                 });
 
                 // Assign stopping distances for enemies making some enemies get close and other stay furter away
-                float stopDist = 2;
+                float stopDist = 0.5f;
                 float enemiesOnLayer = 5;
                 for (int i = 0; i < basic.activeList.Count; i++)
                 {
