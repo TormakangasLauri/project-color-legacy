@@ -111,15 +111,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brush:
-    splatTexture: {fileID: 0}
-    splatsX: 1
-    splatsY: 1
+    splatTexture: {fileID: 2800000, guid: dad266e927e11ee44bfc9c73ff2d04f1, type: 3}
+    splatsX: 4
+    splatsY: 4
     splatIndex: -1
-    splatScale: 1.3
+    splatScale: 2
     splatRandomScaleMin: 1
     splatRandomScaleMax: 1
     splatRotation: 0
-    splatRandomRotation: 180
+    splatRandomRotation: 0
     splatChannel: 0
   RandomChannel: 0
 --- !u!1 &506454276
@@ -233,9 +233,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brush:
-    splatTexture: {fileID: 0}
-    splatsX: 1
-    splatsY: 1
+    splatTexture: {fileID: 2800000, guid: 43e87afee2872b94bb737541f97500ad, type: 3}
+    splatsX: 4
+    splatsY: 4
     splatIndex: -1
     splatScale: 3
     splatRandomScaleMin: 1
@@ -277,7 +277,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1501514496}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1157272943
 MeshFilter:
@@ -436,6 +436,7 @@ Transform:
   - {fileID: 9066615307023468531}
   - {fileID: 6734607746050790572}
   - {fileID: 8326161632234248903}
+  - {fileID: 7457731676748148691}
   - {fileID: 1888466903}
   - {fileID: 1157272939}
   m_Father: {fileID: 3057327554204247310}
@@ -506,7 +507,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1501514496}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1888466902
 MeshFilter:
@@ -984,18 +985,20 @@ MonoBehaviour:
     m_Bits: 256
   enemies: []
   AI: {fileID: 4741410202215241573}
-  CP3: {fileID: 448478528}
-  CP4: {fileID: 506454278}
+  CP1: {fileID: 448478528}
+  CP2: {fileID: 506454278}
   paintChannel: 0
   attackParticle1: {fileID: 198255729007284778}
   attackParticle2: {fileID: 9152008217593698319}
   attackParticle3: {fileID: 6892550846225288016}
   attackParticle4: {fileID: 8168711181845857595}
+  attackParticle5: {fileID: 7326880624577376303}
   AP: {fileID: 1501514497}
   slamParticle1: {fileID: 198255727309103070}
   slamParticle2: {fileID: 3845811730727200955}
   slamParticle3: {fileID: 8978724180091128708}
   slamParticle4: {fileID: 1034719157787023125}
+  slamParticle5: {fileID: 0}
   slamParticle0: {fileID: 1298191176658011}
   bounceParticle: {fileID: 7304074648934938494}
   bounceTrail: {fileID: 7255392833574676431}
@@ -1011,6 +1014,17 @@ MonoBehaviour:
   bounceForceOnPlayer: 30
   enemyBounceMult: 0.5
   bounceForceOnEnemy: 20
+  rayPaint:
+    splatTexture: {fileID: 2800000, guid: 1ebe49986e5780d44b379bd0a5ad8a5f, type: 3}
+    splatsX: 1
+    splatsY: 1
+    splatIndex: -1
+    splatScale: 5
+    splatRandomScaleMin: 1
+    splatRandomScaleMax: 1
+    splatRotation: -90
+    splatRandomRotation: 0
+    splatChannel: 0
 --- !u!114 &1409609777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1575,13 +1589,14 @@ MonoBehaviour:
   color2: {r: 1, g: 0, b: 0, a: 1}
   color3: {r: 0, g: 1, b: 0, a: 1}
   color4: {r: 0, g: 0, b: 1, a: 1}
+  color5: {r: 0.7, g: 0, b: 1, a: 1}
   shaders:
+  - {fileID: 4800000, guid: 2b0f5fce771a1c645adeaed55998c8f1, type: 3}
   - {fileID: 4800000, guid: e8513d0e92db73e47b4a4b19db71fae4, type: 3}
   - {fileID: 4800000, guid: 19a341542ca19e14baa44692721a3751, type: 3}
   - {fileID: 4800000, guid: 5d8d104dc82dc1644a7f0df2766917c6, type: 3}
   - {fileID: 4800000, guid: 92ffea8701286ef4b8a72e22a2ef6f2d, type: 3}
   - {fileID: 4800000, guid: 7abf40037636e214cac697f5d17df419, type: 3}
-  - {fileID: 4800000, guid: 2b0f5fce771a1c645adeaed55998c8f1, type: 3}
   - {fileID: 4800000, guid: dd982015ef1f2a641b54c0229f30d391, type: 3}
   - {fileID: 4800000, guid: e2c704b44d19a2c42af5bb6cd35fdcee, type: 3}
   - {fileID: 4800000, guid: fee48ea82f4b5d64c865cbf6d87f8892, type: 3}
@@ -1931,6 +1946,85 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7461384142225559219, guid: 4bd0a740b5f07b84880794909cb737f8, type: 3}
   m_PrefabInstance: {fileID: 432383537}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &310721018307443556
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1501514496}
+    m_Modifications:
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.r
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7113280781664327765, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: brush.splatChannel
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7144235402634423863, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_Name
+      value: AttackParticle (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+--- !u!198 &7326880624577376303 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+  m_PrefabInstance: {fileID: 310721018307443556}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7457731676748148691 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7147432978287039671, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+  m_PrefabInstance: {fileID: 310721018307443556}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1206049421959695984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2196,12 +2290,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 1501514496}
     m_Modifications:
     - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.b
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key1.g
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7113280781664327765, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: brush.splatChannel
@@ -2362,11 +2472,19 @@ PrefabInstance:
     m_TransformParent: {fileID: 1501514496}
     m_Modifications:
     - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.g
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.b
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
@@ -2519,6 +2637,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1501514496}
     m_Modifications:
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.g
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key0.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.g
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7053103232944835403, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key1.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7113280781664327765, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
+      propertyPath: brush.splatChannel
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7144235402634423863, guid: b11c2b57530bafd4fafcd16754e704f2, type: 3}
       propertyPath: m_Name
       value: AttackParticle

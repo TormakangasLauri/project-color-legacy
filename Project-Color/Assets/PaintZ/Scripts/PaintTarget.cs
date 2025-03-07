@@ -215,7 +215,7 @@ public class PaintTarget : MonoBehaviour
     private static void PaintRaycast(Ray ray, Brush brush, bool multi = true)
     {
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 10000))
+        if (Physics.Raycast(ray, out hit, 10000, LayerMask.GetMask("Terrain")))
         {
             if (multi)
             {

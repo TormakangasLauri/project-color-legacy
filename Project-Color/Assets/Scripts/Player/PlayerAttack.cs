@@ -24,23 +24,22 @@ public class PlayerAttack : MonoBehaviour
     public AttackIndicator AI;
     public static PlayerAttack inst;
 
-    private CollisionPainter CP1;
-    private CollisionPainter CP2;
-
-    public CollisionPainter CP3;
-    public CollisionPainter CP4;
+    public CollisionPainter CP1;
+    public CollisionPainter CP2;
 
     public int paintChannel;
     public ParticleSystem attackParticle1;
     public ParticleSystem attackParticle2;
     public ParticleSystem attackParticle3;
     public ParticleSystem attackParticle4;
+    public ParticleSystem attackParticle5;
     public AttackParticle AP;
 
     public ParticleSystem slamParticle1;
     public ParticleSystem slamParticle2;
     public ParticleSystem slamParticle3;
     public ParticleSystem slamParticle4;
+    public ParticleSystem slamParticle5;
     public GameObject slamParticle0;
 
     public ParticleSystem bounceParticle;
@@ -70,6 +69,8 @@ public class PlayerAttack : MonoBehaviour
     public float bounceForceOnPlayer = 30;
     public float enemyBounceMult = 1;
     public float bounceForceOnEnemy = 20;
+
+    public Brush rayPaint;
     
     private void Awake()
     {
@@ -83,8 +84,6 @@ public class PlayerAttack : MonoBehaviour
         PM = gameObject.transform.parent.GetComponentInParent<PlayerMovement2>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
-        CP1 = gameObject.transform.parent.GetChild(2).GetChild(4).GetComponent<CollisionPainter>();
-        CP2 = gameObject.transform.parent.GetChild(2).GetChild(5).GetComponent<CollisionPainter>();
     }
 
     private void Update()
@@ -109,6 +108,14 @@ public class PlayerAttack : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) paintChannel = 1; ChangeBrushColor();
         if (Input.GetKeyDown(KeyCode.Alpha3)) paintChannel = 2; ChangeBrushColor();
         if (Input.GetKeyDown(KeyCode.Alpha4)) paintChannel = 3; ChangeBrushColor();
+        if (Input.GetKeyDown(KeyCode.Alpha5)) paintChannel = 4; ChangeBrushColor();
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            rayPaint.splatChannel = paintChannel;
+            Ray ray = new Ray(transform.parent.parent.position, transform.forward);
+            PaintTarget.PaintRay(ray, rayPaint);
+        }
 
         // Attack side reset
         if (sideSwitchTimer < 0) attackFromRight = true;
@@ -277,6 +284,7 @@ public class PlayerAttack : MonoBehaviour
             case 1: attackParticle2.Play(); break;
             case 2: attackParticle3.Play(); break;
             case 3: attackParticle4.Play(); break;
+            case 4: attackParticle5.Play(); break;
         }
     }
 
@@ -291,6 +299,7 @@ public class PlayerAttack : MonoBehaviour
             case 1: slamParticle2.Play(); break;
             case 2: slamParticle3.Play(); break;
             case 3: slamParticle4.Play(); break;
+            //case 4: slamParticle5.Play(); break;
         }
     }
 
@@ -314,8 +323,6 @@ public class PlayerAttack : MonoBehaviour
     {
         CP1.brush.splatChannel = paintChannel;
         CP2.brush.splatChannel = paintChannel;
-        CP3.brush.splatChannel = paintChannel;
-        CP4.brush.splatChannel = paintChannel;
     }
 
     private void OnTriggerEnter(Collider other)

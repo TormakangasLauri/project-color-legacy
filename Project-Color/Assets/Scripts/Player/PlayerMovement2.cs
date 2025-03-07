@@ -182,7 +182,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            Debug.Log("GROUND");
         }
         
         Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
@@ -226,7 +225,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            Debug.Log("AIR");
             airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
         }
 
@@ -257,7 +255,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            Debug.Log("WALLRUN");
             // Wallrundirection 1 = right and -1 = left
             wallRunDirection = Vector3.Angle(rb.velocity, rightFromWall) < 90 ? 1 : -1;
         }
@@ -271,7 +268,6 @@ public class PlayerMovement2 : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            Debug.Log("SLIDE");
             airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
             rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, groundHit.normal).normalized * slideForce, ForceMode.Impulse);
         }

@@ -1307,8 +1307,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.5, b: 0, a: 0}
-        key1: {r: 1, g: 0.5, b: 0, a: 1}
+        key0: {r: 0, g: 0, b: 1, a: 0}
+        key1: {r: 0, g: 0, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4848,7 +4848,7 @@ MonoBehaviour:
     splatRandomScaleMax: 1.25
     splatRotation: 0
     splatRandomRotation: 180
-    splatChannel: 0
+    splatChannel: 3
   RandomChannel: 0
 --- !u!1001 &4363654427509508913
 PrefabInstance:

@@ -14,7 +14,7 @@ public class PaintController : MonoBehaviour
     [HideInInspector] public int paint;
     [HideInInspector] public int paintLastFrame;
 
-    private float paintGroupRadius = 3;
+    private float paintGroupRadius = 4;
 
     float t = 0;
 
