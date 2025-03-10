@@ -82,7 +82,7 @@ public class KillObjective : Objective
             {
                 // Update enemy list
                 enemiesInObjective.Clear();
-                foreach (GameObject enemy in enemyController.all.activeList)
+                foreach (GameObject enemy in EnemyController.all.activeList)
                     if (enemy.GetComponent<EnemyType>().killGroup == group)
                         enemiesInObjective.Add(enemy);
                 
@@ -100,11 +100,11 @@ public class KillObjective : Objective
         float spread = 2;
         float wait = 0.05f;
         
-        for (int type = 0; type < enemyController.typeLists.Count; type++)
+        for (int type = 0; type < esp.enemiesToSpawn.Count; type++)
             for (int j = 0; j < esp.enemiesToSpawn[type]; j++)
             {
                 Vector3 random = new Vector3(Random.Range(-spread, spread), 0, Random.Range(-spread, spread));
-                GameObject enemy = enemyController.typeLists[type].inactiveList[0];
+                GameObject enemy = EnemyController.typeLists[type].inactiveList[0];
                     
                 // Spawn
                 enemy.GetComponent<EnemyType>().Activate(spawnpoint.transform.position + random, group);

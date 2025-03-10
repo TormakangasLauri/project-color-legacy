@@ -7,9 +7,9 @@ public class PaintController : MonoBehaviour
 {
     private List<PaintPoint> paintPoints = new List<PaintPoint>();
 
-    public List<GameObject> paintObjects = new List<GameObject>();
+    public static List<GameObject> paintObjects = new List<GameObject>();
     private List<GameObject> newPaintbjects = new List<GameObject>();
-    public List<GameObject> paintGroups = new List<GameObject>();
+    public static List<GameObject> paintGroups = new List<GameObject>();
 
     [HideInInspector] public int paint;
     [HideInInspector] public int paintLastFrame;
@@ -96,14 +96,14 @@ public class PaintController : MonoBehaviour
         paintGroups.Add(group);
     }
 
-    private void OnDrawGizmos()
-    {
-        foreach (GameObject group in paintGroups)
-        {
-            Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
-            Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(group.transform.position, 0.2f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    foreach (GameObject group in paintGroups)
+    //    {
+    //        Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
+    //        Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(group.transform.position, 0.2f);
+    //    }
+    //}
 }

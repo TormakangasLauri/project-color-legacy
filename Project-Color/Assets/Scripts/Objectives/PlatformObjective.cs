@@ -20,7 +20,8 @@ public class PlatformObjective : Objective
         {
             if (!active)
             {
-                GetComponent<Collider>().enabled = false;
+                //GetComponent<Collider>().enabled = false;
+
                 endTrigger.enabled = true;
 
                 active = true;

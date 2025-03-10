@@ -37,23 +37,20 @@ namespace Controllers
     {
         public List<GameObject> enemyPrefabs = new List<GameObject>();
 
-        public EnemyList all = new EnemyList();
-        public EnemyList basic = new EnemyList();
-        public EnemyList sniper = new EnemyList();
-        public EnemyList hulk = new EnemyList();
-        public EnemyList hanging = new EnemyList();
-        public EnemyList copter = new EnemyList();
+        public static EnemyList all = new EnemyList();
+        public static EnemyList basic = new EnemyList();
+        public static EnemyList sniper = new EnemyList();
+        public static EnemyList hulk = new EnemyList();
+        public static EnemyList hanging = new EnemyList();
+        public static EnemyList copter = new EnemyList();
 
-        public List<EnemyList> typeLists;
+        public static List<EnemyList> typeLists;
 
-        public static EnemyController enemyController;
         private GameObject player;
         private float t;
 
         private void Awake()
         {
-            enemyController = this;
-        
             typeLists = new List<EnemyList>
             {
                 basic,
@@ -124,7 +121,8 @@ namespace Controllers
             }
         }
 
-        void Hanging(){
+        void Hanging()
+        {
             
         }
     }

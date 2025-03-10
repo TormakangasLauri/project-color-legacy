@@ -72,7 +72,7 @@ public class SniperShooting : MonoBehaviour
         if (Physics.Raycast(shootPoint.position, targetDirection, out var hit))
         {
             GameObject hitObj = hit.transform.gameObject;
-            if (enemyController.all.activeList.Contains(hitObj))
+            if (EnemyController.all.activeList.Contains(hitObj))
             {
                 // Enemy hit
                 StartCoroutine(BulletTrail(2));

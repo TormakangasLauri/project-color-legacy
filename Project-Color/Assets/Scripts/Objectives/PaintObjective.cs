@@ -80,7 +80,7 @@ public class PaintObjective : Objective
         objectives.NewObjective(this);
         Debug.Log("Paint objective started");
 
-        foreach (GameObject paintObj in paintController.paintObjects) CheckPaintCollision(paintObj); // Check all existing paint splats at the start
+        foreach (GameObject paintObj in PaintController.paintObjects) CheckPaintCollision(paintObj); // Check all existing paint splats at the start
 
         yield return new WaitUntil(() => paintPercentage > percentageToComplete);
         active = false;
@@ -91,14 +91,14 @@ public class PaintObjective : Objective
 
     private void Update()
     {
-        paint = paintController.paintObjects.Count; // Get paintobjects from paintcontroller
+        paint = PaintController.paintObjects.Count; // Get paintobjects from paintcontroller
         if (paint > paintLastFrame) CheckNewPaint(paint - paintLastFrame);
         paintLastFrame = paint;
     }
 
     void CheckNewPaint(int newPaint) // Go through all new paint objects
     {
-        foreach (GameObject paintObj in paintController.paintObjects.GetRange(paintController.paintObjects.Count-newPaint, newPaint))
+        foreach (GameObject paintObj in PaintController.paintObjects.GetRange(PaintController.paintObjects.Count-newPaint, newPaint))
         {
             CheckPaintCollision(paintObj);
         }

@@ -53,8 +53,8 @@ public abstract class EnemyType : MonoBehaviour
         }
         
         // Add enemy to correct lists in enemycontroller
-        enemyController.all.inactiveList.Add(gameObject);
-        enemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
+        EnemyController.all.inactiveList.Add(gameObject);
+        EnemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
 
         if (deactivateOnStart) DeactivateOnStart();
     }
@@ -78,8 +78,8 @@ public abstract class EnemyType : MonoBehaviour
         transform.position = position;
         rb.velocity = Vector3.zero;
         
-        enemyController.all.MoveToActive(gameObject);
-        enemyController.typeLists[typeIndex].MoveToActive(gameObject);
+        EnemyController.all.MoveToActive(gameObject);
+        EnemyController.typeLists[typeIndex].MoveToActive(gameObject);
         
         killGroup = group;
         
@@ -96,8 +96,8 @@ public abstract class EnemyType : MonoBehaviour
 
     public void Deactivate()
     {
-        enemyController.all.MoveToInactive(gameObject);
-        enemyController.typeLists[typeIndex].MoveToInactive(gameObject);
+        EnemyController.all.MoveToInactive(gameObject);
+        EnemyController.typeLists[typeIndex].MoveToInactive(gameObject);
 
         GetComponent<MeshRenderer>().enabled = false;
         GetComponent<MeshCollider>().enabled = false;

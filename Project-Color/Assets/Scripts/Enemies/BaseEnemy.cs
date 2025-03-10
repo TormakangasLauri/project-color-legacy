@@ -20,8 +20,6 @@ public abstract class Enemy : MonoBehaviour
     public GameObject target;
     public NavMeshPath path;
 
-    private EnemyController enemyController;
-
     public int killGroup;
 
     public bool active = false;
@@ -32,7 +30,6 @@ public abstract class Enemy : MonoBehaviour
     void Start()
     {
         target = GameObject.Find("Player");
-        enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
 
         switch (type)
         {
@@ -43,8 +40,8 @@ public abstract class Enemy : MonoBehaviour
         }
 
         // Add enemy to correct lists in enemycontroller
-        enemyController.all.inactiveList.Add(gameObject);
-        enemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
+        EnemyController.all.inactiveList.Add(gameObject);
+        EnemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
 
         // Deactivate
         if (despawnEnemies)
@@ -71,8 +68,8 @@ public abstract class Enemy : MonoBehaviour
 
     public void Activate(int group = -1)
     {
-        enemyController.all.MoveToActive(gameObject);
-        enemyController.typeLists[typeIndex].MoveToActive(gameObject);
+        EnemyController.all.MoveToActive(gameObject);
+        EnemyController.typeLists[typeIndex].MoveToActive(gameObject);
 
         killGroup = group;
 
@@ -87,8 +84,8 @@ public abstract class Enemy : MonoBehaviour
 
     public void Deactivate()
     {
-        enemyController.all.MoveToInactive(gameObject);
-        enemyController.typeLists[typeIndex].MoveToInactive(gameObject);
+        EnemyController.all.MoveToInactive(gameObject);
+        EnemyController.typeLists[typeIndex].MoveToInactive(gameObject);
 
         // enemyController.allEnemies_active.Remove(gameObject);
         // enemyController.allEnemies.Add(gameObject);

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.VersionControl;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
