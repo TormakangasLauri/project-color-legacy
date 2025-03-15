@@ -32,29 +32,14 @@ public class KillObjective : Objective
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected override IEnumerator ObjectiveRequirement()
     {
-        // Start objective on trigger collision
-        if (other.gameObject.CompareTag("Player"))
-        {
-            StartCoroutine(Objective());
-            GetComponent<Collider>().enabled = false;
-        }
-    }
-
-    IEnumerator Objective()
-    {
-        active = true;
-        objectives.NewObjective(this);
         Debug.Log("Kill objective started");
-        
+
         StartCoroutine(StartSpawnWaves());
-        
         yield return new WaitUntil(() => !spawning);
-        active = false;
-        completed = true;
+
         Debug.Log("Kill objective complete");
-        objectives.RemoveObjective(this);
     }
     
     IEnumerator StartSpawnWaves()

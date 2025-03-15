@@ -64,29 +64,14 @@ public class PaintObjective : Objective
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected override IEnumerator ObjectiveRequirement()
     {
-        // Start objective on trigger collision
-        if (other.gameObject.CompareTag("Player"))
-        {
-            StartCoroutine(Objective());
-            GetComponent<Collider>().enabled = false;
-        }
-    }
-
-    IEnumerator Objective()
-    {
-        active = true;
-        objectives.NewObjective(this);
         Debug.Log("Paint objective started");
 
         foreach (GameObject paintObj in PaintController.paintObjects) CheckPaintCollision(paintObj); // Check all existing paint splats at the start
-
         yield return new WaitUntil(() => paintPercentage > percentageToComplete);
-        active = false;
-        completed = true;
+
         Debug.Log("Paint objective complete");
-        objectives.RemoveObjective(this);
     }
 
     private void Update()

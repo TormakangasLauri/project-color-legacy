@@ -9,22 +9,22 @@ using UnityEngine;
 
 public class Objectives : MonoBehaviour
 {
-    private ObjectiveDisplay objectiveDisplay;
+    private static ObjectiveDisplay objectiveDisplay;
     
-    public List<Objective> activeObjectives = new List<Objective>();
+    public static List<Objective> activeObjectives = new List<Objective>();
 
     private void Start()
     {
         objectiveDisplay = GameObject.FindWithTag("PlayerRoot").transform.GetChild(6).GetChild(1).gameObject.GetComponent<ObjectiveDisplay>(); // Player > HUD > Objectives
     }
 
-    public void NewObjective(Objective objective)
+    public static void NewObjective(Objective objective)
     {
         activeObjectives.Add(objective);
         objectiveDisplay.NewObjective(objective);
     }
 
-    public void RemoveObjective(Objective objective)
+    public static void RemoveObjective(Objective objective)
     {
         activeObjectives.Remove(objective);
         objectiveDisplay.ObjectiveComplete(objective);

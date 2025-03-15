@@ -6,35 +6,47 @@ using UnityEngine;
 public class PlatformObjective : Objective
 {
     private Collider endTrigger;
+    private GameObject player;
     
     void Start()
     {
         endTrigger = transform.GetChild(0).GetComponent<Collider>();
         endTrigger.enabled = false;
+
+        player = GameObject.FindWithTag("Player");
     }
 
-    private void OnTriggerEnter(Collider other)
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    // Start objective on trigger collision
+    //    if (other.gameObject.CompareTag("Player"))
+    //    {
+    //        if (!active)
+    //        {
+    //            //GetComponent<Collider>().enabled = false;
+
+    //            endTrigger.enabled = true;
+
+    //            active = true;
+    //            Objectives.NewObjective(this);
+    //            Debug.Log("Platform objective started");
+    //        }
+    //        else
+    //        {
+    //            active = false;
+    //            completed = true;
+    //            Debug.Log("Platform objective complete");
+    //            Objectives.RemoveObjective(this);
+    //        }
+    //    }
+    //}
+
+    protected override IEnumerator ObjectiveRequirement()
     {
-        // Start objective on trigger collision
-        if (other.gameObject.CompareTag("Player"))
-        {
-            if (!active)
-            {
-                //GetComponent<Collider>().enabled = false;
+        Debug.Log("Platform objective started");
 
-                endTrigger.enabled = true;
+        yield return new WaitUntil(() => endTrigger.bounds.Contains(player.transform.position));
 
-                active = true;
-                objectives.NewObjective(this);
-                Debug.Log("Platform objective started");
-            }
-            else
-            {
-                active = false;
-                completed = true;
-                Debug.Log("Platform objective complete");
-                objectives.RemoveObjective(this);
-            }
-        }
+        Debug.Log("Platform objective complete");
     }
 }
