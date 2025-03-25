@@ -117,6 +117,12 @@ public class PlayerAttack : MonoBehaviour
             PaintTarget.PaintRay(ray, rayPaint);
         }
 
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            Debug.Log(EnemyController.hanging.inactiveList[0]);
+            EnemyController.Activate("hanging", Vector3.zero);
+        }
+
         // Attack side reset
         if (sideSwitchTimer < 0) attackFromRight = true;
         sideSwitchTimer -= Time.deltaTime;

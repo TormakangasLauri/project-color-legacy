@@ -8,8 +8,6 @@ public class PaintObjective : Objective
 {
     public GameObject pointIndicator;
     public Material mat;
-
-    private PaintController paintController;
     
     public List<Collider> paintAreaColliders = new List<Collider>();
     private GameObject paintColliders;
@@ -22,13 +20,15 @@ public class PaintObjective : Objective
 
     private int paint;
     private int paintLastFrame;
+    private int paintGroupsLastCheck;
+
+    private float groupCheckTimer = 0;
 
     public int paintPercentage;
     public int percentageToComplete = 90;
     
     void Start()
     {
-        paintController = GameObject.Find("GameController").GetComponent<PaintController>();
         paintAreaColliders.AddRange(GetComponentsInChildren<Collider>());
         paintAreaColliders.Remove(GetComponent<Collider>()); // Remove objective trigger
         paintColliders = GameObject.Find("PaintColliders");
@@ -69,6 +69,7 @@ public class PaintObjective : Objective
         Debug.Log("Paint objective started");
 
         foreach (GameObject paintObj in PaintController.paintObjects) CheckPaintCollision(paintObj); // Check all existing paint splats at the start
+        foreach (GameObject group in PaintController.paintGroups) CheckPaintGroupCollision(group); // Check all existing paint groups
         yield return new WaitUntil(() => paintPercentage > percentageToComplete);
 
         Debug.Log("Paint objective complete");
@@ -79,15 +80,22 @@ public class PaintObjective : Objective
         paint = PaintController.paintObjects.Count; // Get paintobjects from paintcontroller
         if (paint > paintLastFrame) CheckNewPaint(paint - paintLastFrame);
         paintLastFrame = paint;
+
+        if (groupCheckTimer < 0 && PaintController.paintGroups.Count > paintGroupsLastCheck)
+        {
+            CheckNewPaintGroups(PaintController.paintGroups.Count - paintGroupsLastCheck);
+            paintGroupsLastCheck = PaintController.paintGroups.Count;
+            groupCheckTimer = 5;
+        }
+        groupCheckTimer -= Time.deltaTime;
     }
 
     void CheckNewPaint(int newPaint) // Go through all new paint objects
     {
         foreach (GameObject paintObj in PaintController.paintObjects.GetRange(PaintController.paintObjects.Count-newPaint, newPaint))
-        {
             CheckPaintCollision(paintObj);
-        }
     }
+
 
     void CheckPaintCollision(GameObject paintObj) // Check whether the collider is in the paint area (or whether any of the area points are inside the collider)
     {
@@ -104,6 +112,22 @@ public class PaintObjective : Objective
         }
         paintObj.SetActive(false);
         UpdatePaintArea(pointsInCol);
+    }
+
+    private void CheckNewPaintGroups(int newGroups)
+    {
+        foreach (GameObject group in PaintController.paintGroups.GetRange(PaintController.paintGroups.Count - newGroups, newGroups))
+            CheckPaintGroupCollision(group);
+    }
+
+    private void CheckPaintGroupCollision(GameObject group) // Check whether the group collides with the paint area
+    {
+        foreach (Vector3 point in paintAreaPoints)
+            if (group.GetComponent<Collider>().bounds.Contains(point) && !PaintController.paintGroupsInPaintArea.Contains(group))
+            {
+                PaintController.paintGroupsInPaintArea.Add(group);
+                break;
+            }
     }
 
     private void UpdatePaintArea(List<Vector3> points)

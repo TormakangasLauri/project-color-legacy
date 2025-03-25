@@ -11,6 +11,9 @@ public class EnemyMovement2 : BaseEnemyMovement
     
     private void FixedUpdate()
     {
+        // Change to inactive
+        if (!_enemyType.active) currentState = states.inactive;
+
         // States
         //  inactive: while enemy is inactive (not spawned / dead)
         //  idle: not moving / wandering, will finish later
@@ -23,9 +26,6 @@ public class EnemyMovement2 : BaseEnemyMovement
             case states.navmesh: NavMeshMovement(); break;
             case states.los: LOSMovement(); break;
         }
-        
-        // Change to inactive
-        if (!_enemyType.active) currentState = states.inactive;
 
         // Gravity
         if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);

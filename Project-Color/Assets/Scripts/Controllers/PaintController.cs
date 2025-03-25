@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class PaintController : MonoBehaviour
 {
     private List<PaintPoint> paintPoints = new List<PaintPoint>();
@@ -10,6 +9,7 @@ public class PaintController : MonoBehaviour
     public static List<GameObject> paintObjects = new List<GameObject>();
     private List<GameObject> newPaintbjects = new List<GameObject>();
     public static List<GameObject> paintGroups = new List<GameObject>();
+    public static List<GameObject> paintGroupsInPaintArea = new List<GameObject>();
 
     [HideInInspector] public int paint;
     [HideInInspector] public int paintLastFrame;
@@ -84,6 +84,7 @@ public class PaintController : MonoBehaviour
     {
         GameObject group = new GameObject();
         group.transform.position = paintObj.transform.position;
+        group.transform.rotation = paintObj.transform.rotation;
         group.name = "PaintGroup";
 
         paintObj.transform.parent = group.transform;

@@ -46,6 +46,15 @@ namespace Controllers
 
         public static List<EnemyList> typeLists;
 
+        public static Dictionary<string, int> enemies = new Dictionary<string, int>
+        {
+            { "basic", 0 },
+            { "sniper", 1 },
+            { "hulk", 2 },
+            { "hanging", 3 },
+            { "copter", 4 }
+        };
+
         private GameObject player;
         private float t;
 
@@ -66,15 +75,15 @@ namespace Controllers
             player = GameObject.FindWithTag("Player");
 
             // Spawn all enemies
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 100; i++) // Basic
                 Instantiate(enemyPrefabs[0], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 30; i++) // Sniper
                 Instantiate(enemyPrefabs[1], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) // Hulk
                 Instantiate(enemyPrefabs[2], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) // Hanging
                 Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) // Copter
                 Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
         }
 
@@ -83,6 +92,15 @@ namespace Controllers
             BasicEnemy();
             Hulk();
             Hanging();
+        }
+
+        public static void Activate(int enemy, Vector3 position)
+        {
+            typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+        }
+        public static void Activate(string enemy, Vector3 position)
+        {
+            typeLists[enemies[enemy]].inactiveList[0].GetComponent<EnemyType>().Activate(position);
         }
 
         void BasicEnemy()

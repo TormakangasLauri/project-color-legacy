@@ -322,7 +322,7 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
-  despawnEnemies: 1
+  deactivateOnStart: 1
 --- !u!114 &8094043269757407083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,6 +338,7 @@ MonoBehaviour:
   maxHealth: 100
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
+  healthBar: {fileID: 0}
 --- !u!114 &3652864760032474004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -345,7 +346,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7073502008848142263}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40ed8ad4fc591514692edfe1dbb12e42, type: 3}
   m_Name: 

@@ -83,10 +83,6 @@ public abstract class EnemyType : MonoBehaviour
         
         killGroup = group;
         
-        GetComponent<MeshRenderer>().enabled = true;
-        GetComponent<MeshCollider>().enabled = true;
-        GetComponent<PaintTarget>().enabled = true;
-        transform.Find("PathFinder").gameObject.SetActive(true);
         gameObject.SetActive(true);
 
         active = true;
@@ -99,10 +95,6 @@ public abstract class EnemyType : MonoBehaviour
         EnemyController.all.MoveToInactive(gameObject);
         EnemyController.typeLists[typeIndex].MoveToInactive(gameObject);
 
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshCollider>().enabled = false;
-        GetComponent<PaintTarget>().enabled = false;
-        transform.Find("PathFinder").gameObject.SetActive(false);
         gameObject.SetActive(false);
 
         transform.position = new Vector3(0, -500, 0);

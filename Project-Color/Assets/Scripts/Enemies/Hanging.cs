@@ -8,15 +8,16 @@ public class Hanging : EnemyType
     public GameObject ropeJointPrefab;
     [HideInInspector] public GameObject hangPoint;
 
+    public GameObject targetPaintGroup;
+    public Vector3 targetPoint;
+
     public float hangPointHeight = 10;
     
     private void Awake()
     {
         target = GameObject.FindWithTag("PlayerRoot");
         type = Type.hanging;
-        deactivateOnStart = false;
-
-        HangPoint();
+        //deactivateOnStart = false;
     }
 
     void HangPoint()
@@ -26,7 +27,7 @@ public class Hanging : EnemyType
         joint.maxDistance = hangPointHeight;
 
         joint.connectedBody = gameObject.GetComponent<Rigidbody>();
-        hangPoint.transform.position += Vector3.up * hangPointHeight;
+        //hangPoint.transform.position += Vector3.up * hangPointHeight;
 
         // GameObject lastRopeJoint = gameObject;
         
@@ -45,6 +46,18 @@ public class Hanging : EnemyType
 
     protected override void OnActivate()
     {
-        
+        // Pick a random paint group in the paint area
+        //targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+        targetPaintGroup = PaintController.paintGroups[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+
+        targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+
+        HangPoint();
+        gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
+    }
+
+    protected override void OnDeactivate()
+    {
+        Destroy(hangPoint);
     }
 }
