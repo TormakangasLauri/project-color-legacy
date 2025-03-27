@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 8094043269757407083}
   - component: {fileID: 3652864760032474004}
   m_Layer: 8
-  m_Name: M.I.L.O
+  m_Name: Hulk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -57,6 +57,7 @@ public abstract class EnemyType : MonoBehaviour
         EnemyController.typeLists[typeIndex].inactiveList.Add(gameObject);
 
         if (deactivateOnStart) DeactivateOnStart();
+        else Activate();
     }
 
     private void Update()
@@ -73,18 +74,29 @@ public abstract class EnemyType : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Activate(Vector3 position, int group = -1)
+    public void Activate(int group = -1) // Activate
     {
-        transform.position = position;
         rb.velocity = Vector3.zero;
+        killGroup = group;
         
         EnemyController.all.MoveToActive(gameObject);
         EnemyController.typeLists[typeIndex].MoveToActive(gameObject);
         
+        gameObject.SetActive(true);
+        active = true;
+        
+        OnActivate();
+    }
+    public void Activate(Vector3 position, int group = -1) // Activate and move to the specified position
+    {
+        transform.position = position;
+        rb.velocity = Vector3.zero;
         killGroup = group;
         
+        EnemyController.all.MoveToActive(gameObject);
+        EnemyController.typeLists[typeIndex].MoveToActive(gameObject);
+        
         gameObject.SetActive(true);
-
         active = true;
         
         OnActivate();
@@ -92,26 +104,18 @@ public abstract class EnemyType : MonoBehaviour
 
     public void Deactivate()
     {
+        transform.position = new Vector3(0, -500, 0);
+
         EnemyController.all.MoveToInactive(gameObject);
         EnemyController.typeLists[typeIndex].MoveToInactive(gameObject);
 
         gameObject.SetActive(false);
-
-        transform.position = new Vector3(0, -500, 0);
-
         active = false;
         timeActive = 0;
         
         OnDeactivate();
     }
 
-    protected virtual void OnActivate()
-    {
-        
-    }
-
-    protected virtual void OnDeactivate()
-    {
-        
-    }
+    protected virtual void OnActivate(){}
+    protected virtual void OnDeactivate(){}
 }

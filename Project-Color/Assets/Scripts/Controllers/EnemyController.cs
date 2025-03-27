@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Controllers
 {
@@ -35,7 +38,8 @@ namespace Controllers
 
     public class EnemyController : MonoBehaviour
     {
-        public List<GameObject> enemyPrefabs = new List<GameObject>();
+        [SerializeField] private List<GameObject> enemyPrefabs = new List<GameObject>();
+        public static List<GameObject> _enemyPrefabs = new List<GameObject>();
 
         public static EnemyList all = new EnemyList();
         public static EnemyList basic = new EnemyList();
@@ -45,6 +49,13 @@ namespace Controllers
         public static EnemyList copter = new EnemyList();
 
         public static List<EnemyList> typeLists;
+
+        [Header("Spawn enemies on start")]
+        [SerializeField] private int spawnBasic = 100;
+        [SerializeField] private int spawnSniper = 30;
+        [SerializeField] private int spawnHulk = 10;
+        [SerializeField] private int spawnHanging = 10;
+        [SerializeField] private int spawnCopter = 10;
 
         public static Dictionary<string, int> enemies = new Dictionary<string, int>
         {
@@ -58,8 +69,12 @@ namespace Controllers
         private GameObject player;
         private float t;
 
+        public static EnemyController inst;
+
         private void Awake()
         {
+            inst = this;
+
             typeLists = new List<EnemyList>
             {
                 basic,
@@ -68,6 +83,8 @@ namespace Controllers
                 hanging,
                 copter
             };
+
+            _enemyPrefabs = enemyPrefabs;
         }
 
         private void Start()
@@ -75,16 +92,11 @@ namespace Controllers
             player = GameObject.FindWithTag("Player");
 
             // Spawn all enemies
-            for (int i = 0; i < 100; i++) // Basic
-                Instantiate(enemyPrefabs[0], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 30; i++) // Sniper
-                Instantiate(enemyPrefabs[1], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++) // Hulk
-                Instantiate(enemyPrefabs[2], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++) // Hanging
-                Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
-            for (int i = 0; i < 10; i++) // Copter
-                Instantiate(enemyPrefabs[3], Vector3.down * 500, Quaternion.identity);
+            SpawnNewEnemies("basic", spawnBasic);
+            SpawnNewEnemies("sniper", spawnSniper);
+            SpawnNewEnemies("hulk", spawnHulk);
+            SpawnNewEnemies("hanging", spawnHanging);
+            SpawnNewEnemies("copter", spawnCopter);
         }
 
         void Update()
@@ -94,13 +106,31 @@ namespace Controllers
             Hanging();
         }
 
-        public static void Activate(int enemy, Vector3 position)
+        public static void Activate(int enemy, Vector3 position) // Activate an enemy
         {
-            typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            if (typeLists[enemy].inactiveList.Count > 0)
+                typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            else // Spawn more enemies if there are no more inactive enemies to use
+            {
+                SpawnNewEnemies(enemy, 1);
+                inst.StartCoroutine(ActivateLate(enemy, position));
+            }
         }
-        public static void Activate(string enemy, Vector3 position)
+        public static void Activate(string enemy, Vector3 position) // Overload for Activate (above)
         {
-            typeLists[enemies[enemy]].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            int enemyIndex = enemies[enemy];
+            if (typeLists[enemyIndex].inactiveList.Count > 0)
+                typeLists[enemyIndex].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            else
+            {
+                SpawnNewEnemies(enemy, 1);
+                inst.StartCoroutine(ActivateLate(enemyIndex, position));
+            }
+        }
+        static IEnumerator ActivateLate(int enemy, Vector3 position)
+        {
+            yield return new WaitUntil(() => typeLists[enemy].inactiveList.Count > 0); // Wait until new enemies get added to lists
+            typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
         }
 
         void BasicEnemy()
@@ -142,6 +172,17 @@ namespace Controllers
         void Hanging()
         {
             
+        }
+
+        static void SpawnNewEnemies(int enemy ,int count)
+        {
+            for (int i = 0; i < count; i++)
+                Instantiate(_enemyPrefabs[enemy], Vector3.down * 500, Quaternion.identity);
+        }
+        static void SpawnNewEnemies(string enemy, int count)
+        {
+            for (int i = 0; i < count; i++)
+                Instantiate(_enemyPrefabs[enemies[enemy]], Vector3.down * 500, Quaternion.identity);
         }
     }
 }

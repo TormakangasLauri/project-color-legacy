@@ -46,14 +46,16 @@ public class Hanging : EnemyType
 
     protected override void OnActivate()
     {
-        // Pick a random paint group in the paint area
-        //targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
-        targetPaintGroup = PaintController.paintGroups[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+        if (PaintController.paintGroups.Count > 0) // Pick a random paint group in the paint area
+        {
+            //targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+            targetPaintGroup = PaintController.paintGroups[(int)(Random.Range(0, PaintController.paintGroups.Count - 1))];
 
-        targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+            targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+            gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
+        }
 
         HangPoint();
-        gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
     }
 
     protected override void OnDeactivate()

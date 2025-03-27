@@ -129,7 +129,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28528
+  m_Name: pb_Mesh31984
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -800,6 +800,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6027972418167623204, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}
+      propertyPath: hangPointHeight
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6027972418167623204, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}
+      propertyPath: deactivateOnStart
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9fa29bfd099dc0438cb025f0f8f4413, type: 3}
 --- !u!1001 &1558292550
@@ -809,6 +817,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawnHulk
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawnBasic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawnCopter
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawnSniper
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawnHanging
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 565114066, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: spawn.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: m_Name
       value: GameController

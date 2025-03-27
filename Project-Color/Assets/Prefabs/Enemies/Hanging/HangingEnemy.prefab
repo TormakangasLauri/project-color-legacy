@@ -138,7 +138,9 @@ MonoBehaviour:
   hangPointPrefab: {fileID: 9108745315837387002, guid: 1fbcad01d0757f043b94b9cb32753899, type: 3}
   ropeJointPrefab: {fileID: 8467754817347641331, guid: 57c9f3ca9370073488a421498052b76b, type: 3}
   hangPoint: {fileID: 0}
-  hangPointHeight: 50
+  targetPaintGroup: {fileID: 0}
+  targetPoint: {x: 0, y: 0, z: 0}
+  hangPointHeight: 20
 --- !u!114 &621487367663589414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,7 +148,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621487367663589408}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 232e80a258c500c44a96bc93096759fa, type: 3}
   m_Name: 
@@ -162,7 +164,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621487367663589408}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40ed8ad4fc591514692edfe1dbb12e42, type: 3}
   m_Name: 

@@ -119,7 +119,6 @@ public class PlayerAttack : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            Debug.Log(EnemyController.hanging.inactiveList[0]);
             EnemyController.Activate("hanging", Vector3.zero);
         }
 
