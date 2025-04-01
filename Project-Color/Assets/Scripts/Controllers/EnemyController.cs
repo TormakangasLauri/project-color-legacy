@@ -127,9 +127,9 @@ namespace Controllers
                 inst.StartCoroutine(ActivateLate(enemyIndex, position));
             }
         }
-        static IEnumerator ActivateLate(int enemy, Vector3 position)
+        static IEnumerator ActivateLate(int enemy, Vector3 position) // Wait until a new enemy gets added to lists to activate it
         {
-            yield return new WaitUntil(() => typeLists[enemy].inactiveList.Count > 0); // Wait until new enemies get added to lists
+            yield return new WaitUntil(() => typeLists[enemy].inactiveList.Count > 0);
             typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
         }
 

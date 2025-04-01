@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Controllers;
 using UnityEngine;
 
 public class Hanging : EnemyType
@@ -46,16 +47,44 @@ public class Hanging : EnemyType
 
     protected override void OnActivate()
     {
-        if (PaintController.paintGroups.Count > 0) // Pick a random paint group in the paint area
+        if (PaintController.paintGroupsInPaintArea.Count > 0) // Paint objective active
         {
-            //targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+            targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
+
+            targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+            gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
+            HangPoint();
+        }
+        else if (PaintController.paintGroups.Count > 0) // No objective
+        {
             targetPaintGroup = PaintController.paintGroups[(int)(Random.Range(0, PaintController.paintGroups.Count - 1))];
 
             targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
             gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
+            HangPoint();
         }
+        else // No paint
+        {
+            float maxDist = 15;
+            float minDist = 8;
+            bool spawned = false;
 
-        HangPoint();
+            for (int i = 0; i < 100; i++)
+            {
+                Vector3 direction = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
+                float distance = Random.Range(minDist, maxDist);
+                Vector3 spawnPoint = target.transform.position + direction * distance;
+
+                if (!Physics.Raycast(spawnPoint + Vector3.up * (hangPointHeight + 1), Vector3.down, hangPointHeight, LayerMask.GetMask("Terrain")))
+                {
+                    gameObject.transform.position = spawnPoint + Vector3.up * hangPointHeight;
+                    HangPoint();
+                    spawned = true;
+                    break;
+                }
+            }
+            if (!spawned) Deactivate();
+        }
     }
 
     protected override void OnDeactivate()
