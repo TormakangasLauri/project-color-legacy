@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 621487367663589409}
   - component: {fileID: 621487367663589417}
   - component: {fileID: 6027972418167623204}
+  - component: {fileID: -8897624464510354698}
+  - component: {fileID: 3825016019416144230}
   - component: {fileID: 621487367663589414}
   - component: {fileID: 621487367663589416}
   m_Layer: 8
@@ -140,7 +142,53 @@ MonoBehaviour:
   hangPoint: {fileID: 0}
   targetPaintGroup: {fileID: 0}
   targetPoint: {x: 0, y: 0, z: 0}
+  targetDirection: {x: 0, y: 0, z: 0}
   hangPointHeight: 20
+--- !u!114 &-8897624464510354698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621487367663589408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72cfe931455cf5e45ae279bfd8cdf1d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  stopDistance: 0
+  LOSToTarget: 0
+  grounded: 0
+  hEscapeSpeed: 0
+  vEscapeSpeed: 10
+--- !u!114 &3825016019416144230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621487367663589408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38d68117fd264a448e4e0e8547d096c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cleanSpeed: 10
+  cleaningArea: 16
+  brush:
+    splatTexture: {fileID: 2800000, guid: 6d6d0f230462a324f9faa76904b9f7a2, type: 3}
+    splatsX: 1
+    splatsY: 1
+    splatIndex: -1
+    splatScale: 1
+    splatRandomScaleMin: 1
+    splatRandomScaleMax: 1
+    splatRotation: 0
+    splatRandomRotation: 0
+    splatChannel: 3
+  cleaning: 0
+  cleaningComplete: 0
 --- !u!114 &621487367663589414
 MonoBehaviour:
   m_ObjectHideFlags: 0

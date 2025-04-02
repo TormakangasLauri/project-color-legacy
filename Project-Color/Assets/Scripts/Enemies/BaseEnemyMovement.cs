@@ -10,7 +10,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     protected EnemyType _enemyType;
     public NavMeshPath path;
     
-    protected GameObject target;
+    public GameObject target;
     
     public float speed;
     [HideInInspector] public float stopDistance;
@@ -36,7 +36,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
+        //LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
         path = _enemyType.path;
     }

@@ -5,27 +5,35 @@ using UnityEngine;
 public class HangingMovement : BaseEnemyMovement
 {
     private Hanging _hanging;
+    private HangingCleaning _cleaning;
     private GameObject hangPoint;
 
-    private enum states { inactive, idle, move };
+    public float hEscapeSpeed = 0;
+    public float vEscapeSpeed = 10;
+
+    private enum states { inactive, idle, move, escape };
     private states currentState;
     
     void Start()
     {
         _hanging = GetComponent<Hanging>();
-
+        _cleaning = GetComponent<HangingCleaning>();
         hangPoint = GetComponent<Hanging>().hangPoint;
+
+        currentState = states.move;
     }
     
     void FixedUpdate()
     {
         if (!_enemyType.active) currentState = states.inactive;
+        if (_cleaning.cleaningComplete) currentState = states.escape;
 
         switch (currentState)
         {
             case states.inactive: Inactive(); break;
             case states.idle: Idle(); break;
             case states.move: Move(); break;
+            case states.escape: Escape(); break;
         }
     }
 
@@ -36,11 +44,26 @@ public class HangingMovement : BaseEnemyMovement
 
     void Idle()
     {
+        if (!_cleaning.cleaning) _cleaning.StartCleaning();
         if (rb.velocity.magnitude > 1) currentState = states.move;
     }
 
     void Move()
     {
-        if (rb.velocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
+        //if (_hanging.targetPoint == null)
+        //{
+
+            if (rb.velocity.magnitude <= 1) currentState = states.idle;
+        //}
+        //else
+        //{
+
+        //    if (rb.velocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
+        //}
+    }
+
+    void Escape()
+    {
+        hangPoint.transform.position += Vector3.up * vEscapeSpeed/1000 - _hanging.targetDirection * hEscapeSpeed/1000;
     }
 }

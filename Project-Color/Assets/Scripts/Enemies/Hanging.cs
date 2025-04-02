@@ -11,6 +11,7 @@ public class Hanging : EnemyType
 
     public GameObject targetPaintGroup;
     public Vector3 targetPoint;
+    public Vector3 targetDirection;
 
     public float hangPointHeight = 10;
     
@@ -52,6 +53,7 @@ public class Hanging : EnemyType
             targetPaintGroup = PaintController.paintGroupsInPaintArea[(int)(Random.Range(0, PaintController.paintGroupsInPaintArea.Count - 1))];
 
             targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+            targetDirection = -targetPaintGroup.transform.forward;
             gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
             HangPoint();
         }
@@ -60,6 +62,7 @@ public class Hanging : EnemyType
             targetPaintGroup = PaintController.paintGroups[(int)(Random.Range(0, PaintController.paintGroups.Count - 1))];
 
             targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
+            targetDirection = -targetPaintGroup.transform.forward;
             gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
             HangPoint();
         }

@@ -195,9 +195,13 @@ public class PaintTarget : MonoBehaviour
         PaintRaycast(ray, brush);
     }
 
-    public static void PaintRay(Ray ray, Brush brush)
+    public static void PaintRay(Ray ray, Brush brush, float maxRayDistance = 10000)
     {
         PaintRaycast(ray, brush);
+    }
+    public static void PaintRay(Ray ray, Brush brush, LayerMask layer, float maxRayDistance = 10000) //Overload
+    {
+        PaintRaycast(ray, brush, maxRayDistance, layer);
     }
 
     public static void PaintCursor(Brush brush)
@@ -216,6 +220,31 @@ public class PaintTarget : MonoBehaviour
     {
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 10000, LayerMask.GetMask("Terrain")))
+        {
+            if (multi)
+            {
+                RaycastHit[] hits = Physics.SphereCastAll(hit.point, brush.splatScale , ray.direction);
+                for (int h=0; h < hits.Length; h++)
+                {
+                    PaintTarget paintTarget = hits[h].collider.gameObject.GetComponent<PaintTarget>();
+                    if (paintTarget != null)
+                    {
+                        PaintObject(paintTarget, hit.point, hits[h].normal, brush);
+                    }
+                }
+            }
+            else
+            {
+                PaintTarget paintTarget = hit.collider.gameObject.GetComponent<PaintTarget>();
+                if (!paintTarget) return;
+                PaintObject(paintTarget, hit.point, hit.normal, brush);
+            }
+        }
+    }
+    private static void PaintRaycast(Ray ray, Brush brush, float maxRayDistance, LayerMask layer, bool multi = true) // Overload
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, maxRayDistance, layer))
         {
             if (multi)
             {
