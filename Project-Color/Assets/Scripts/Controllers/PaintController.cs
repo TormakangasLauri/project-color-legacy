@@ -10,6 +10,7 @@ public class PaintController : MonoBehaviour
     private List<GameObject> newPaintbjects = new List<GameObject>();
     public static List<GameObject> paintGroups = new List<GameObject>();
     public static List<GameObject> paintGroupsInPaintArea = new List<GameObject>();
+    public static List<GameObject> paintGroupsOccupied = new List<GameObject>();
 
     [HideInInspector] public int paint;
     [HideInInspector] public int paintLastFrame;
@@ -97,14 +98,28 @@ public class PaintController : MonoBehaviour
         paintGroups.Add(group);
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    foreach (GameObject group in paintGroups)
-    //    {
-    //        Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
-    //        Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
-    //        Gizmos.color = Color.red;
-    //        Gizmos.DrawSphere(group.transform.position, 0.2f);
-    //    }
-    //}
+    public static void CleanPaintGroup(GameObject paintGroup)
+    {
+        paintGroupsOccupied.Remove(paintGroup);
+        Destroy(paintGroup);
+    }
+
+    public static void OccupyPaintGroup(GameObject paintGroup)
+    {
+        if (paintGroups.Contains(paintGroup)) paintGroups.Remove(paintGroup);
+        if (paintGroupsInPaintArea.Contains(paintGroup)) paintGroupsInPaintArea.Remove(paintGroup);
+
+        paintGroupsOccupied.Add(paintGroup);
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (GameObject group in paintGroups)
+        {
+            Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
+            Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(group.transform.position, 0.2f);
+        }
+    }
 }

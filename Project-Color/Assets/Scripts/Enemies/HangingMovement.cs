@@ -18,7 +18,7 @@ public class HangingMovement : BaseEnemyMovement
     {
         _hanging = GetComponent<Hanging>();
         _cleaning = GetComponent<HangingCleaning>();
-        hangPoint = GetComponent<Hanging>().hangPoint;
+        hangPoint = _hanging.hangPoint;
 
         currentState = states.move;
     }
@@ -44,26 +44,23 @@ public class HangingMovement : BaseEnemyMovement
 
     void Idle()
     {
-        if (!_cleaning.cleaning) _cleaning.StartCleaning();
+        _cleaning.Clean(_hanging.targetPaintGroup); // Clean paint when not moving
+
         if (rb.velocity.magnitude > 1) currentState = states.move;
     }
 
     void Move()
     {
-        //if (_hanging.targetPoint == null)
-        //{
+        _cleaning.StopCleaning(); // Stop cleaning when moving
 
-            if (rb.velocity.magnitude <= 1) currentState = states.idle;
-        //}
-        //else
-        //{
-
-        //    if (rb.velocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
-        //}
+        if (rb.velocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
     }
 
     void Escape()
     {
+        hangPoint = _hanging.hangPoint;
         hangPoint.transform.position += Vector3.up * vEscapeSpeed/1000 - _hanging.targetDirection * hEscapeSpeed/1000;
+
+        if (transform.position.y > _hanging.spawnHeight) _enemyType.Deactivate();
     }
 }

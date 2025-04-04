@@ -292,7 +292,7 @@ public class PaintTarget : MonoBehaviour
         splatObject.transform.RotateAround(point, normal, Random.Range(-brush.splatRandomRotation, brush.splatRandomRotation));
         splatObject.transform.localScale = new Vector3(randScale, randScale, randScale) * brush.splatScale;
 
-        paintWorldPositions.Add(new PaintPoint(point, normal, randScale * brush.splatScale)); // Store all paint points
+        if (brush.splatChannel >= 0 &&  brush.splatChannel <= 3) paintWorldPositions.Add(new PaintPoint(point, normal, randScale * brush.splatScale)); // Store all paint points
         
         Paint newPaint = new Paint();
         newPaint.paintMatrix = splatObject.transform.worldToLocalMatrix;

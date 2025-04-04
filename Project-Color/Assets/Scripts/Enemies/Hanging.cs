@@ -14,6 +14,7 @@ public class Hanging : EnemyType
     public Vector3 targetDirection;
 
     public float hangPointHeight = 10;
+    public float spawnHeight;
     
     private void Awake()
     {
@@ -22,7 +23,7 @@ public class Hanging : EnemyType
         //deactivateOnStart = false;
     }
 
-    void HangPoint()
+    void CreateHangPoint()
     {
         hangPoint = Instantiate(hangPointPrefab, transform.position, Quaternion.identity);
         SpringJoint joint = hangPoint.GetComponent<SpringJoint>();
@@ -55,7 +56,9 @@ public class Hanging : EnemyType
             targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
             targetDirection = -targetPaintGroup.transform.forward;
             gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
-            HangPoint();
+            CreateHangPoint();
+
+            PaintController.OccupyPaintGroup(targetPaintGroup);
         }
         else if (PaintController.paintGroups.Count > 0) // No objective
         {
@@ -64,7 +67,9 @@ public class Hanging : EnemyType
             targetPoint = targetPaintGroup.transform.position + targetPaintGroup.transform.forward * 2;
             targetDirection = -targetPaintGroup.transform.forward;
             gameObject.transform.position = targetPoint + Vector3.up * hangPointHeight;
-            HangPoint();
+            CreateHangPoint();
+
+            PaintController.OccupyPaintGroup(targetPaintGroup);
         }
         else // No paint
         {
@@ -81,13 +86,15 @@ public class Hanging : EnemyType
                 if (!Physics.Raycast(spawnPoint + Vector3.up * (hangPointHeight + 1), Vector3.down, hangPointHeight, LayerMask.GetMask("Terrain")))
                 {
                     gameObject.transform.position = spawnPoint + Vector3.up * hangPointHeight;
-                    HangPoint();
+                    CreateHangPoint();
                     spawned = true;
                     break;
                 }
             }
             if (!spawned) Deactivate();
         }
+
+        spawnHeight = transform.position.y;
     }
 
     protected override void OnDeactivate()

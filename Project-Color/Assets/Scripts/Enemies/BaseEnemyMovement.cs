@@ -25,10 +25,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
         path = new NavMeshPath();
         terrainLayer = LayerMask.GetMask("Terrain");
         _enemyType = GetComponent<EnemyType>();
-    }
 
-    private void Start()
-    {
         rb = GetComponent<Rigidbody>();
         target = GameObject.FindWithTag("Player");
     }
