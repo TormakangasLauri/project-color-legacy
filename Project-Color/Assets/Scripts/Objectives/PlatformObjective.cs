@@ -13,6 +13,8 @@ public class PlatformObjective : Objective
         endTrigger = transform.GetChild(0).GetComponent<Collider>();
         endTrigger.enabled = false;
 
+        type = ObjectiveType.platform;
+
         player = GameObject.FindWithTag("Player");
     }
 

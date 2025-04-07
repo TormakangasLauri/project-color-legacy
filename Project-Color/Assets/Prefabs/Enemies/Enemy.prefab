@@ -482,10 +482,10 @@ GameObject:
   - component: {fileID: 7073502008848142266}
   - component: {fileID: 4624277683453445398}
   - component: {fileID: 7073502008848142261}
-  - component: {fileID: 6965473459593261956}
   - component: {fileID: 4508742802356643735}
   - component: {fileID: 5720307658208484925}
   - component: {fileID: 9110505115261770114}
+  - component: {fileID: 1877474543208778911}
   - component: {fileID: 6382010168526749810}
   m_Layer: 8
   m_Name: Enemy
@@ -606,26 +606,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
---- !u!114 &6965473459593261956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7073502008848142263}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a32f9946e70ac594d889a68cd114168e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  speed: 5
-  stopDistance: 0
-  LOSToTarget: 0
-  grounded: 0
-  state: 0
 --- !u!114 &4508742802356643735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b53fcffa355d2404a8343f0cf710b496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   speed: 5
   stopDistance: 0
   LOSToTarget: 0
@@ -675,6 +656,18 @@ MonoBehaviour:
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
   healthBar: {fileID: 5458304785395442287}
+--- !u!114 &1877474543208778911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073502008848142263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f2a6e9943ebd3a45a6b748cdaaac976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6382010168526749810
 MonoBehaviour:
   m_ObjectHideFlags: 0

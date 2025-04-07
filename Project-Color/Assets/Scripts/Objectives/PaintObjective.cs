@@ -26,13 +26,15 @@ public class PaintObjective : Objective
 
     public int paintPercentage;
     public int percentageToComplete = 90;
-    
+
     void Start()
     {
         paintAreaColliders.AddRange(GetComponentsInChildren<Collider>());
         paintAreaColliders.Remove(GetComponent<Collider>()); // Remove objective trigger
         paintColliders = GameObject.Find("PaintColliders");
         paintPoints = PaintTarget.paintWorldPositions;
+
+        type = ObjectiveType.paint;
 
         // Create paint check points for the paint area
         foreach (Collider col in paintAreaColliders)

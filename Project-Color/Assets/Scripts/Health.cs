@@ -6,30 +6,28 @@ using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
-    public Image healthBar;
     public float maxHealth = 100;
     float healthAmount;
-    public Color damageFlash = new Color(116f / 255f, 18f / 255f, 27f / 255f);
-    private Renderer enemyRenderer;
     
-    private TextMeshProUGUI healthText;
-
+    public TextMeshProUGUI healthText;
 
     void Start()
     {
-        enemyRenderer = GetComponent<Renderer>();
         healthAmount = maxHealth;
+
+        UpdateHealthUI();
     }
+
     void Update()
     {
-        // Placeholder damagen aiheuttaja (Paina E, tekee X vahinkoa)
-        if (Input.GetKeyDown(KeyCode.E))
+        // Placeholder damagen aiheuttaja (Paina F, tekee X vahinkoa)
+        if (Input.GetKeyDown(KeyCode.F))
         {
             TakeDamage(20);
         }
 
-        // Placeholder elinvoiman palauttaja (Paina T, parantaa X vahinkoa)
-        if (Input.GetKeyDown(KeyCode.T))
+        // Placeholder elinvoiman palauttaja (Paina G, parantaa X vahinkoa)
+        if (Input.GetKeyDown(KeyCode.G))
         {
             Healing(10);
         }
@@ -38,20 +36,21 @@ public class Health : MonoBehaviour
     public void TakeDamage(float damage)
     {
         healthAmount -= damage;
-        healthBar.fillAmount = healthAmount / 100;
-        if (healthAmount <= 0)
-        {
-            Destroy(gameObject);
-            GameOver();
-        }
+        UpdateHealthUI();
+
+        if (healthAmount <= 0) GameOver(); // Death
     }
 
     public void Healing(float healPoints)
     {
         healthAmount += healPoints;
         healthAmount = Mathf.Clamp(healthAmount, 0, maxHealth);
-        
-        healthBar.fillAmount = healthAmount / 100;
+        UpdateHealthUI();
+    }
+
+    void UpdateHealthUI()
+    {
+        healthText.text = "Health: " + healthAmount;
     }
 
     public void GameOver()

@@ -1,54 +1,75 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class playermovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public InputActionReference move;
     public InputActionReference rightStick;
-    
-    [Header("Objects/Components")]
+
+    private enum movementState
+    {
+        ground,
+        air,
+        wallrun,
+        slide
+    }
+
+    private movementState currentState = movementState.ground;
+    private movementState previousState = movementState.ground;
+
     private Rigidbody rb;
-    new public Camera camera;
+    private GameObject body;
+    private GameObject head;
 
     [Header("Movement")]
-    public float acceleration = 100;
+    public float acceleration = 70;
     public float maxSpeed = 10;
-    private Vector2 moveDirection;
+    public float deceleration = 20;
+    public float airAcc = 20;
+    public float airDeceleration = 100;
+    public float airTurnSpeed = 50;
+    private Vector3 airMovementDirection;
+    private Vector2 moveInputDirection;
+    
     [Header("Slope movement")]
     public float maxSlopeAngle = 45;
     public bool onSlope;
-    private RaycastHit slopeHit;
-    private Vector3 slopeMoveDir;
-    
+    private RaycastHit groundHit;
+
+    [Header("Crouch")]
+    public float crouchAcc = 70;
+    public float maxCrouchSpeed = 10;
+    public bool crouching;
+    public bool pressingCrouch;
+
     [Header("Jump")]
     public float jumpForce = 12;
     public float landingGracePeriod = 0.2f;
-    private float landingGrace;
     public bool pressingJump;
-    private bool hasJumped;
-    private float timeSinceJump;
-    
+    private bool waitingToJump;
+
     [Header("Wallrun")]
     public bool wallRunning;
     public int wallRunDirection;
-    private bool firstWallRunCall = true;
-    private Vector3 wallRunForce;
-    
-    [Header("Slide")]
-    public float maxSlideSpeed = 30;
 
+    [Header("Slide")]
+    public float slideAcc = 10;
+    public float maxSlideSpeed = 30;
+    public float slideTurnSpeed = 50;
+    public float slideForce = 20;
     public bool sliding;
-    public bool pressingSlide;
-    private bool firstSlideCall;
-    private float slideForceTimer;
-    private Vector3 slideDirection;
 
     [Header("Dash")]
     public bool canDash = true;
@@ -58,45 +79,53 @@ public class playermovement : MonoBehaviour
 
     [Header("Camera")]
     public float mouseSensitivity = 2f;
-    private float cameraVerticalRotation;
-    private float cameraHorizontalRotation;
-    
+    private float headVerticalRotation;
+    private float headHorizontalRotation;
+
     [Header("Checks")]
     public GameObject groundCheck;
     public LayerMask terrainLayer;
     public bool grounded;
+    public float timeSinceGrounded;
     public LayerMask wallLayer;
     public bool walled;
     [HideInInspector] public List<Collider> wallColList = new List<Collider>();
     private Vector3 dirToWall;
 
     // Other
-    
+
     public float gravity = 20;
+    public bool enterState = true;
     public bool underTerrain;
     public bool slamming;
 
+    private Vector3 originalBodyScale;
+    private float originalHeadHeight;
 
-    void Start()
+    private void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        rb = gameObject.GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
+        body = transform.GetChild(0).gameObject;
+        head = transform.GetChild(1).gameObject;
+
+        originalBodyScale = body.transform.localScale;
+        originalHeadHeight = head.transform.localPosition.y;
     }
-    
-    void Update()
+
+    private void Update()
     {
         GroundCheck();
         Walled();
-        Jump();
-        Slide();
-        onSlope = SlopeCheck();
-        underTerrain = RoofCheck();
+        SlopeCheck();
+        if (crouching || sliding) RoofCheck();
+
         CameraRotation();
 
-        moveDirection = move.action.ReadValue<Vector2>();
-        // BigAssBall() making a comeback 2024
-        
+        moveInputDirection = move.action.ReadValue<Vector2>();
+        // BigAssBall is real?!?!?!
+
         // Dash
         dashCoolDown -= Time.deltaTime;
         if ((grounded || wallRunning) && !dashing && dashCoolDown < 0) canDash = true;
@@ -104,246 +133,266 @@ public class playermovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!wallRunning && !sliding) Movement(); // If wallrunning, disable base movement
-        else if (!sliding && !slamming) WallRun();
-        
-        // Extra gravity
-        if (!wallRunning) rb.AddForce(0, !slamming ? -gravity: -gravity*5f, 0);
-        else rb.useGravity = false;
-        if (onSlope)
-        {
-            rb.useGravity = false;
-            rb.AddForce(-slopeHit.normal * gravity);
+        // Define movement state
+        if (grounded) {
+            // Grounded
+            if (pressingCrouch && rb.velocity.magnitude > maxCrouchSpeed * 1.5) currentState = movementState.slide; // Slide
+            else if (pressingCrouch){
+                crouching = true;
+                currentState = movementState.ground;
+            }
+            else currentState = movementState.ground; // Ground
         }
-        else
-            rb.useGravity = true;
+        else {
+            // Not grounded
+            if (walled) {
+                if (pressingJump && !pressingCrouch && !slamming && timeSinceGrounded > 0.2) currentState = movementState.wallrun; // Wallrun
+                else currentState = movementState.air; // Air
+            }else currentState = movementState.air;
+        }
+
+        // Reset enterState when switching movement states
+        if (currentState != previousState)
+        {
+            enterState = true;
+        }
+        previousState = currentState;
+
+        switch (currentState) {
+            case movementState.ground: GroundMovement(); break;
+            case movementState.air: AirMovement(); break;
+            case movementState.wallrun: Wallrun(); break;
+            case movementState.slide: SlideMovement(); break;
+        }
+
+        if (currentState == movementState.air) rb.AddForce(Vector3.down * gravity);
     }
 
-    void WallRun()
+    /* Movement
+     __  __                                            _
+    |  \/  |                                          | |
+    | \  / |  ___ __   __ ___  _ __ ___    ___  _ __  | |_
+    | |\/| | / _ \\ \ / // _ \| '_ ` _ \  / _ \| '_ \ | __|
+    | |  | || (_) |\ V /|  __/| | | | | ||  __/| | | || |_
+    |_|  |_| \___/  \_/  \___||_| |_| |_| \___||_| |_| \__|
+    */
+
+    void GroundMovement()
     {
-        Vector3 dirToWall90 = Quaternion.Euler(0, 90, 0) * dirToWall;
-        float camAngle90 = Vector3.Angle(dirToWall90, transform.rotation * Vector3.forward);
-
-        if (firstWallRunCall)
+        if (enterState)
         {
-            if (camAngle90 < 90)
-            {
-                wallRunForce = dirToWall90.normalized * acceleration;
-                wallRunDirection = 1;
-            }
-            else
-            {
-                wallRunForce = dirToWall90.normalized * -acceleration;
-                wallRunDirection = -1;
-            }
+            enterState = false;
         }
-        firstWallRunCall = false;
+        
+        Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer);
 
-        wallRunForce = dirToWall90.normalized * (acceleration * wallRunDirection);
+        // Movement direction on flat ground
+        Vector3 flatMovementDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        // Movement direction projected onto the ground
+        Vector3 movementDirection = Vector3.ProjectOnPlane(flatMovementDirection, groundHit.normal);
 
-        // Apply force to ride the wall
-        if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude < maxSpeed) rb.AddForce(wallRunForce, ForceMode.Force);
+        // Velocity on x and z-axes projected onto the ground
+        Vector3 velocityAlongGround = Vector3.ProjectOnPlane(new Vector3(rb.velocity.x, 0, rb.velocity.z), groundHit.normal);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongGround, movementDirection);
+        
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, movementDirection) < 90) movementDirection = Vector3.ProjectOnPlane(movementDirection, dirToWall);
+
+        
+        if (!crouching) // Normal movement
+        {
+            rb.AddForce(movementDirection * acceleration);
+            // Speed limit - apply force to the opposite direction of velocity
+            if (velocityAlongGround.magnitude > maxSpeed) rb.AddForce(-velocityAlongGround.normalized * acceleration
+            * (1 + velocityAlongGround.magnitude - maxSpeed) * 0.15f);
+            // Slow down when no movement inputs or if trying to move against the direction of velocity
+            else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
+            else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
+        }
+        else // Crouching
+        {
+            rb.AddForce(movementDirection * crouchAcc);
+            // Speed limit
+            if (velocityAlongGround.magnitude > maxCrouchSpeed) rb.AddForce(-velocityAlongGround.normalized * crouchAcc);
+            // Slow down when no movement inputs or if trying to move against the direction of velocity
+            else if (movementDirection == Vector3.zero || velocityMovementDirAngle > 90) rb.AddForce(-velocityAlongGround * deceleration);
+            else rb.AddForce(Vector3.ProjectOnPlane(-velocityAlongGround, movementDirection) * deceleration);
+        }
+    }
+
+    void AirMovement()
+    {
+        if (enterState)
+        {
+            enterState = false;
+            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
+        }
+
+        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
+        float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
+
+
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, airMovementDirection) < 90) airMovementDirection = Vector3.ProjectOnPlane(airMovementDirection, dirToWall);
+
+        // Movement
+        if (inputMovementAngle < 130 || velocityAlongXZ.magnitude < 2)
+        {
+            if (velocityAlongXZ.magnitude >= 2) airMovementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, airTurnSpeed * Time.fixedDeltaTime);
+            else airMovementDirection = inputDirection;
+
+            if (velocityAlongXZ.magnitude < maxSpeed) rb.AddForce(airMovementDirection * inputDirection.magnitude * airAcc);
+            else rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, velocityAlongXZ) * inputDirection.magnitude * airAcc);
+        }else rb.AddForce(-velocityAlongXZ.normalized * airDeceleration * Mathf.Clamp01((velocityAlongXZ.magnitude - maxSpeed)/maxSpeed + 1) * 0.05f);
+    }
+
+    void Wallrun()
+    {
+        Vector3 rightFromWall = (Quaternion.Euler(0,90,0) * dirToWall).normalized;
+        
+        if (enterState)
+        {
+            enterState = false;
+            // Wallrundirection 1 = right and -1 = left
+            wallRunDirection = Vector3.Angle(rb.velocity, rightFromWall) < 90 ? 1 : -1;
+        }
+        
+        if (rb.velocity.magnitude < maxSpeed) rb.AddForce(rightFromWall * acceleration * wallRunDirection);
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
     }
 
-    
-
-    void Movement()
+    void SlideMovement() // Base for this is literally copied from AirMovement and this uses some variables meant for air movement
     {
-        Vector3 velocity = rb.velocity;
-        float xzSpeed = new Vector2(velocity.x, velocity.z).magnitude;
-        
-        // Movement force
-        Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
-        
-        // Angle between the direction of where the player is going and the wall
-        float wallAngle = Vector3.Angle(dirToWall, movement);
-        float wallAngle90 = Vector3.Angle(Quaternion.Euler(0, 90, 0) * dirToWall, movement);
+        if (enterState)
+        {
+            enterState = false;
+            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
+            rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, groundHit.normal).normalized * slideForce, ForceMode.Impulse);
+        }
 
-        float scale = wallAngle / 90f;
+        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
+        float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
+        float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
 
-        // Redirects the player when moving towards walls to prevent the player from sticking to them
-        if (walled && !wallRunning && Mathf.Abs(wallAngle) <= 90)
+
+        // Adjust movement direction to avoid getting stuck to walls
+        if (walled && Vector3.Angle(dirToWall, airMovementDirection) < 90) airMovementDirection = Vector3.ProjectOnPlane(airMovementDirection, dirToWall);
+
+        // Movement
+        if (inputMovementAngle < 130 || velocityAlongXZ.magnitude < 1)
         {
-            if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
-            else movement = Quaternion.Euler(0, -(90 - wallAngle),0) * movement * scale;
+            if (velocityAlongXZ.magnitude >= 1) airMovementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, slideTurnSpeed * Time.fixedDeltaTime);
+            else airMovementDirection = inputDirection;
+
+            if (groundHit.normal != Vector3.up && rb.velocity.magnitude < maxSlideSpeed) rb.AddForce(-Vector3.ProjectOnPlane(Vector3.up, groundHit.normal).normalized * slideAcc);
+            rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, velocityAlongXZ) * inputDirection.magnitude * airAcc);
         }
-        
-        if (grounded)
-        {
-            if (!onSlope && xzSpeed < maxSpeed) rb.AddForce(movement, ForceMode.Force);
-            
-            // Slows the player when there are no movement inputs
-            if (movement == Vector3.zero && xzSpeed < maxSpeed) rb.velocity = new Vector3(velocity.x * 0.6f, velocity.y, velocity.z * 0.6f);
-            
-            // Normal speed limit on the ground
-            if (xzSpeed > maxSpeed * 1.2) rb.AddForce(xzSpeed - maxSpeed + 1 < 3 ? -velocity * (xzSpeed - maxSpeed + 1): -velocity * 3);
-        }
-        else if (xzSpeed < maxSpeed)
-        {
-            // Movement in air
-            rb.AddForce(movement / ((velocity.magnitude+1)/3), ForceMode.Force);
-        }
-        if (onSlope)
-        {
-            Vector3 slopeMovement = Vector3.ProjectOnPlane(movement, slopeHit.normal);
-            
-            if (velocity.magnitude < maxSpeed)
-            {
-                rb.AddForce(slopeMovement, ForceMode.Force);
-                if (velocity.y > 0) rb.AddForce(slopeMovement * (Vector3.Angle(slopeHit.normal, Vector3.up) * 0.05f), ForceMode.Force);
-            }
-            
-            // Angle between the moving direction and direction to the left of the slope
-            float moveAngle = Vector3.Angle(velocity, Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)));
-            float slopeScale1 = -(moveAngle / 90) + 1;
-            float slopeScale2 = (moveAngle - 90) / 90;
-            
-            // Limits the relative left and right movement on slope when moving diagonally
-            if (moveAngle < 70 && moveAngle > 20) rb.AddForce(-Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale1));
-            else if (moveAngle > 110 && moveAngle < 160) rb.AddForce(Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale2));
-        }
-        
-        // Start wallride
-        if (!grounded && walled && pressingJump && moveDirection.y > 0)
-            wallRunning = true;
+        else rb.AddForce(-velocityAlongXZ.normalized * airDeceleration * Mathf.Clamp01((velocityAlongXZ.magnitude - maxSpeed) / maxSpeed + 1) * 0.05f);
+    }
+
+    void EnterCrouch()
+    {
+        crouching = true;
+        body.transform.localScale = new Vector3(originalBodyScale.x, originalBodyScale.y/2, originalBodyScale.z);
+        head.transform.localPosition = new Vector3(0, originalHeadHeight/2, 0);
+        if (!grounded) transform.position = transform.position + Vector3.up * 0.75f;
+    }
+
+    void ExitCrouch()
+    {
+        crouching = false;
+        body.transform.localScale = originalBodyScale;
+        head.transform.localPosition = new Vector3(0, originalHeadHeight, 0);
+        if (!grounded) transform.position = transform.position + Vector3.down * 0.75f;
     }
     
-    
-    // Call path: player -> Player Input -> Events -> player
-    public void JumpInput(InputAction.CallbackContext action)
-    {
-        // Sets landingGrace to determine wheter to jump in Jump()
-        if (action.performed)
-        {
-            landingGrace = Time.realtimeSinceStartup + landingGracePeriod;
-            pressingJump = true;
-        }
-
-        if (action.canceled)
-        {
-            pressingJump = false;
-            if (wallRunning) WallJump();
-            wallRunning = false;
-        }
-    }
     void Jump()
     {
-        Vector3 velocity = rb.velocity;
-        Quaternion localRotation = transform.localRotation;
-        // Calculates the x and z components of the velocity added to the player when jumping
-        float moveX = moveDirection.x * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad);
-        float moveZ = -moveDirection.x * velocity.magnitude * Mathf.Sin(localRotation.eulerAngles.y * Mathf.Deg2Rad) + moveDirection.y * velocity.magnitude * Mathf.Cos(localRotation.eulerAngles.y * Mathf.Deg2Rad);
-
-        Vector2 velocity2 = new Vector2(velocity.x, velocity.z);
-        Vector2 direction2 = new Vector2(moveX, moveZ);
-        float velAngle = Mathf.Rad2Deg * Mathf.Acos((velocity.x * moveX + velocity.z * moveZ) / (velocity2.magnitude * direction2.magnitude));
-        float scale = -((velAngle / 180f) * (1f + 0.2f) - 0.2f) + 0.8f;
-
-        if (landingGrace > Time.realtimeSinceStartup && !hasJumped && grounded) //Jump if player has landed within the grace period and has not yet jumped
-        {
-            if (moveDirection.magnitude > 0 && velocity.magnitude < maxSpeed * 1.5f && velocity.magnitude > 0.5) rb.velocity = new Vector3(moveX * scale, sliding ? jumpForce * 1.5f : jumpForce, moveZ * scale);
-            else rb.velocity = new Vector3(velocity.x, sliding ? jumpForce * 1.5f : jumpForce, velocity.z);
-
-            hasJumped = true;
-            timeSinceJump = Time.time;
-        }
-        if (timeSinceJump + 0.2 < Time.time) hasJumped = false;
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
-
+    
     void WallJump()
     {
         Vector3 velocity = rb.velocity;
         
-        // Walljumping throws the player away from the wall
-        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall.normalized * 8 + Vector3.up * jumpForce * 0.6f;
-        
-        hasJumped = true;
-        firstWallRunCall = true;
+        // Walljumping makes the player jump away from the wall regardless of directional movement inputs
+        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
     }
-
-    public void SlideInput(InputAction.CallbackContext action)
+    
+    /* Inputs
+     _____                       _        
+    |_   _|                     | |       
+      | |   _ __   _ __   _   _ | |_   ___ 
+      | |  | '_ \ | '_ \ | | | || __|/ __|
+     _| |_ | | | || |_) || |_| || |_ \__ \
+    |_____||_| |_|| .__/  \__,_| \__||___/
+                  | |
+                  |_|
+    */
+    
+    // Call path: player (object in scene hierarchy) -> Player Input (component) -> Events -> player
+    public void JumpInput(InputAction.CallbackContext action)
     {
-        if (action.performed) pressingSlide = true;
+        if (action.performed)
+        {
+            if (!waitingToJump) StartCoroutine(WaitToJump());
+            pressingJump = true;
+        }
         else if (action.canceled)
         {
-            pressingSlide = false;
-            if (!underTerrain) sliding = false;
+            pressingJump = false;
+            if (currentState == movementState.wallrun) WallJump();
+            wallRunning = false;
+        }
+        
+        IEnumerator WaitToJump() // Wait until the player is grounded to jump
+        {
+            waitingToJump = true;
+            float i = landingGracePeriod;
+            yield return new WaitUntil(() =>
+            {
+                if (grounded) Jump();
+                i -= Time.deltaTime;
+                return i <= 0 || grounded;
+            });
+            waitingToJump = false;
         }
     }
-
-    void Slide()
+    
+    public void CrouchInput(InputAction.CallbackContext action)
     {
-        // Start sliding if grounded or as soons as the player touches groung while pressing the slide key
-        if (pressingSlide && grounded && !pressingJump)
+        if (action.performed)
         {
-            sliding = true;
-            slideDirection = rb.velocity;
+            pressingCrouch = true;
+            EnterCrouch();
         }
-
-        if (sliding)
+        else if (action.canceled)
         {
-            float velMagnitude = rb.velocity.magnitude;
+            pressingCrouch = false;
+            if (!underTerrain) ExitCrouch();
+            else StartCoroutine(Exit());
             
-            if (firstSlideCall)
+            IEnumerator Exit()
             {
-                transform.localScale = new Vector3(1, 0.5f, 1);
-                rb.AddForce(slopeHit.normal * -50, ForceMode.Impulse);
-                slideForceTimer = Time.time + Mathf.Lerp(0, 0.4f, velMagnitude / maxSpeed);
+                yield return new WaitUntil(() => { return !underTerrain; });
+                ExitCrouch();
             }
-            firstSlideCall = false;
-            
-            Vector3 velocity = rb.velocity;
-
-            Vector3 movement = transform.rotation * new Vector3(moveDirection.x, 0, moveDirection.y) * acceleration;
-            
-            // Angle between the direction of where the player is going and the wall
-            float wallAngle = Vector3.Angle(dirToWall, movement);
-            float wallAngle90 = Vector3.Angle(Quaternion.Euler(0, 90, 0) * dirToWall, movement);
-
-            float scale = wallAngle / 90f;
-            
-            // Redirects the player when moving towards walls to prevent the player from sticking to them
-            if (walled && !wallRunning && Mathf.Abs(wallAngle) <= 90)
-            {
-                if (wallAngle90 < 90) movement = Quaternion.Euler(0, wallAngle90,0) * movement * scale;
-                else movement = Quaternion.Euler(0, -(90 - wallAngle),0) * movement * scale;
-            }
-            
-            // Add force towards movement direction for a brief moment after starting the slide
-            if (Time.time < slideForceTimer && velMagnitude < maxSpeed * 1.2f) rb.AddForce(slideDirection / 10 * (acceleration * 0.5f), ForceMode.Force);
-            // Slideforce downhill
-            if (Time.time > slideForceTimer && Vector3.Angle(slopeHit.normal, Vector3.up) > 0 && velMagnitude < maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * (acceleration * 0.3f), ForceMode.Force);
-            // "Crouching" movement
-            if (velMagnitude < maxSpeed * 0.5f || onSlope) rb.AddForce(Vector3.ProjectOnPlane(movement, slopeHit.normal) / 3, ForceMode.Force);
-            if (velMagnitude > maxSlideSpeed) rb.AddForce(new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z).normalized * -(acceleration * 0.5f), ForceMode.Force);
-            
-            // Angle between the moving direction and direction to the left of the slope
-            float moveAngle = Vector3.Angle(velocity, Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)));
-            float slopeScale1 = -(moveAngle / 90) + 1;
-            float slopeScale2 = (moveAngle - 90) / 90;
-            
-            // Limits the relative left and right movement on slope when moving diagonally
-            if (moveAngle < 70 && moveAngle > 20) rb.AddForce(-Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale1));
-            else if (moveAngle > 110 && moveAngle < 160) rb.AddForce(Vector3.Cross(slopeHit.normal, new Vector3(slopeHit.normal.x, 0, slopeHit.normal.z)).normalized * (50 * slopeScale2));
-
-            if (!pressingSlide && !underTerrain) sliding = false;
-        }
-        else
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-            firstSlideCall = true;
         }
     }
-
+    
     public void DashInput(InputAction.CallbackContext action)
     {
+        // Dash if not touching terrain or performing dash or slam
         if (action.performed && canDash && !dashing && !grounded && !walled && !slamming)
         {
             StartCoroutine(Dash());
         }
     }
-
+    
     IEnumerator Dash()
     {
         rb.useGravity = false;
@@ -352,7 +401,7 @@ public class playermovement : MonoBehaviour
         dashCoolDown = 0.1f;
 
         Vector3 startPos = transform.position;
-        Vector3 dashDirection = camera.transform.rotation * Vector3.forward;
+        Vector3 dashDirection = head.transform.rotation * Vector3.forward;
         float startVelocity = rb.velocity.magnitude;
         
         rb.AddForce(dashDirection * (dashDistance * 10), ForceMode.Impulse);
@@ -360,79 +409,83 @@ public class playermovement : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         yield return new WaitUntil(delegate
         {
+            // Slow down when reaching max dash distance or touching terrain
             if (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled) rb.velocity *= 0.9f;
-            return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.velocity.magnitude < (startVelocity > maxSpeed ? startVelocity: maxSpeed);
+            // Return when slowing down and velocity is the same as before dashing
+            return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.velocity.magnitude < startVelocity;
         });
         
         rb.useGravity = true;
         dashing = false;
     }
-
+    
     void CameraRotation()
     {
         // Rotate the Camera around its local X axis
         float inputY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-        cameraVerticalRotation -= inputY;
-        cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, -90f, 90f);
-        camera.transform.localRotation = Quaternion.Euler(cameraVerticalRotation, 0f, 0f);
+        headVerticalRotation -= inputY;
+        headVerticalRotation = Mathf.Clamp(headVerticalRotation, -90f, 90f);
+        head.transform.localRotation = Quaternion.Euler(headVerticalRotation, 0f, 0f);
         
         // Rotate the Player Object around its Y axis
         float inputX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        cameraHorizontalRotation += inputX;
-        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
+        headHorizontalRotation += inputX;
+        transform.rotation = Quaternion.Euler(0f, headHorizontalRotation, 0f);
 
         // Gamepad input
         Vector2 input = rightStick.action.ReadValue<Vector2>();
-        cameraVerticalRotation -= input.y;
-        cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, -90f, 90f);
-        camera.transform.localRotation = Quaternion.Euler(cameraVerticalRotation, 0, 0);
+        headVerticalRotation -= input.y;
+        headVerticalRotation = Mathf.Clamp(headVerticalRotation, -90f, 90f);
+        head.transform.localRotation = Quaternion.Euler(headVerticalRotation, 0, 0);
 
-        cameraHorizontalRotation += input.x;
-        transform.rotation = Quaternion.Euler(0f, cameraHorizontalRotation, 0f);
+        headHorizontalRotation += input.x;
+        transform.rotation = Quaternion.Euler(0f, headHorizontalRotation, 0f);
     }
+    
+    // ENVIROMENT CHECKS
     
     void GroundCheck()
     {
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, terrainLayer).Length > 0)
         {
             grounded = true;
-            
             wallRunning = false;
-            firstWallRunCall = true;
-
             dashing = false;
+            timeSinceGrounded = 0;
         }
-        else
+        else // Not grounded
         {
             grounded = false;
-            hasJumped = false;
+            timeSinceGrounded += Time.deltaTime;
         }
     }
 
-    bool SlopeCheck()
+    void SlopeCheck()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, 1.3f, terrainLayer) && Vector3.Angle(Vector3.up, slopeHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, slopeHit.normal) > 0)
-            return true;
-        return false;
+        if (Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, terrainLayer) && Vector3.Angle(Vector3.up, groundHit.normal) < maxSlopeAngle && Vector3.Angle(Vector3.up, groundHit.normal) > 0)
+            onSlope = true;
+        else onSlope = false;
     }
 
-    bool RoofCheck()
+    void RoofCheck()
     {
-        Vector3 rayPos = new Vector3(0.5f,-transform.localScale.y,0);
+        bool checkTrue = false;
+        Vector3 rayPos = new Vector3(0.5f,0,0);
         for (int i = 0; i < 8; i++)
         {
             Quaternion rotation = Quaternion.Euler(0,45 * i,0);
             if (Physics.Raycast(transform.position + rotation * rayPos, Vector3.up, 2, terrainLayer))
-                return true;
+                checkTrue = true;
         }
-        return false;
+
+        underTerrain = checkTrue;
     }
 
     void Walled()
     {
         if (walled)
         {
-            dirToWall = wallColList[0].ClosestPoint(transform.position) - transform.position;
+            dirToWall = (wallColList[0].ClosestPoint(transform.position) - transform.position).normalized;
 
             dashing = false;
         }

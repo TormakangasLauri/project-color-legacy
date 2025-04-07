@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
 
-public class EnemyMovement2 : BaseEnemyMovement
+public class EnemyMovement : BaseEnemyMovement
 { 
     private enum states { inactive, idle, navmesh, los };
     private states currentState;

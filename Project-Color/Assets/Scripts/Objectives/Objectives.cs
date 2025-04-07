@@ -7,6 +7,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum ObjectiveType { kill, platform, paint }
+
 public class Objectives : MonoBehaviour
 {
     private static ObjectiveDisplay objectiveDisplay;

@@ -11,16 +11,17 @@ public class KillObjective : Objective
     private EnemyController enemyController;
     
     public List<GameObject> spawnpoints = new List<GameObject>();
-    private List<GameObject> enemiesInObjective = new List<GameObject>();
+    public List<GameObject> enemiesInObjective = new List<GameObject>();
 
     private bool spawning;
     [HideInInspector] public int waves;
-
     [HideInInspector] public int group;
-    
+
     private void Start()
     {
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
+        type = ObjectiveType.kill;
+
         // Add all spawnpoints to the list
         foreach (Transform child in transform)
             spawnpoints.Add(child.gameObject);

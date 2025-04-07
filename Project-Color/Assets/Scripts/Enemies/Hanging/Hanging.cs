@@ -85,7 +85,7 @@ public class Hanging : EnemyType
 
                 if (!Physics.Raycast(spawnPoint + Vector3.up * (hangPointHeight + 1), Vector3.down, hangPointHeight, LayerMask.GetMask("Terrain")))
                 {
-                    gameObject.transform.position = spawnPoint + Vector3.up * hangPointHeight;
+                    gameObject.transform.position = spawnPoint + Vector3.up * (hangPointHeight + Random.Range(1.5f, 5f));
                     CreateHangPoint();
                     spawned = true;
                     break;

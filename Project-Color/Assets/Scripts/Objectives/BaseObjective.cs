@@ -8,6 +8,8 @@ public class Objective : MonoBehaviour
     public bool active;
     public bool completed;
 
+    public ObjectiveType type;
+
     private void OnTriggerEnter(Collider other)
     {
         // Start objective on trigger collision
