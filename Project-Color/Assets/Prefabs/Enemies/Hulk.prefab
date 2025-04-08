@@ -164,8 +164,8 @@ GameObject:
   - component: {fileID: 7073502008848142266}
   - component: {fileID: -2800636157152445101}
   - component: {fileID: 7073502008848142261}
-  - component: {fileID: 6965473459593261956}
   - component: {fileID: 5676568136486794914}
+  - component: {fileID: 7958634032743590955}
   - component: {fileID: 8094043269757407083}
   - component: {fileID: 3652864760032474004}
   m_Layer: 8
@@ -286,26 +286,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
---- !u!114 &6965473459593261956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7073502008848142263}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a32f9946e70ac594d889a68cd114168e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  speed: 6
-  stopDistance: 0
-  LOSToTarget: 0
-  grounded: 0
-  state: 0
 --- !u!114 &5676568136486794914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -323,6 +303,23 @@ MonoBehaviour:
   active: 0
   timeActive: 0
   deactivateOnStart: 1
+--- !u!114 &7958634032743590955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073502008848142263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b53fcffa355d2404a8343f0cf710b496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  speed: 2
+  stopDistance: 0
+  LOSToTarget: 0
+  grounded: 0
 --- !u!114 &8094043269757407083
 MonoBehaviour:
   m_ObjectHideFlags: 0

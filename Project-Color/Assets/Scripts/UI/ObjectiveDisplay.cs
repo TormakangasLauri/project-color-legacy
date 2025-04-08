@@ -17,9 +17,6 @@ public class ObjectiveDisplay : MonoBehaviour
         public Color backgroundColor;
         public TextMeshProUGUI text;
 
-        public int order;
-        public static int objectives;
-
         public ObjectiveBlock(Objective objective)
         {
             gameObject = Instantiate(objectiveBlockPrefab);
@@ -28,14 +25,21 @@ public class ObjectiveDisplay : MonoBehaviour
 
             this.objective = objective;
             type = objective.type;
-            order = objectives + 1;
 
-            gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, objectives * -25);
-
-            objectives++;
+            gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, objectiveBlocks.Count * -25);
         }
 
-
+        public IEnumerator Complete()
+        {
+            Image bg = gameObject.GetComponent<Image>();
+            for (int i = 0; i < 4; i++)
+            {
+                bg.color = Color.green;
+                yield return new WaitForSeconds(0.25f);
+                bg.color = Color.white;
+                yield return new WaitForSeconds(0.25f);
+            }
+        }
     }
 
     public GameObject objectiveBlock;
@@ -58,15 +62,26 @@ public class ObjectiveDisplay : MonoBehaviour
 
     public void ObjectiveComplete(Objective objective) // Remove an objective from the display after completion
     {
+        ObjectiveBlock remove = null;
         foreach (ObjectiveBlock block in objectiveBlocks)
             if (block.objective == objective)
             {
-                objectiveBlocks.Remove(block);
+                remove = block;
+                StartCoroutine(block.Complete());
                 break;
             }
-
-        foreach (ObjectiveBlock block in objectiveBlocks) // Reorder blocks in the display
-            block.gameObject.GetComponent<RectTransform>().position = new Vector2(0, -25 * objectiveBlocks.IndexOf(block));
+        StartCoroutine(Reorder());
+        IEnumerator Reorder()
+        {
+            yield return new WaitForSeconds(2);
+            if (remove != null)
+            {
+                Destroy(remove.gameObject);
+                objectiveBlocks.Remove(remove);
+            }
+            foreach (ObjectiveBlock block in objectiveBlocks) // Reorder blocks in the display
+                block.gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, objectiveBlocks.IndexOf(block) * -25);
+        }
     }
 
     private void Update()
