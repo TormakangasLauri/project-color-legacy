@@ -31,7 +31,8 @@ public class PathFind : MonoBehaviour
         
         NavMeshPath path = new NavMeshPath();
         agent.enabled = true;
-        agent.CalculatePath(hit.point, path);
+        try { agent.CalculatePath(hit.point, path); }
+        catch {  }
         agent.enabled = false;
         ET.path = path;
 

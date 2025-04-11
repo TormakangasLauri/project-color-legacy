@@ -4,16 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
 
-public class EnemyMovement : BaseEnemyMovement
+public class HulkMovement : BaseEnemyMovement
 { 
-    private enum states { inactive, idle, navmesh, los, attack };
+    private enum states { inactive, idle, navmesh, los };
     private states currentState;
     
     private void FixedUpdate()
     {
         // Change to inactive
         if (!_enemyType.active) currentState = states.inactive;
-        if (_enemyAttack.attacking) currentState = states.attack;
 
         // States
         //  inactive: while enemy is inactive (not spawned / dead)
@@ -26,7 +25,6 @@ public class EnemyMovement : BaseEnemyMovement
             case states.idle: Idle(); break;
             case states.navmesh: NavMeshMovement(); break;
             case states.los: LOSMovement(); break;
-            case states.attack: Attack(); break;
         }
 
         // Gravity
@@ -105,11 +103,7 @@ public class EnemyMovement : BaseEnemyMovement
         // Moving when not in stopping distance of the target
         if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
         // Slow down enemy when in stopping distance
-        else
-        {
-            if (stopDistance < 3f) _enemyAttack.Attack(); // Make only the closest enemies attack
-            if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
-        }
+        else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
         // Speed limit
         if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
         // Move away from the target when too close
@@ -128,10 +122,5 @@ public class EnemyMovement : BaseEnemyMovement
         {
             currentState = states.navmesh;
         }
-    }
-
-    private void Attack()
-    {
-        if (!_enemyAttack.attacking) currentState = LOSToTarget ? states.los : states.navmesh;
     }
 }

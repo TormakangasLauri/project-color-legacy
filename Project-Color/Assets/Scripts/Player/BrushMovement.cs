@@ -108,7 +108,7 @@ public class BrushMovement : MonoBehaviour
             Vector3 kb = rb.velocity.normalized * knockback;
             EnemyHealth EH = other.gameObject.GetComponent<EnemyHealth>();
             
-            EH.TakeDamage(damage);
+            EH.Damage(damage);
             EH.Knockback(kb, ForceMode.Force);
         }
     }

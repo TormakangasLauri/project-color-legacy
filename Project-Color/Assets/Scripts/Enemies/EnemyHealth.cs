@@ -4,11 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : Health
 {
-    public float maxHealth = 100;
     public float KBmult = 1;
-    float healthAmount;
     public Color damageFlash = new Color(116f / 255f, 18f / 255f, 27f / 255f);
     private Renderer enemyRenderer;
     Rigidbody rb;
@@ -21,18 +19,12 @@ public class EnemyHealth : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         healthAmount = maxHealth;
         healthBar = GetComponentInChildren<FloatingHealthBar>();   // kommentoi tämä rivi jos health barit halutaan pois
-        
     }
 
-    public void TakeDamage(float damage)
+    protected override void OnDamaged()
     {
-        healthAmount -= damage;
         if (healthBar != null) healthBar.UpdateHealthBar(healthAmount, maxHealth);
-        if (healthAmount <= 0)
-        {
-            OnDeath();
-        }
-        else StartCoroutine(FlashColor());
+        StartCoroutine(FlashColor());
     }
 
     IEnumerator FlashColor()
@@ -58,13 +50,12 @@ public class EnemyHealth : MonoBehaviour
         rb.AddForce(kb * KBmult, fm);
     }
 
-    public void Healing(float healPoints)
+    protected override void OnHealed()
     {
-        healthAmount += healPoints;
-        healthAmount = Mathf.Clamp(healthAmount, 0, maxHealth);
+        
     }
 
-    private void OnDeath()
+    protected override void OnDeath()
     {
         gameObject.GetComponent<EnemyType>().Deactivate();
         PlayerAttack.inst.enemies.Remove(gameObject);

@@ -4,6 +4,15 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public enum Enemies
+{
+    basic,
+    sniper,
+    hulk,
+    hanging,
+    copter
+}
+
 namespace Controllers
 {
     public class EnemyList
@@ -57,15 +66,6 @@ namespace Controllers
         [SerializeField] private int spawnHanging = 10;
         [SerializeField] private int spawnCopter = 10;
 
-        public static Dictionary<string, int> enemies = new Dictionary<string, int>
-        {
-            { "basic", 0 },
-            { "sniper", 1 },
-            { "hulk", 2 },
-            { "hanging", 3 },
-            { "copter", 4 }
-        };
-
         private GameObject player;
         private float t;
 
@@ -92,11 +92,11 @@ namespace Controllers
             player = GameObject.FindWithTag("Player");
 
             // Spawn all enemies
-            SpawnNewEnemies("basic", spawnBasic);
-            SpawnNewEnemies("sniper", spawnSniper);
-            SpawnNewEnemies("hulk", spawnHulk);
-            SpawnNewEnemies("hanging", spawnHanging);
-            SpawnNewEnemies("copter", spawnCopter);
+            SpawnNewEnemies(Enemies.basic, spawnBasic);
+            SpawnNewEnemies(Enemies.sniper, spawnSniper);
+            SpawnNewEnemies(Enemies.hulk, spawnHulk);
+            SpawnNewEnemies(Enemies.hanging, spawnHanging);
+            SpawnNewEnemies(Enemies.copter, spawnCopter);
         }
 
         void Update()
@@ -106,31 +106,20 @@ namespace Controllers
             Hanging();
         }
 
-        public static void Activate(int enemy, Vector3 position) // Activate an enemy
+        public static void Activate(Enemies enemy, Vector3 position) // Activate an enemy
         {
-            if (typeLists[enemy].inactiveList.Count > 0)
-                typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            if (typeLists[(int)enemy].inactiveList.Count > 0)
+                typeLists[(int)enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
             else // Spawn more enemies if there are no more inactive enemies to use
             {
                 SpawnNewEnemies(enemy, 1);
                 inst.StartCoroutine(ActivateLate(enemy, position));
             }
         }
-        public static void Activate(string enemy, Vector3 position) // Overload for Activate (above)
+        static IEnumerator ActivateLate(Enemies enemy, Vector3 position) // Wait until a new enemy gets added to lists to activate it
         {
-            int enemyIndex = enemies[enemy];
-            if (typeLists[enemyIndex].inactiveList.Count > 0)
-                typeLists[enemyIndex].inactiveList[0].GetComponent<EnemyType>().Activate(position);
-            else
-            {
-                SpawnNewEnemies(enemy, 1);
-                inst.StartCoroutine(ActivateLate(enemyIndex, position));
-            }
-        }
-        static IEnumerator ActivateLate(int enemy, Vector3 position) // Wait until a new enemy gets added to lists to activate it
-        {
-            yield return new WaitUntil(() => typeLists[enemy].inactiveList.Count > 0);
-            typeLists[enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
+            yield return new WaitUntil(() => typeLists[(int)enemy].inactiveList.Count > 0);
+            typeLists[(int)enemy].inactiveList[0].GetComponent<EnemyType>().Activate(position);
         }
 
         void BasicEnemy()
@@ -146,14 +135,14 @@ namespace Controllers
                 });
 
                 // Assign stopping distances for enemies making some enemies get close and other stay furter away
-                float stopDist = 0.5f;
+                float stopDist = 2.5f;
                 float enemiesOnLayer = 5;
                 for (int i = 0; i < basic.activeList.Count; i++)
                 {
-                    if (i % enemiesOnLayer == 0)
+                    if (i % enemiesOnLayer == 0 && i != 0)
                     {
                         stopDist += 1;
-                        enemiesOnLayer += stopDist;
+                        enemiesOnLayer += 8;
                     }
 
                     basic.activeList[i].GetComponent<BaseEnemyMovement>().stopDistance = stopDist;
@@ -165,7 +154,7 @@ namespace Controllers
         {
             foreach (GameObject h in hulk.activeList)
             {
-                h.GetComponent<EnemyMovement>().stopDistance = 3;
+                h.GetComponent<HulkMovement>().stopDistance = 3;
             }
         }
 
@@ -174,15 +163,10 @@ namespace Controllers
             
         }
 
-        static void SpawnNewEnemies(int enemy ,int count)
+        static void SpawnNewEnemies(Enemies enemy ,int count)
         {
             for (int i = 0; i < count; i++)
-                Instantiate(_enemyPrefabs[enemy], Vector3.down * 500, Quaternion.identity);
-        }
-        static void SpawnNewEnemies(string enemy, int count)
-        {
-            for (int i = 0; i < count; i++)
-                Instantiate(_enemyPrefabs[enemies[enemy]], Vector3.down * 500, Quaternion.identity);
+                Instantiate(_enemyPrefabs[(int)enemy], Vector3.down * 500, Quaternion.identity);
         }
     }
 }

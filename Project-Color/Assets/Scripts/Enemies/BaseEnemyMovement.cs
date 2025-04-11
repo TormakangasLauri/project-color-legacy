@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,12 +9,13 @@ public abstract class BaseEnemyMovement : MonoBehaviour
 {
     protected Rigidbody rb;
     protected EnemyType _enemyType;
+    protected EnemyAttack _enemyAttack;
     public NavMeshPath path;
     
     public GameObject target;
     
     public float speed;
-    [HideInInspector] public float stopDistance;
+    public float stopDistance;
 
     protected LayerMask terrainLayer;
     
@@ -25,6 +27,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
         path = new NavMeshPath();
         terrainLayer = LayerMask.GetMask("Terrain");
         _enemyType = GetComponent<EnemyType>();
+        _enemyAttack = GetComponent<EnemyAttack>();
 
         rb = GetComponent<Rigidbody>();
         target = GameObject.FindWithTag("Player");
@@ -33,7 +36,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        //LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
+        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
         path = _enemyType.path;
     }

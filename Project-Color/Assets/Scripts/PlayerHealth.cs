@@ -4,17 +4,12 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class Health : MonoBehaviour
+public class PlayerHealth : Health
 {
-    public float maxHealth = 100;
-    float healthAmount;
-    
     public TextMeshProUGUI healthText;
 
     void Start()
     {
-        healthAmount = maxHealth;
-
         UpdateHealthUI();
     }
 
@@ -23,38 +18,31 @@ public class Health : MonoBehaviour
         // Placeholder damagen aiheuttaja (Paina F, tekee X vahinkoa)
         if (Input.GetKeyDown(KeyCode.F))
         {
-            TakeDamage(20);
+            Damage(20);
         }
 
         // Placeholder elinvoiman palauttaja (Paina G, parantaa X vahinkoa)
         if (Input.GetKeyDown(KeyCode.G))
         {
-            Healing(10);
+            Heal(10);
         }
     }
 
-    public void TakeDamage(float damage)
+    protected override void OnDamaged()
     {
-        healthAmount -= damage;
-        UpdateHealthUI();
-
-        if (healthAmount <= 0) GameOver(); // Death
-    }
-
-    public void Healing(float healPoints)
-    {
-        healthAmount += healPoints;
-        healthAmount = Mathf.Clamp(healthAmount, 0, maxHealth);
         UpdateHealthUI();
     }
 
-    void UpdateHealthUI()
+    protected override void OnHealed()
     {
-        healthText.text = "Health: " + healthAmount;
+        UpdateHealthUI();
     }
 
-    public void GameOver()
+    void UpdateHealthUI() { healthText.text = "Health: " + healthAmount; }
+
+    protected override void OnDeath()
     {
         // jotain tänne idk @mkeoys
     }
+
 }

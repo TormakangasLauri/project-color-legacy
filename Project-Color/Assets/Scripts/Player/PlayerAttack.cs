@@ -119,7 +119,11 @@ public class PlayerAttack : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.H))
         {
-            EnemyController.Activate("hanging", Vector3.zero);
+            EnemyController.Activate(Enemies.hanging, Vector3.zero);
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            EnemyController.Activate(Enemies.basic, transform.position + transform.forward * 10);
         }
 
         // Attack side reset
@@ -186,7 +190,7 @@ public class PlayerAttack : MonoBehaviour
     private void Attack(GameObject enemy, bool charged)
     {
         EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-        enemyHealth.TakeDamage(!charged ? attackDamage: cAttackDamage);
+        enemyHealth.Damage(!charged ? attackDamage: cAttackDamage);
 
         Vector2 KB = !charged ? attackKB : cAttackKB;
         Vector3 KBdir = GetComponentInParent<Transform>().rotation * Vector3.forward * KB.x + Vector3.up * KB.y;
@@ -203,7 +207,7 @@ public class PlayerAttack : MonoBehaviour
         {
             // Damage
             EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            enemyHealth.TakeDamage(slamDamage);
+            enemyHealth.Damage(slamDamage);
 
             // Knockback
             Vector3 dir = (enemy.transform.position - transform.parent.position).normalized;
@@ -332,7 +336,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (enemyLayer == (enemyLayer | (1 << other.gameObject.layer))) enemies.Add(other.gameObject);
+        if (enemyLayer == (enemyLayer | (1 << other.gameObject.layer)) && other.gameObject.name != "Attack") enemies.Add(other.gameObject);
     }
 
     private void OnTriggerExit(Collider other)

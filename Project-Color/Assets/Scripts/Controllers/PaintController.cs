@@ -112,14 +112,14 @@ public class PaintController : MonoBehaviour
         paintGroupsOccupied.Add(paintGroup);
     }
 
-    private void OnDrawGizmos()
-    {
-        foreach (GameObject group in paintGroups)
-        {
-            Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
-            Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(group.transform.position, 0.2f);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    foreach (GameObject group in paintGroups)
+    //    {
+    //        Gizmos.color = new Color(1, 0.5f, 0, 0.4f);
+    //        Gizmos.DrawSphere(group.transform.position, paintGroupRadius);
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(group.transform.position, 0.2f);
+    //    }
+    //}
 }
