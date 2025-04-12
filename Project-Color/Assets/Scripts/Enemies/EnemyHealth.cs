@@ -9,14 +9,12 @@ public class EnemyHealth : Health
     public float KBmult = 1;
     public Color damageFlash = new Color(116f / 255f, 18f / 255f, 27f / 255f);
     private Renderer enemyRenderer;
-    Rigidbody rb;
 
     [SerializeField] private FloatingHealthBar healthBar;
 
     void Start()
     {
         enemyRenderer = GetComponent<Renderer>();
-        rb = GetComponent<Rigidbody>();
         healthAmount = maxHealth;
         healthBar = GetComponentInChildren<FloatingHealthBar>();   // kommentoi tämä rivi jos health barit halutaan pois
     }

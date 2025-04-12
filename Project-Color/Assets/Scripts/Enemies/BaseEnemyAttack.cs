@@ -21,7 +21,7 @@ public class EnemyAttack : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         cooldownTimer -= Time.deltaTime;
         if (cooldownTimer <= 0) onCooldown = false;
@@ -33,8 +33,5 @@ public class EnemyAttack : MonoBehaviour
         onCooldown = true;
     }
 
-    public virtual void Attack()
-    {
-
-    }
+    public virtual void Attack() { }
 }

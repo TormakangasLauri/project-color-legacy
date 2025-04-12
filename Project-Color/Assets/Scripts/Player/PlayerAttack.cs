@@ -117,14 +117,12 @@ public class PlayerAttack : MonoBehaviour
             PaintTarget.PaintRay(ray, rayPaint);
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            EnemyController.Activate(Enemies.hanging, Vector3.zero);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            EnemyController.Activate(Enemies.basic, transform.position + transform.forward * 10);
-        }
+        // Spawn enemies for testing
+        if (Input.GetKeyDown(KeyCode.Z)) { EnemyController.Activate(Enemies.basic, transform.position + transform.forward * 10); }
+        if (Input.GetKeyDown(KeyCode.X)) { EnemyController.Activate(Enemies.sniper, transform.position + transform.forward * 10); }
+        if (Input.GetKeyDown(KeyCode.C)) { EnemyController.Activate(Enemies.hulk, transform.position + transform.forward * 10); }
+        if (Input.GetKeyDown(KeyCode.V)) { EnemyController.Activate(Enemies.hanging, transform.position + transform.forward * 10); }
+        if (Input.GetKeyDown(KeyCode.B)) { EnemyController.Activate(Enemies.copter, transform.position + transform.forward * 10); }
 
         // Attack side reset
         if (sideSwitchTimer < 0) attackFromRight = true;

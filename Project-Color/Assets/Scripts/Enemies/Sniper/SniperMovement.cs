@@ -3,42 +3,18 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-public class SniperMovement : MonoBehaviour
+public class SniperMovement : BaseEnemyMovement
 {
-    private Rigidbody rb;
-    private GameObject target;
-    
-    public float speed;
     public float maxDistToTarget;
-    public bool LOSToTarget;
-    public bool grounded;
 
-    private NavMeshPath path;
-
-    private LayerMask terrainLayer;
-
-    private SniperShooting SS;
-    private EnemyType ET;
+    private SniperAttack attack;
     
     public enum State { idle, find, escape, attack };
     public State state;
     
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        target = GameObject.FindWithTag("Player");
-        terrainLayer = LayerMask.GetMask("Terrain");
-        SS = GetComponent<SniperShooting>();
-        ET = GetComponent<EnemyType>();
-
-        state = State.idle;
-    }
-    
-    void Update()
-    {
-        Grounded();
-        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
-        path = ET.path;
+        attack = GetComponent<SniperAttack>();
     }
 
     private void FixedUpdate()
@@ -50,18 +26,10 @@ public class SniperMovement : MonoBehaviour
         //  attack: shoots while staying still
         switch (state)
         {
-            case State.idle:
-                Idle();
-                break;
-            case State.find:
-                Find();
-                break;
-            case State.escape:
-                Escape();
-                break;
-            case State.attack:
-                Attack();
-                break;
+            case State.idle: Idle(); break;
+            case State.find: Find(); break;
+            case State.escape: Escape(); break;
+            case State.attack: Attack(); break;
         }
 
         // Gravity
@@ -131,7 +99,7 @@ public class SniperMovement : MonoBehaviour
 
     private void Attack()
     {
-        SS.moving = false;
+        attack.moving = false;
 
         Vector3 targetPos = target.transform.position;
         Vector3 pos = transform.position;
@@ -142,7 +110,7 @@ public class SniperMovement : MonoBehaviour
         // State change check
         if ((targetPos - pos).magnitude < maxDistToTarget && targetPos.y > pos.y - 1 && LOSToTarget)
         {
-            SS.moving = true;
+            attack.moving = true;
             state = State.escape;
             GetComponentInChildren<SniperPathFind>().enabled = true;
             GetComponentInChildren<PathFind>().enabled = false;
@@ -161,12 +129,5 @@ public class SniperMovement : MonoBehaviour
             }
 
         }
-    }
-    
-    private void Grounded()
-    {
-        if (Physics.OverlapBox(transform.position + Vector3.down * 0.5f, new Vector3(0.3f, 1, 0.3f), Quaternion.identity, terrainLayer).Length > 0)
-            grounded = true;
-        else grounded = false;
     }
 }
