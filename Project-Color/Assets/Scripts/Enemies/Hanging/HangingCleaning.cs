@@ -36,8 +36,18 @@ public class HangingCleaning : MonoBehaviour
 
         PaintTarget.PaintRay(new Ray(transform.position, hanging.targetDirection), brush, LayerMask.GetMask("Terrain"), 5);
 
+        // Check if paint objects should be removed
+        RaycastHit hit;
+        Physics.Raycast(transform.position, hanging.targetDirection, out hit, 5, LayerMask.GetMask("Terrain"));
+        foreach (Transform paint in targetPaintGroup.transform.GetComponentsInChildren<Transform>())
+            if (Vector3.Distance(paint.position, hit.point) < currentBrushSize/6 && paint != transform)
+            {
+                Destroy(paint.gameObject);
+            }
+
         if (currentBrushSize >= cleaningArea)
         {
+            PaintController.CleanPaintGroup(targetPaintGroup);
             cleaningComplete = true;
         }
     }

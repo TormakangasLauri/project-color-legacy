@@ -30,7 +30,7 @@ public class SniperAttack : EnemyAttack
         base.Update();
 
         Vector3 position = transform.position;
-        Vector3 tPosition = GameObject.FindWithTag("PlayerRoot").transform.position;
+        Vector3 tPosition = target.transform.position + Vector3.up;
         LOSToTarget = !Physics.Raycast(position, tPosition - position, Vector3.Distance(tPosition, position), LayerMask.GetMask("Terrain"));
 
         if (!LOSToTarget || moving) StartCooldown();
@@ -68,13 +68,9 @@ public class SniperAttack : EnemyAttack
             Vector3 targetDirection = ((target.transform.position + Vector3.up) - shootPoint.position).normalized;
             yield return new WaitForSeconds(0.1f);
 
-            RaycastHit[] allHits = Physics.RaycastAll(shootPoint.position, targetDirection);
+            RaycastHit[] allHits = Physics.RaycastAll(shootPoint.position, targetDirection, 1000, ~0, QueryTriggerInteraction.Ignore);
             List<RaycastHit> hits = new List<RaycastHit>();
             hits.AddRange(allHits);
-
-            List<GameObject> objects = new List<GameObject>();
-            foreach (RaycastHit hit in hits)
-                objects.Add(hit.collider.gameObject);
 
             if (hits.Count > 0)
             {
@@ -87,10 +83,11 @@ public class SniperAttack : EnemyAttack
                     Debug.Log("Enemy hit");
                     StartCoroutine(BulletTrail(2));
                 }
-                else if (hitObj.layer == LayerMask.GetMask("Player"))
+                else if (hitObj.CompareTag("PlayerRoot") || hitObj.CompareTag("Player"))
                 {
                     // Player hit
                     Debug.Log("Player hit");
+                    hitObj.GetComponentInParent<Health>().Damage(damage);
                     StartCoroutine(BulletTrail(1));
                 }
                 else
