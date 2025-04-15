@@ -6,4 +6,9 @@ public class GameController : MonoBehaviour
 {
     // Empty placeholder for now.
     // TODO: Add GameController related things
+
+    private void Start()
+    {
+        
+    }
 }
