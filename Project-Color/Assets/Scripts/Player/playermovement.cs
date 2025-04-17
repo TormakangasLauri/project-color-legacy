@@ -484,9 +484,20 @@ public class PlayerMovement : MonoBehaviour
     void Walled()
     {
         if (walled)
-        {
+        { 
             dirToWall = (wallColList[0].ClosestPoint(transform.position) - transform.position).normalized;
-
+            if (dirToWall == Vector3.zero) // Failed to get the closest point on the wall
+            {
+                RaycastHit hit = new RaycastHit();
+                RaycastHit hit0 = new RaycastHit();
+                for (int i = 0; i < 8; i++)
+                {
+                    if (i == 0) Physics.Raycast(transform.position, transform.forward, out hit, 2, LayerMask.GetMask("Terrain"));
+                    else Physics.Raycast(transform.position, Quaternion.Euler(0, 45 * i, 0) * transform.forward, out hit0, 2, LayerMask.GetMask("Terrain"));
+                    hit = Vector3.Distance(transform.position, hit0.point) < Vector3.Distance(transform.position, hit.point) ? hit0 : hit; // Use the closest hit
+                }
+                dirToWall = -hit.normal;
+            }
             dashing = false;
         }
     }
