@@ -20,7 +20,6 @@ public class BasicAttack : EnemyAttack
     {
         if (!onCooldown && !attacking)
         {
-            Debug.Log("Attack");
             attacking = true;
 
             Vector3 targetDirection = ((enemyType.target.transform.position + Vector3.up) - transform.position).normalized;
@@ -39,7 +38,6 @@ public class BasicAttack : EnemyAttack
                 });
                 if (targetInHitbox != null) // Target hit
                 {
-                    Debug.Log("Hit");
                     targetInHitbox.GetComponent<Health>().Damage(damage, targetDirection * 14 + Vector3.up * 5);
                 }
                 attacking = false;

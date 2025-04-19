@@ -59,7 +59,6 @@ public class SniperAttack : EnemyAttack
 
     public override void Attack()
     {
-        Debug.Log("Attack");
         attacking = true;
         StartCoroutine(Shoot());
 
@@ -80,19 +79,16 @@ public class SniperAttack : EnemyAttack
                 if (EnemyController.all.activeList.Contains(hitObj) && hitObj != gameObject)
                 {
                     // Enemy hit
-                    Debug.Log("Enemy hit");
                     StartCoroutine(BulletTrail(2));
                 }
                 else if (hitObj.CompareTag("PlayerRoot") || hitObj.CompareTag("Player"))
                 {
                     // Player hit
-                    Debug.Log("Player hit");
                     hitObj.GetComponentInParent<Health>().Damage(damage);
                     StartCoroutine(BulletTrail(1));
                 }
                 else
                 {
-                    Debug.Log("Terrain/other hit");
                     StartCoroutine(BulletTrail(0));
                 }
             }

@@ -87,7 +87,9 @@ public class PlayerAttack : MonoBehaviour
     }
 
     private void Update()
-    {      
+    {
+        if (GameController.paused) return;
+
         if (lmbHeld || rmbHeld) holdTimer += Time.deltaTime;
         else holdTimer = 0;
         AI.SetValue(holdTimer);

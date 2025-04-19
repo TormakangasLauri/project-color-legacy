@@ -116,6 +116,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (GameController.paused) return;
+
         GroundCheck();
         Walled();
         SlopeCheck();
