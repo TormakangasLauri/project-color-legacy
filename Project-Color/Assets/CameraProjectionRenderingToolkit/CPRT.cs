@@ -175,7 +175,7 @@ namespace CameraProjectionRenderingToolkit {
 		/// <summary>
 		/// Power of the projection deformation.
 		/// </summary>
-		[Range(0.0f,1.0f)]
+		[Range(-0.5f,1.0f)]
 		public float intensity=1.0f;
 
 		/// <summary>
