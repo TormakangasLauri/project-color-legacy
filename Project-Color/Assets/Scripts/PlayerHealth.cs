@@ -6,11 +6,14 @@ using UnityEngine.UI;
 
 public class PlayerHealth : Health
 {
-    public TextMeshProUGUI healthText;
-
     void Start()
     {
-        UpdateHealthUI();
+        StartCoroutine(Wait());
+        IEnumerator Wait()
+        {
+            yield return new WaitForFixedUpdate();
+            UpdateHealthUI();
+        }
     }
 
     void Update()
@@ -38,7 +41,11 @@ public class PlayerHealth : Health
         UpdateHealthUI();
     }
 
-    void UpdateHealthUI() { healthText.text = "Health: " + healthAmount; }
+    void UpdateHealthUI()
+    {
+        //healthText.text = "Health: " + healthAmount;
+        HUDText.SetText(15, $"Health: {healthAmount}");
+    }
 
     protected override void OnDeath()
     {

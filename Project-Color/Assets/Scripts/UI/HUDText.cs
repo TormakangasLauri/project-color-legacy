@@ -1,49 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Timeline;
 using UnityEngine;
+using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class HUDText : MonoBehaviour
 {
-    public GameObject textLine;
+    public bool x;
+    public float timeForChar;
 
-    public int lines = 7;
-    public float spacing = 0;
+    public static List<TextMeshProUGUI> textColumns = new List<TextMeshProUGUI>();
 
-    private List<GameObject> lineList = new List<GameObject>();
+    static HUDText inst;
 
     private void OnValidate()
     {
-        
+        UpdateTextContainer();
+        inst = this;
+    }
+
+    private void Awake()
+    {
+        UpdateTextContainer();
     }
 
     private void Start()
     {
+        UpdateTextContainer();
+    }
 
-        ////foreach (Transform child in GetComponent<RectTransform>()) // Add all existing children
-        ////    DestroyImmediate(child.gameObject);
-        ////int linesBefore = lineList.Count;
-
-        //for (int i = 0; i < lines; i++)
-        //{
-        //    GameObject line = Instantiate(textLine);
-
-        //    line.transform.parent = transform;
-
-        //    RectTransform rectTransform = line.GetComponent<RectTransform>();
-        //    rectTransform.localRotation = Quaternion.Euler(Vector3.zero);
-        //    rectTransform.localScale = Vector3.one;
-        //    rectTransform.rect.Set(5, -i * lineHeight, fullWidth, lineHeight);
-        //    rectTransform.anchoredPosition = new Vector3(5, -i * lineHeight, 0);
-
-        //    TextMeshProUGUI textMesh = line.GetComponent<TextMeshProUGUI>();
-        //    textMesh.fontSize = lineHeight;
-        //    textMesh.text = $"Line {i + 1}";
-
-        //    line.name = $"Line{i + 1}";
-
-        //    lineList.Add(line);
-        //}
+    void UpdateTextContainer()
+    {
+        textColumns.Clear();
 
         float fullHeight = transform.parent.GetComponent<RectTransform>().rect.height;
         float fullWidth = transform.parent.GetComponent<RectTransform>().rect.width;
@@ -54,13 +46,90 @@ public class HUDText : MonoBehaviour
         foreach (Transform textLine in transform)
         {
             RectTransform rectTransform = textLine.GetComponent<RectTransform>();
-            rectTransform.rect.Set(5, -i*lineHeight, fullWidth-10, lineHeight);
+            rectTransform.rect.Set(0, -i * lineHeight, fullWidth - 10, lineHeight);
+            rectTransform.anchoredPosition = new Vector2(5, -i * lineHeight + lineHeight * 0.15f);
+            rectTransform.sizeDelta = new Vector2(fullWidth, lineHeight);
 
             TextMeshProUGUI textMesh = textLine.GetComponent<TextMeshProUGUI>();
             textMesh.fontSize = lineHeight;
-            textMesh.text = $"Line {i+1}";
+            textMesh.text = i.ToString();
+
+            textColumns.Add(textMesh);
 
             i++;
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.J)) SetText(1, "testtest123456");
+        if (Input.GetKeyDown(KeyCode.N)) StartCoroutine(SwapCharacters(textColumns[0]));
+        if (Input.GetKeyDown(KeyCode.M)) ClearAllText();
+    }
+
+    public static void SetText(int line, string text)
+    {
+        TextMeshProUGUI textMesh = textColumns[line - 1];
+        textMesh.text = text;
+
+        inst.StartCoroutine(Text());
+        IEnumerator Text()
+        {
+            float elapsedTime = 0;
+
+            yield return new WaitUntil(() =>
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+                // Get a substring from textContent with the amount of characters calculated from the time it should take for one char to appear and time elapsed in the process
+                textMesh.text = text[..Mathf.Clamp((int)(elapsedTime / inst.timeForChar), 0, text.Length)];
+                return textMesh.text.Length == text.Length;
+            });
+        }
+    }
+
+    IEnumerator SwapCharacters(TextMeshProUGUI textMesh) // Not working correctly, characters don't get removed in a similar fashion as in SetText make them appear
+    {
+        float elapsedTime = 0;
+        int waitForCharsToClear = 3;
+        int lastIndex = -1;
+        char[] updatedText = textMesh.text.ToCharArray();
+
+        yield return new WaitUntil(() =>
+        {
+            // Get a substring from textContent with the amount of characters calculated from the time it should take for one char to appear and time elapsed in the process
+            //textMesh.text = text[..Mathf.Clamp((int)(elapsedTime / inst.timeForChar), 0, text.Length)];
+
+            for (int i = lastIndex + 1; i <= (int)(elapsedTime / timeForChar) && i < textMesh.text.Length; i++)
+                updatedText[i] = ' ';
+            textMesh.text = updatedText.ToString();
+            lastIndex = (int)(elapsedTime / timeForChar);
+            elapsedTime += Time.unscaledDeltaTime;
+            return lastIndex >= textMesh.text.Length;
+        });
+    }
+
+    public static void ClearAllText()
+    {
+        inst.StartCoroutine(Clear());
+        IEnumerator Clear()
+        {
+            foreach (TextMeshProUGUI textMesh in textColumns)
+            {
+                float elapsedTime = 0;
+                string textContent = "";
+                foreach (char c in textMesh.text)
+                    textContent += " ";
+
+                yield return new WaitUntil(() =>
+                {
+                    elapsedTime += Time.unscaledDeltaTime;
+                    // Get a substring from textContent with the amount of characters calculated from the time it should take for one char to appear and time elapsed in the process
+                    textMesh.text = textContent[..Mathf.Clamp((int)(elapsedTime / inst.timeForChar), 0, textContent.Length)];
+                    return textMesh.text.Length == textContent.Length;
+                });
+
+                textMesh.text = "";
+            }
         }
     }
 }
