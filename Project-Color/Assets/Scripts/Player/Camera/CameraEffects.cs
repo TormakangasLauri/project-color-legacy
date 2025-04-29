@@ -29,28 +29,28 @@ public class CameraEffects : MonoBehaviour
 
     void Update()
     {
-        if (GameController.paused)
-        {
-            EffecsEnabled(true);
-            timer1 -= Time.unscaledDeltaTime;
-            timer2 -= Time.unscaledDeltaTime;
-            System.Random rand = new System.Random();
-            if (timer1 < 0)
-            {
-                SetEffect1Random();
-                timer1 = (float)rand.NextDouble()/3;
-            }
-            if (timer2 < 0)
-            {
-                SetEffect2Random();
-                timer2 = (float)rand.NextDouble()/3;
-            }
-        }
-        else
-        {
-            EffecsEnabled(false);
-            timer1 = 0;
-        }
+        //if (GameController.paused)
+        //{
+        //    EffecsEnabled(true);
+        //    timer1 -= Time.unscaledDeltaTime;
+        //    timer2 -= Time.unscaledDeltaTime;
+        //    System.Random rand = new System.Random();
+        //    if (timer1 < 0)
+        //    {
+        //        SetEffect1Random();
+        //        timer1 = (float)rand.NextDouble()/3;
+        //    }
+        //    if (timer2 < 0)
+        //    {
+        //        SetEffect2Random();
+        //        timer2 = (float)rand.NextDouble()/3;
+        //    }
+        //}
+        //else
+        //{
+        //    EffecsEnabled(false);
+        //    timer1 = 0;
+        //}
     }
 
     void SetEffect()

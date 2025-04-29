@@ -38,7 +38,9 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0;
         GameController.paused = true;
 
-        StartCoroutine(WriteText());
+        HUDText.SaveAllText();
+        HUDText.ClearAllText();
+        HUDText.SetText(1, "Pause");
     }
 
     private void ClosePauseMenu()
@@ -47,20 +49,6 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1;
         GameController.paused = false;
 
-        menuText.text = "";
-    }
-
-    IEnumerator WriteText()
-    {
-        float timeFor1Char = textAppearSpeed / textContent.Length;
-        float elapsedTime = 0;
-
-        yield return new WaitUntil(() =>
-        {
-            elapsedTime += Time.unscaledDeltaTime;
-            // Get a substring from textContent with the amount of characters calculated from the time it should take for one char to appear and time elapsed in the process
-            menuText.text = textContent[..Mathf.Clamp((int)(elapsedTime/timeFor1Char), 0, textContent.Length)];
-            return !GameController.paused || menuText.text.Length == textContent.Length;
-        });
+        HUDText.RetreiveAllText();
     }
 }
