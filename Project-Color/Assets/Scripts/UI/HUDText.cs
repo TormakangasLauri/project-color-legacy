@@ -8,6 +8,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using static System.Net.Mime.MediaTypeNames;
 
+public enum HUDTextReplaceMethod
+{
+    Keep,
+    Clear
+}
+
+public enum HUDTextFillMethod
+{
+    Single,
+    Fill
+}
+
 public class HUDText : MonoBehaviour
 {
     public float fontSize = 1;
@@ -55,31 +67,77 @@ public class HUDText : MonoBehaviour
 
             TextMeshProUGUI textMesh = textLine.GetComponent<TextMeshProUGUI>();
             textMesh.fontSize = lineHeight * fontSize;
-            textMesh.text = i.ToString();
+            textMesh.text = "";
+            if (i < 10)
+                for (int j = 0; j < 10; j++)
+                    textMesh.text += i.ToString();
+            else for (int j = 0; j < 5; j++)
+                    textMesh.text += i.ToString();
 
-            textColumns.Add(textMesh);
+                textColumns.Add(textMesh);
             textContents.Add("");
 
             i++;
         }
     }
 
-    public static void SetText(int line, string text)
+    private void Update()
     {
-        inst.StartCoroutine(inst.ReplaceAllLines(line, text));
+        if (Input.GetKeyDown(KeyCode.J)) SetText(0, "000000000");
     }
 
-    IEnumerator ReplaceAllLines(int line, string text)
+    public static void SetText(int line, string text, HUDTextReplaceMethod replaceMethod = HUDTextReplaceMethod.Keep)
+    {
+        inst.StartCoroutine(inst.ReplaceAllLines(line, text, replaceMethod));
+    }
+
+    public static void SetText(int[] lines, string[] texts, HUDTextReplaceMethod replaceMethod = HUDTextReplaceMethod.Keep, HUDTextFillMethod fill = HUDTextFillMethod.Single)
+    {
+        inst.StartCoroutine(inst.ReplaceAllLines(lines, texts, replaceMethod, fill));
+    }
+
+    IEnumerator ReplaceAllLines(int line, string text, HUDTextReplaceMethod replaceMethod)
     {
         for (int i = 0; i < textColumns.Count; i++)
         {
             if (line == i) yield return ReplaceLine(i, text);
-            else yield return ReplaceLine(i, textColumns[i].text);
+            else if (replaceMethod == HUDTextReplaceMethod.Keep) yield return ReplaceLine(i);
+            else if (replaceMethod == HUDTextReplaceMethod.Clear) yield return ReplaceLine(i, "");
         }
     }
 
-    IEnumerator ReplaceLine(int line, string text)
+    IEnumerator ReplaceAllLines(int[] lines, string[] texts, HUDTextReplaceMethod replaceMethod = HUDTextReplaceMethod.Keep, HUDTextFillMethod fillMethod = HUDTextFillMethod.Single)
     {
+        int textIndex = 0;
+        bool fill = false;
+        string fillText = null;
+        for (int i = 0; i < textColumns.Count; i++)
+        {
+            if (lines.Contains(i))
+            {
+                if (!fill) fillText = texts[textIndex]; // If fill is not on, set a new fill text
+
+                yield return ReplaceLine(i, fillText); // Use the existing fill text for replacing on set indexes
+
+                if (fill || fillMethod == HUDTextFillMethod.Single) // If fill is on or fill is not used (default), turn it off and increment fill index to use the next text in the parameter array
+                {
+                    textIndex++;
+                    fill = false;
+                }
+                else fill = true; // Otherwise turn fill on
+            }
+            else
+            {
+                if (fill) yield return ReplaceLine(i, fillText); // If fill is on, use fill text set above
+                else if (replaceMethod == HUDTextReplaceMethod.Keep) yield return ReplaceLine(i); // Otherwise replace with the same text or clear depending on settings
+                else if (replaceMethod == HUDTextReplaceMethod.Clear) yield return ReplaceLine(i, "");
+            }
+        }
+    }
+
+    IEnumerator ReplaceLine(int line, string text = null)
+    {
+        if (text == null) text = textColumns[line].text;
         StartCoroutine(ClearLine(line));
         yield return new WaitForSecondsRealtime(timeForChar * waitForCharactersOnSwap);
         StartCoroutine(SetLine(line, text));
@@ -90,10 +148,10 @@ public class HUDText : MonoBehaviour
         TextMeshProUGUI textMesh = textColumns[line];
         float elapsedTime = 0;
         int lastIndex = -1;
-        char[] updatedText = textMesh.text.ToCharArray();
 
         yield return new WaitUntil(() =>
         {
+            char[] updatedText = textMesh.text.ToCharArray();
             int newIndex = (int)(elapsedTime / timeForChar);
             for (int i = lastIndex + 1; i <= newIndex; i++) // Go through all new characters in the existing text
                 if (i < updatedText.Length) updatedText[i] = ' ';
@@ -109,10 +167,10 @@ public class HUDText : MonoBehaviour
         TextMeshProUGUI textMesh = textColumns[line];
         float elapsedTime = 0;
         int lastIndex = -1;
-        string oldText = textMesh.text;
 
         yield return new WaitUntil(() =>
         {
+            string oldText = textMesh.text;
             int newIndex = (int)(elapsedTime / timeForChar);
             for (int i = lastIndex + 1; i <= newIndex && i <= text.Length; i++)
             {
@@ -147,14 +205,7 @@ public class HUDText : MonoBehaviour
 
     public static void RetreiveAllText()
     {
-        inst.StartCoroutine(Retreive());
-        IEnumerator Retreive()
-        {
-            for (int i = 0; i < textColumns.Count; i++)
-            {
-                yield return inst.ReplaceLine(i, textContents[i]);
-            }
-        }
+        SetText(new[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14}, textContents.ToArray(), HUDTextReplaceMethod.Keep);
     }
 
 }

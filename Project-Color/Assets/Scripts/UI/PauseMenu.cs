@@ -3,32 +3,34 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject menu;
-    [SerializeField] private TextMeshProUGUI menuText;
-    private bool menuOpen = false;
-
-    [TextArea] public string textContent;
     public float textAppearSpeed = 1;
+
+    private bool menuOpen = false;
 
     private void Start()
     {
         menu.SetActive(false); // Close pause menu at the start
     }
 
-    public void TogglePauseMenu()
+    public void TogglePauseMenu(InputAction.CallbackContext action)
     {
-        if (menuOpen)
+        if (action.canceled)
         {
-            menuOpen = false;
-            ClosePauseMenu();
-        }
-        else
-        {
-            menuOpen = true;
-            OpenPauseMenu();
+            if (menuOpen)
+            {
+                menuOpen = false;
+                ClosePauseMenu();
+            }
+            else
+            {
+                menuOpen = true;
+                OpenPauseMenu();
+            }
         }
     }
 
@@ -39,8 +41,7 @@ public class PauseMenu : MonoBehaviour
         GameController.paused = true;
 
         HUDText.SaveAllText();
-        HUDText.ClearAllText();
-        HUDText.SetText(1, "Pause");
+        HUDText.SetText(new[]{0}, new[]{"Paused"}, HUDTextReplaceMethod.Clear, HUDTextFillMethod.Fill);
     }
 
     private void ClosePauseMenu()
