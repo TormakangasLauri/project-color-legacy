@@ -542,6 +542,8 @@ MonoBehaviour:
   yOffset: 8
   timeForChar: 0.001
   waitForCharactersOnSwap: 20
+  bufferWaitTime: 0.2
+  maxBufferSize: 100
 --- !u!1 &1888466898
 GameObject:
   m_ObjectHideFlags: 0
