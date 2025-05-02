@@ -8,8 +8,8 @@ using UnityEngine.InputSystem;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject menu;
-    public float textAppearSpeed = 1;
-
+    public float menuCooldown = 0.2f;
+    private float timer = 0;
     private bool menuOpen = false;
 
     private void Start()
@@ -17,18 +17,24 @@ public class PauseMenu : MonoBehaviour
         menu.SetActive(false); // Close pause menu at the start
     }
 
+    private void Update()
+    {
+        timer -= Time.unscaledDeltaTime;
+    }
+
     public void TogglePauseMenu(InputAction.CallbackContext action)
     {
         if (action.canceled)
         {
-            if (menuOpen)
+            if (menuOpen && timer < 0)
             {
                 menuOpen = false;
                 ClosePauseMenu();
             }
-            else
+            else if (!menuOpen)
             {
                 menuOpen = true;
+                timer = menuCooldown;
                 OpenPauseMenu();
             }
         }

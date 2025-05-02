@@ -6,8 +6,10 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Timeline;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using static System.Net.Mime.MediaTypeNames;
+using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 
 public enum HUDTextReplace { Keep, Clear }
 public enum HUDTextUpdate { All, Above, Single }
@@ -58,6 +60,7 @@ public class HUDText : MonoBehaviour
 
     public static List<TextMeshProUGUI> textColumns = new List<TextMeshProUGUI>();
     public static List<string> textContents = new List<string>();
+    public static List<string> savedText = new List<string>();
 
     static HUDText inst;
 
@@ -81,6 +84,7 @@ public class HUDText : MonoBehaviour
     {
         textColumns.Clear();
         textContents.Clear();
+        savedText.Clear();
 
         float fullHeight = transform.parent.GetComponent<RectTransform>().rect.height;
         float fullWidth = transform.parent.GetComponent<RectTransform>().rect.width;
@@ -103,8 +107,9 @@ public class HUDText : MonoBehaviour
             else for (int j = 0; j < 5; j++)
                     textMesh.text += i.ToString();
 
-                textColumns.Add(textMesh);
-            textContents.Add("");
+            textColumns.Add(textMesh);
+            textContents.Add(textMesh.text);
+            savedText.Add("");
 
             i++;
         }
@@ -118,10 +123,20 @@ public class HUDText : MonoBehaviour
             bufferTimer = 0;
             if (bufferList.Count > maxBufferSize) bufferList = bufferList.GetRange(0, maxBufferSize); // Trim buffer list
             TextSettings ts = bufferList[0];
-            if (ts.single) inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update)); // Single
-            else inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill)); // Multiple
+            if (ts.single) // Single line
+            {
+                UpdateTextContents(ts.line, ts.text, ts.replace);
+                inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update));
+            }
+            else // Multiple lines
+            {
+                UpdateTextContents(ts.lines, ts.texts, ts.replace, ts.fill);
+                inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill));
+            }
             bufferList.RemoveAt(0);
         }
+
+        if (Input.GetKeyDown(KeyCode.J)) MoveText(4);
     }
 
     // SetText overloads:
@@ -152,8 +167,24 @@ public class HUDText : MonoBehaviour
     // All available methods (replace, update and fill)
     public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, replace, update, fill)); }
 
+    // Move single line
+    public static void MoveText(int line, bool moveDown = true) { bufferList.Add(new TextSettings(new[] {line,line + 1}, new[] {"",textContents[line]})); }
+    // Move multiple lines
+    public static void MoveText(int[] lines, bool moveDown = true)
+    {
+        List<string> texts = new List<string>();
+        for (int i = lines.Length-1; i >= 0; i--)
+        {
+            int line = lines[i];
+            texts.Insert(0, textContents[line]);
+            texts.Insert(0, "");
+            lines[i]++;
+        }
+        //bufferList.Add(new TextSettings(lines));
+    }
+
     // Replace all for setting a single line
-    IEnumerator ReplaceAllLines(int line, string text, HUDTextReplace replace = default, HUDTextUpdate update = HUDTextUpdate.All)
+    IEnumerator ReplaceAllLines(int line, string text, HUDTextReplace replace = default, HUDTextUpdate update = default)
     {
         for (int i = 0; i < textColumns.Count; i++)
         {
@@ -171,7 +202,7 @@ public class HUDText : MonoBehaviour
     }
 
     // Replace all for setting multiple lines
-    IEnumerator ReplaceAllLines(int[] lines, string[] texts, HUDTextReplace replace = HUDTextReplace.Keep, HUDTextUpdate update = HUDTextUpdate.All, HUDTextFill fill = HUDTextFill.Single)
+    IEnumerator ReplaceAllLines(int[] lines, string[] texts, HUDTextReplace replace = default, HUDTextUpdate update = default, HUDTextFill fill = default)
     {
         int textIndex = 0;
         bool fillSet = false;
@@ -201,6 +232,40 @@ public class HUDText : MonoBehaviour
                     else if (replace == HUDTextReplace.Clear) yield return ReplaceLine(i, "");
                 }
             }
+        }
+    }
+
+    void UpdateTextContents(int line, string text, HUDTextReplace replace = default)
+    {
+        for (int i = 0; i < textColumns.Count; i++)
+        {
+            if (line == i) textContents[i] = text; // Update the specified line
+            else if (replace == HUDTextReplace.Clear) textContents[i] = ""; // If replace method is clear, update other lines to be empty
+        }
+    }
+    
+    void UpdateTextContents(int[] lines, string[] texts, HUDTextReplace replace = default, HUDTextFill fill = default)
+    {
+        int textIndex = 0;
+        bool fillSet = false;
+        string fillText = null;
+        for (int i = 0; i < textColumns.Count; i++)
+        {
+            if (lines.Contains(i))
+            {
+                if (!fillSet) fillText = texts[textIndex]; // If fill is not on, set a new fill text
+
+                textContents[i] = fillText; // Use the existing fill text to update specified indexes
+
+                if (fillSet || fill == HUDTextFill.Single) // If fill is on or fill is not used (default), turn it off and increment fill index to use the next text in the parameter array
+                {
+                    textIndex++;
+                    fillSet = false;
+                }
+                else fillSet = true; // Otherwise turn fill on
+            }
+            else if (fillSet) textContents[i] = fillText; // If fill is on, use fillText set above
+            else if (replace == HUDTextReplace.Clear) textContents[i] = ""; // If replace method is clear, update other lines to be empty
         }
     }
 
@@ -262,9 +327,9 @@ public class HUDText : MonoBehaviour
         }
     }
 
-    public static void SaveLine(int line) { textContents[line] = textColumns[line].text; }
+    public static void SaveLine(int line) { savedText[line] = textContents[line]; }
 
-    public static void RetrieveLine(int line) { SetText(line, textContents[line]); }
+    public static void RetrieveLine(int line) { SetText(line, savedText[line]); }
 
     public static void SaveAllText()
     {
@@ -277,7 +342,7 @@ public class HUDText : MonoBehaviour
         int[] lines = new int[textColumns.Count];
         for (int i = 0; i < textColumns.Count; i++)
             lines[i] = i;
-        SetText(lines, textContents.ToArray(), HUDTextReplace.Keep);
+        SetText(lines, savedText.ToArray(), HUDTextReplace.Keep);
     }
 
 }
