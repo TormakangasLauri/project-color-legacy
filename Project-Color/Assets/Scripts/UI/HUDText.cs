@@ -135,8 +135,6 @@ public class HUDText : MonoBehaviour
             }
             bufferList.RemoveAt(0);
         }
-
-        if (Input.GetKeyDown(KeyCode.J)) MoveText(4);
     }
 
     // SetText overloads:
@@ -167,20 +165,45 @@ public class HUDText : MonoBehaviour
     // All available methods (replace, update and fill)
     public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, replace, update, fill)); }
 
-    // Move single line
-    public static void MoveText(int line, bool moveDown = true) { bufferList.Add(new TextSettings(new[] {line,line + 1}, new[] {"",textContents[line]})); }
-    // Move multiple lines
-    public static void MoveText(int[] lines, bool moveDown = true)
+    // Move single line down
+    public static void MoveTextDown(int line, int moveSpaces = 1) { bufferList.Add(new TextSettings(new[] {line,line + moveSpaces}, new[] {"",textContents[line]})); }
+    // Move multiple lines down
+    public static void MoveTextDown(int[] lines, int moveSpaces = 1)
     {
         List<string> texts = new List<string>();
+        List<int> newLines = new List<int>();
         for (int i = lines.Length-1; i >= 0; i--)
         {
             int line = lines[i];
             texts.Insert(0, textContents[line]);
-            texts.Insert(0, "");
-            lines[i]++;
+            newLines.Insert(0, line + moveSpaces);
+            if (!lines.Contains(line - moveSpaces))
+            {
+                texts.Insert(0, ""); // If the line above is not going to be rewritten, make it empty
+                newLines.Insert(0, line);
+            }
         }
-        //bufferList.Add(new TextSettings(lines));
+        bufferList.Add(new TextSettings(newLines.ToArray(), texts.ToArray()));
+    }
+    // Move single line up
+    public static void MoveTextUp(int line, int moveSpaces = 1) { bufferList.Add(new TextSettings(new[] {line - moveSpaces, line}, new[] {textContents[line], ""})); }
+    // Move multiple lines up
+    public static void MoveTextUp(int[] lines, int moveSpaces = 1)
+    {
+        List<string> texts = new List<string>();
+        List<int> newLines = new List<int>();
+        for (int i = 0; i < lines.Length; i++)
+        {
+            int line = lines[i];
+            texts.Add(textContents[line]);
+            newLines.Add(line - moveSpaces);
+            if (!lines.Contains(line + moveSpaces))
+            {
+                texts.Add(""); // If the line below is not going to be rewritten, make it empty
+                newLines.Add(line);
+            }
+        }
+        bufferList.Add(new TextSettings(newLines.ToArray(), texts.ToArray()));
     }
 
     // Replace all for setting a single line

@@ -15,13 +15,13 @@ public class ObjectiveDisplay : MonoBehaviour
         public ObjectiveType type;
 
         public Color backgroundColor;
-        public TextMeshProUGUI text;
+        public TextMeshProUGUI textMesh;
 
         public ObjectiveBlock(Objective objective)
         {
             gameObject = Instantiate(objectiveBlockPrefab);
             gameObject.transform.parent = _transform;
-            text = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+            textMesh = gameObject.GetComponentInChildren<TextMeshProUGUI>();
 
             this.objective = objective;
             type = objective.type;
@@ -99,21 +99,21 @@ public class ObjectiveDisplay : MonoBehaviour
     {
         KillObjective objective = block.objective as KillObjective;
 
-        block.text.text = $"Kill - Enemies: {objective.enemiesInObjective.Count}";
+        block.textMesh.text = $"Kill - Enemies: {objective.enemiesInObjective.Count}";
     }
 
     void Platform(ObjectiveBlock block)
     {
         PlatformObjective objective = block.objective as PlatformObjective;
 
-        block.text.text = "Platform";
+        block.textMesh.text = "Platform";
     }
 
     void Paint(ObjectiveBlock block)
     {
         PaintObjective objective = block.objective as PaintObjective;
 
-        block.text.text = $"Paint - Painted: {objective.paintPercentage}%";
+        block.textMesh.text = $"Paint - Painted: {objective.paintPercentage}%";
 
     }
 }

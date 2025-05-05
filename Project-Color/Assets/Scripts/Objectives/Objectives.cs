@@ -23,12 +23,14 @@ public class Objectives : MonoBehaviour
     public static void NewObjective(Objective objective)
     {
         activeObjectives.Add(objective);
-        objectiveDisplay.NewObjective(objective);
+        //objectiveDisplay.NewObjective(objective);
+        ObjectiveDisplay2.NewObjective(objective);
     }
 
     public static void RemoveObjective(Objective objective)
     {
         activeObjectives.Remove(objective);
-        objectiveDisplay.ObjectiveComplete(objective);
+        //objectiveDisplay.ObjectiveComplete(objective);
+        ObjectiveDisplay2.ObjectiveComplete(objective);
     }
 }
