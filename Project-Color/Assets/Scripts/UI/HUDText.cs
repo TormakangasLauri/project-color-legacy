@@ -101,11 +101,11 @@ public class HUDText : MonoBehaviour
             TextMeshProUGUI textMesh = textLine.GetComponent<TextMeshProUGUI>();
             textMesh.fontSize = lineHeight * fontSize;
             textMesh.text = "";
-            if (i < 10)
-                for (int j = 0; j < 10; j++)
-                    textMesh.text += i.ToString();
-            else for (int j = 0; j < 5; j++)
-                    textMesh.text += i.ToString();
+            //if (i < 10)
+            //    for (int j = 0; j < 10; j++)
+            //        textMesh.text += i.ToString();
+            //else for (int j = 0; j < 5; j++)
+            //        textMesh.text += i.ToString();
 
             textColumns.Add(textMesh);
             textContents.Add(textMesh.text);

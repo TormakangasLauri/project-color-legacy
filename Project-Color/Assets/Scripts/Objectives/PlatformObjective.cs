@@ -7,6 +7,7 @@ public class PlatformObjective : Objective
 {
     private Collider endTrigger;
     private GameObject player;
+    public int distance;
     
     void Start()
     {
@@ -16,6 +17,11 @@ public class PlatformObjective : Objective
         type = ObjectiveType.platform;
 
         player = GameObject.FindWithTag("Player");
+    }
+
+    private void Update()
+    {
+        distance = (int)Vector3.Distance(player.transform.position, endTrigger.transform.position);
     }
 
     protected override IEnumerator ObjectiveRequirement()
