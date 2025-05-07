@@ -44,7 +44,7 @@ public class PlayerHealth : Health
     void UpdateHealthUI()
     {
         //healthText.text = "Health: " + healthAmount;
-        HUDText.SetText(14, $"Health: {healthAmount}");
+        HUDText.SetText(-1, $"Health: {healthAmount}");
     }
 
     protected override void OnDeath()

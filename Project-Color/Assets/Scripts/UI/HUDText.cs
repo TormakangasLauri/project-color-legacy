@@ -19,8 +19,12 @@ public class HUDText : MonoBehaviour
 {
     public float fontSize = 1;
     public float yOffset = 0;
-    public float timeForChar;
-    public int waitForCharactersOnSwap = 4;
+    [Tooltip("The amount of characters to be changed in a second, represents text writing speed")]
+    public float changeCharsPerSec = 100;
+    [Tooltip("Wait for this many characters to be cleared before starting to write new text on the same line")]
+    public int waitForCharactersOnSwap = 6;
+    [Tooltip("The wait before moving on to the next line, negative values make it wait for the whole last line to finish")]
+    public float waitBeforeNextLine = 0.2f;
     public float bufferWaitTime = 0.2f;
     public int maxBufferSize = 100;
     private float bufferTimer = 0;
@@ -39,7 +43,8 @@ public class HUDText : MonoBehaviour
 
         public TextSettings(int line, string text, HUDTextReplace replace = default, HUDTextUpdate update = default, HUDTextFill fill = default) // Single
         {
-            this.line = line;
+            if (line >= 0) this.line = line;
+            else this.line = textColumns.Count + line; // If line is negative, get the writeable line from the bottom (-1 = last line, -2 = second last)
             this.text = text;
             this.replace = replace;
             this.update = update;
@@ -101,11 +106,11 @@ public class HUDText : MonoBehaviour
             TextMeshProUGUI textMesh = textLine.GetComponent<TextMeshProUGUI>();
             textMesh.fontSize = lineHeight * fontSize;
             textMesh.text = "";
-            //if (i < 10)
-            //    for (int j = 0; j < 10; j++)
-            //        textMesh.text += i.ToString();
-            //else for (int j = 0; j < 5; j++)
-            //        textMesh.text += i.ToString();
+            if (i < 10)
+                for (int j = 0; j < 10; j++)
+                    textMesh.text += i.ToString();
+            else for (int j = 0; j < 5; j++)
+                    textMesh.text += i.ToString();
 
             textColumns.Add(textMesh);
             textContents.Add(textMesh.text);
@@ -213,13 +218,13 @@ public class HUDText : MonoBehaviour
         {
             if (line == i)
             {
-                yield return ReplaceLine(i, text);
+                yield return ReplaceAndWait(i, text);
                 if (update == HUDTextUpdate.Single || update == HUDTextUpdate.Above) break; // Break out of the loop if update method is not all
             }
             else if (update == HUDTextUpdate.All || update == HUDTextUpdate.Above) // Keep replacing if update method is all or above
             {
-                if (replace == HUDTextReplace.Keep) yield return ReplaceLine(i); // Replace with the same text or clear depending on settings
-                else if (replace == HUDTextReplace.Clear) yield return ReplaceLine(i, "");
+                if (replace == HUDTextReplace.Keep) yield return ReplaceAndWait(i); // Replace with the same text or clear depending on settings
+                else if (replace == HUDTextReplace.Clear) yield return ReplaceAndWait(i, "");
             }
         }
     }
@@ -236,7 +241,7 @@ public class HUDText : MonoBehaviour
             {
                 if (!fillSet) fillText = texts[textIndex]; // If fill is not on, set a new fill text
 
-                yield return ReplaceLine(i, fillText); // Use the existing fill text for replacing on set indexes
+                yield return ReplaceAndWait(i, fillText); // Use the existing fill text for replacing on set indexes
                 if ((update == HUDTextUpdate.Single || update == HUDTextUpdate.Above) && lines.Length == i + 1 && i % 2 == 1) break; // If update method is not all and this is the last item in lines, break
 
                 if (fillSet || fill == HUDTextFill.Single) // If fill is on or fill is not used (default), turn it off and increment fill index to use the next text in the parameter array
@@ -248,13 +253,22 @@ public class HUDText : MonoBehaviour
             }
             else
             {
-                if (fillSet) yield return ReplaceLine(i, fillText); // If fill is on, use fill text set above
+                if (fillSet) yield return ReplaceAndWait(i, fillText); // If fill is on, use fill text set above
                 else if (update == HUDTextUpdate.All || update == HUDTextUpdate.Above) // Keep replacing if update method is all or above
                 {
-                    if (replace == HUDTextReplace.Keep) yield return ReplaceLine(i); // Replace with the same text or clear depending on settings
-                    else if (replace == HUDTextReplace.Clear) yield return ReplaceLine(i, "");
+                    if (replace == HUDTextReplace.Keep) yield return ReplaceAndWait(i); // Replace with the same text or clear depending on settings
+                    else if (replace == HUDTextReplace.Clear) yield return ReplaceAndWait(i, "");
                 }
             }
+        }
+    }
+
+    IEnumerator ReplaceAndWait(int line, string text = null)
+    {
+        if (waitBeforeNextLine < 0) yield return ReplaceLine(line, text);
+        else{
+            StartCoroutine(ReplaceLine(line, text));
+            yield return new WaitForSecondsRealtime(waitBeforeNextLine);
         }
     }
 
@@ -296,7 +310,7 @@ public class HUDText : MonoBehaviour
     {
         if (text == null) text = textColumns[line].text;
         StartCoroutine(ClearLine(line));
-        yield return new WaitForSecondsRealtime(timeForChar * waitForCharactersOnSwap);
+        yield return new WaitForSecondsRealtime((1/changeCharsPerSec) * waitForCharactersOnSwap);
         StartCoroutine(SetLine(line, text));
     }
 
@@ -309,7 +323,7 @@ public class HUDText : MonoBehaviour
         yield return new WaitUntil(() =>
         {
             char[] updatedText = textMesh.text.ToCharArray();
-            int newIndex = (int)(elapsedTime / timeForChar);
+            int newIndex = (int)(elapsedTime / (1/changeCharsPerSec));
             for (int i = lastIndex + 1; i <= newIndex; i++) // Go through all new characters in the existing text
                 if (i < updatedText.Length) updatedText[i] = ' ';
             textMesh.text = updatedText.ArrayToString();
@@ -328,7 +342,7 @@ public class HUDText : MonoBehaviour
         yield return new WaitUntil(() =>
         {
             string oldText = textMesh.text;
-            int newIndex = (int)(elapsedTime / timeForChar);
+            int newIndex = (int)(elapsedTime / (1/changeCharsPerSec));
             for (int i = lastIndex + 1; i <= newIndex && i <= text.Length; i++)
             {
                 textMesh.text = text.Substring(0, i);

@@ -540,11 +540,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fontSize: 1.6
   yOffset: 8
-  timeForChar: 0.001
-  waitForCharactersOnSwap: 20
+  changeCharsPerSec: 100
+  waitForCharactersOnSwap: 6
+  waitBeforeNextLine: 0.001
   bufferWaitTime: 0.2
   maxBufferSize: 100
-  text: []
 --- !u!1 &1888466898
 GameObject:
   m_ObjectHideFlags: 0
@@ -851,6 +851,7 @@ GameObject:
   - component: {fileID: 4847366447682058566}
   - component: {fileID: 6203894089058735146}
   - component: {fileID: 6656886974770936896}
+  - component: {fileID: 1208434641}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -957,6 +958,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: {fileID: 4740685350306384471}
   menuCooldown: 0.2
+--- !u!114 &1208434641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497001525721658058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f368a4637ebc3542b0631f29ded015d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1591487894223181167
 GameObject:
   m_ObjectHideFlags: 0
@@ -2124,7 +2137,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6827985432443038778}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf21c529529a3324f85e05b87cbb2a44, type: 3}
   m_Name: 

@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    // Empty placeholder for now.
     // TODO: Add GameController related things
 
     public static bool paused;
