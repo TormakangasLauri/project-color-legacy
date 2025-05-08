@@ -19,6 +19,8 @@ public class HUDText : MonoBehaviour
 {
     public float fontSize = 1;
     public float yOffset = 0;
+    public float xOffset = 0;
+    public float heightOffset = 0;
     [Tooltip("The amount of characters to be changed in a second, represents text writing speed")]
     public float changeCharsPerSec = 100;
     [Tooltip("Wait for this many characters to be cleared before starting to write new text on the same line")]
@@ -61,7 +63,9 @@ public class HUDText : MonoBehaviour
             single = false;
         }
     }
+
     private static List<TextSettings> bufferList = new List<TextSettings>();
+    private static float[] lineStatus;
 
     public static List<TextMeshProUGUI> textColumns = new List<TextMeshProUGUI>();
     public static List<string> textContents = new List<string>();
@@ -91,16 +95,23 @@ public class HUDText : MonoBehaviour
         textContents.Clear();
         savedText.Clear();
 
-        float fullHeight = transform.parent.GetComponent<RectTransform>().rect.height;
-        float fullWidth = transform.parent.GetComponent<RectTransform>().rect.width;
+        float fullHeight = 1080;
+        float fullWidth = 1920;
+        if (transform.parent && transform.parent.GetComponent<RectTransform>())
+        {
+            fullHeight = transform.parent.GetComponent<RectTransform>().rect.height;
+            fullWidth = transform.parent.GetComponent<RectTransform>().rect.width;
+        }
         int lines = transform.childCount;
-        float lineHeight = fullHeight / lines;
+        float height = fullHeight + heightOffset;
+        float startHeight = (height - fullHeight)/2;
+        float lineHeight = height / lines;
 
         int i = 0;
         foreach (Transform textLine in transform)
         {
             RectTransform rectTransform = textLine.GetComponent<RectTransform>();
-            rectTransform.anchoredPosition = new Vector2(5, -i * lineHeight + yOffset);
+            rectTransform.anchoredPosition = new Vector2(xOffset, startHeight - i * lineHeight + yOffset);
             rectTransform.sizeDelta = new Vector2(fullWidth, lineHeight);
 
             TextMeshProUGUI textMesh = textLine.GetComponent<TextMeshProUGUI>();
@@ -118,12 +129,16 @@ public class HUDText : MonoBehaviour
 
             i++;
         }
+        lineStatus = new float[textColumns.Count];
     }
 
     private void Update()
     {
+        for (int i = 0; i < lineStatus.Length; i++)
+            lineStatus[i] += Time.unscaledDeltaTime;
         bufferTimer += Time.unscaledDeltaTime;
-        if (bufferTimer > bufferWaitTime && bufferList.Count > 0)
+
+        if (/*bufferTimer > bufferWaitTime &&*/ bufferList.Count > 0)
         {
             bufferTimer = 0;
             if (bufferList.Count > maxBufferSize) bufferList = bufferList.GetRange(0, maxBufferSize); // Trim buffer list
@@ -132,13 +147,14 @@ public class HUDText : MonoBehaviour
             {
                 UpdateTextContents(ts.line, ts.text, ts.replace);
                 inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update));
+                bufferList.RemoveAt(0);
             }
             else // Multiple lines
             {
                 UpdateTextContents(ts.lines, ts.texts, ts.replace, ts.fill);
                 inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill));
+                bufferList.RemoveAt(0);
             }
-            bufferList.RemoveAt(0);
         }
     }
 
@@ -265,8 +281,16 @@ public class HUDText : MonoBehaviour
 
     IEnumerator ReplaceAndWait(int line, string text = null)
     {
-        if (waitBeforeNextLine < 0) yield return ReplaceLine(line, text);
-        else{
+        if (waitBeforeNextLine < 0)
+        {
+            yield return new WaitUntil(() => { return lineStatus[line] > 0.2; });
+            lineStatus[line] = 0;
+            yield return ReplaceLine(line, text);
+        }
+        else
+        {
+            yield return new WaitUntil(() => { return lineStatus[line] > 0.2; });
+            lineStatus[line] = 0;
             StartCoroutine(ReplaceLine(line, text));
             yield return new WaitForSecondsRealtime(waitBeforeNextLine);
         }
@@ -366,7 +390,7 @@ public class HUDText : MonoBehaviour
 
     public static void SaveLine(int line) { savedText[line] = textContents[line]; }
 
-    public static void RetrieveLine(int line) { SetText(line, savedText[line]); }
+    public static void RetrieveLine(int line) { SetText(line, savedText[line], HUDTextUpdate.Single); }
 
     public static void SaveAllText()
     {
