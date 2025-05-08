@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     public Scene level;
     public Camera cam;
     public string[] menuTexts;
+    private string[] highlightedMenuTexts;
 
     private RectTransform rectT;
     private List<Transform> textLines = new List<Transform>();
@@ -23,8 +24,13 @@ public class MainMenu : MonoBehaviour
             textLines.Add(textTransform);
 
         string[] menuTextContents = menuTexts; // Save text contents and move them to the new array
+        highlightedMenuTexts = new string[menuTexts.Length];
         if (menuTexts == null || menuTexts.Length != textLines.Count) menuTexts = new string[textLines.Count];
-        for (int i = 0; i < menuTexts.Length; i++) menuTexts[i] = menuTextContents[i];
+        for (int i = 0; i < menuTexts.Length; i++)
+        {
+            menuTexts[i] = menuTextContents[i];
+            highlightedMenuTexts[i] = "> " + menuTexts[i];
+        }
 
         int[] lines = new int[textLines.Count];
         for (int i = 0; i < menuTexts.Length; i++) lines[i] = i;
@@ -38,7 +44,6 @@ public class MainMenu : MonoBehaviour
 
         if (mousePos.x < rectT.sizeDelta.x * 0.3f)
         {
-            targetLine = 0;
             for (int i = 1; i < textLines.Count; i++)
                 if (RectTransformUtility.RectangleContainsScreenPoint(HUDText.textColumns[i].GetComponent<RectTransform>(), mousePos, cam))
                 {
@@ -50,14 +55,14 @@ public class MainMenu : MonoBehaviour
         // Check if any text needs updating and update them accordingly
         List<int> linesToSet = new List<int>();
         List<string> textsToSet = new List<string>();
-        for (int i = 0; i < textLines.Count; i++)
+        for (int i = 1; i < textLines.Count; i++)
         {
-            if (i != 0 && HUDText.textContents[i] != "")
+            if (HUDText.textContents[i].Length > 0)
             {
-                if (i == targetLine && HUDText.textContents[i] != $"> {menuTexts[i]}")
+                if (i == targetLine && HUDText.textContents[i] != highlightedMenuTexts[i])
                 {
                     linesToSet.Add(i);
-                    textsToSet.Add($"> {menuTexts[i]}");
+                    textsToSet.Add(highlightedMenuTexts[i]);
                 }
                 else if (i != targetLine && HUDText.textContents[i] != menuTexts[i])
                 {
