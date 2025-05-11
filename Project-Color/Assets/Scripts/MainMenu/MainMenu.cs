@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
     {
         textLines.Clear();
         rectT = GetComponent<RectTransform>();
-        foreach (Transform textTransform in GetComponentInChildren<HUDText>().transform)
+        foreach (Transform textTransform in GetComponentInChildren<HUDText2>().transform)
             textLines.Add(textTransform);
 
         string[] menuTextContents = menuTexts; // Save text contents and move them to the new array
@@ -34,7 +34,7 @@ public class MainMenu : MonoBehaviour
 
         int[] lines = new int[textLines.Count];
         for (int i = 0; i < menuTexts.Length; i++) lines[i] = i;
-        HUDText.SetText(lines, menuTexts);
+        HUDText2.SetText(lines, menuTexts);
     }
 
     private void Update()
@@ -45,7 +45,7 @@ public class MainMenu : MonoBehaviour
         if (mousePos.x < rectT.sizeDelta.x * 0.3f)
         {
             for (int i = 1; i < textLines.Count; i++)
-                if (RectTransformUtility.RectangleContainsScreenPoint(HUDText.textColumns[i].GetComponent<RectTransform>(), mousePos, cam))
+                if (RectTransformUtility.RectangleContainsScreenPoint(HUDText2.textLines[i].GetComponent<RectTransform>(), mousePos, cam))
                 {
                     targetLine = i;
                     break;
@@ -57,21 +57,21 @@ public class MainMenu : MonoBehaviour
         List<string> textsToSet = new List<string>();
         for (int i = 1; i < textLines.Count; i++)
         {
-            if (HUDText.textContents[i].Length > 0)
+            if (HUDText2.textContents[i].Length > 0)
             {
-                if (i == targetLine && HUDText.textContents[i] != highlightedMenuTexts[i])
+                if (i == targetLine && HUDText2.textContents[i] != highlightedMenuTexts[i])
                 {
                     linesToSet.Add(i);
                     textsToSet.Add(highlightedMenuTexts[i]);
                 }
-                else if (i != targetLine && HUDText.textContents[i] != menuTexts[i])
+                else if (i != targetLine && HUDText2.textContents[i] != menuTexts[i])
                 {
                     linesToSet.Add(i);
                     textsToSet.Add(menuTexts[i]);
                 }
             }
         }
-        if (linesToSet.Count > 0) HUDText.SetText(linesToSet.ToArray(), textsToSet.ToArray(), HUDTextUpdate.Single);
+        if (linesToSet.Count > 0) HUDText2.SetText(linesToSet.ToArray(), textsToSet.ToArray(), HUDTextUpdate.Single);
 
         lastLine = targetLine;
     }
