@@ -72,8 +72,18 @@ public class MainMenu : MonoBehaviour
             }
         }
         if (linesToSet.Count > 0) HUDText.SetText(linesToSet.ToArray(), textsToSet.ToArray(), HUDTextUpdate.Single);
-
         lastLine = targetLine;
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            switch (menuTexts[targetLine])
+            {
+                case "Play": Play(); break;
+                case "Levels": Levels(); break;
+                case "test": Debug.Log("test"); break;
+            }
+
+        }
     }
 
     public void Play()
