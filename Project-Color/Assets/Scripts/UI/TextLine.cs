@@ -6,7 +6,7 @@ using UnityEngine;
 public class TextLine : MonoBehaviour
 {
     TextMeshProUGUI textMesh;
-    HUDText2 hudtext;
+    HUDText hudtext;
 
     public int line;
     public string textContent;
@@ -17,16 +17,20 @@ public class TextLine : MonoBehaviour
     private void Start()
     {
         textMesh = GetComponent<TextMeshProUGUI>();
-        hudtext = GetComponentInParent<HUDText2>();
+        hudtext = GetComponentInParent<HUDText>();
     }
 
     private void Update()
     {
         timeSinceSet += Time.unscaledDeltaTime;
-        if (HUDText2.textContents[line] != textContent) HUDText2.textContents[line] = textContent;
     }
 
-    public IEnumerator ReplaceAndWait(string text = null)
+    private void LateUpdate()
+    {
+        if (HUDText.textContents[line] != textContent) HUDText.textContents[line] = textContent;
+    }
+
+    public IEnumerator ReplaceAndWait(string text = null) // Replace text and wait for the replace or a set amount of time
     {
         if (hudtext.waitBeforeNextLine < 0)
         {
@@ -36,14 +40,14 @@ public class TextLine : MonoBehaviour
         }
         else
         {
-            if (timeSinceSet < 1) ClearImmediate();
+            if (timeSinceSet < 1 / hudtext.changeCharsPerSec * hudtext.waitForCharactersOnSwap) ClearImmediate();
             timeSinceSet = 0;
             StartCoroutine(ReplaceLine(text));
             yield return new WaitForSecondsRealtime(hudtext.waitBeforeNextLine);
         }
     }
 
-    IEnumerator ReplaceLine(string text = null)
+    IEnumerator ReplaceLine(string text = null) // Clear text and set new after a wait
     {
         if (text == null) text = textContent;
         StartCoroutine(ClearLine());
@@ -51,7 +55,7 @@ public class TextLine : MonoBehaviour
         StartCoroutine(SetLine(text));
     }
 
-    IEnumerator SetLine(string text)
+    IEnumerator SetLine(string text) // Write new text
     {
         float elapsedTime = 0;
         int lastIndex = -1;
@@ -69,9 +73,10 @@ public class TextLine : MonoBehaviour
             elapsedTime += Time.unscaledDeltaTime;
             return lastIndex >= text.Length;
         });
+        textMesh.text = textMesh.text.TrimEnd(' '); // Remove unwanted emtpy spaces from the end
     }
 
-    public IEnumerator ClearLine()
+    public IEnumerator ClearLine() // Clear text (replace characters with an empty space)
     {
         float elapsedTime = 0;
         int lastIndex = -1;
