@@ -5543,7 +5543,12 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 115.200005
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7916904239311069598, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: useBuffer
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7446328586341321930, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
 --- !u!43 &800593164
 Mesh:

@@ -142,9 +142,11 @@ public class PlayerAttack : MonoBehaviour
         else if (action.canceled && canAttack)
         {
             lmbHeld = false;
+            List<GameObject> _enemies = new List<GameObject>();
+            _enemies.AddRange(enemies);
             if (holdTimer < 0.3 && !PM.slamming)
             {
-                foreach (GameObject enemy in enemies)
+                foreach (GameObject enemy in _enemies)
                 {
                     Attack(enemy, false);
                 }
@@ -153,9 +155,7 @@ public class PlayerAttack : MonoBehaviour
             }
             else if (holdTimer >= 1)
             {
-                List<GameObject> enemies1 = new List<GameObject>();
-                enemies1.AddRange(enemies);
-                foreach (GameObject enemy in enemies1)
+                foreach (GameObject enemy in _enemies)
                 {
                     Attack(enemy, true);
                 }

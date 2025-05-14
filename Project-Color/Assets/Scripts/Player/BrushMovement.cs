@@ -27,7 +27,7 @@ public class BrushMovement : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
         rb = GetComponent<Rigidbody>();
-        PA = GameObject.FindWithTag("Player").GetComponentInChildren<PlayerAttack>();
+        PA = GameObject.FindWithTag("PlayerRoot").GetComponentInChildren<PlayerAttack>();
 
         StartCoroutine(Move());
     }
@@ -43,12 +43,12 @@ public class BrushMovement : MonoBehaviour
 
         Vector3 startPos = transform.position;
         float currentSpeed = speed;
-        Vector3 dir = (point - startPos).normalized;
 
         // Move towards path end point
         float t = floatTime;
         yield return new WaitUntil(delegate
         {
+            Vector3 dir = (point - transform.position).normalized;
             Vector3 pos = transform.position;
 
             rb.velocity = dir * currentSpeed;
@@ -102,7 +102,7 @@ public class BrushMovement : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Hits the enemy only if it's not hit yet on the current movement path
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy") && !enemiesHit.Contains(other.gameObject))
+        if (other.gameObject.layer == LayerMask.GetMask("Enemy") && !enemiesHit.Contains(other.gameObject) && other.GetComponent<EnemyHealth>())
         {
             enemiesHit.Add(other.gameObject);
             Vector3 kb = rb.velocity.normalized * knockback;

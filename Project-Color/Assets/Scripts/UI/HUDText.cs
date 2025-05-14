@@ -25,9 +25,12 @@ public class HUDText : MonoBehaviour
     public int waitForCharactersOnSwap = 6;
     [Tooltip("The wait before moving on to the next line, negative values make it wait for the whole last line to finish")]
     public float waitBeforeNextLine = 0.001f;
+    public bool useBuffer = false;
     public float bufferWaitTime = 0.2f;
     public int maxBufferSize = 100;
     private float bufferTimer = 0;
+
+    public static bool stopUpdates = false;
 
     class TextSettings
     {
@@ -133,25 +136,45 @@ public class HUDText : MonoBehaviour
 
     private void Update()
     {
-        bufferTimer += Time.unscaledDeltaTime;
-
-        if (/*bufferTimer > bufferWaitTime &&*/ bufferList.Count > 0)
+        if (useBuffer)
         {
-            bufferTimer = 0;
-            if (bufferList.Count > maxBufferSize) bufferList = bufferList.GetRange(0, maxBufferSize); // Trim buffer list
-            TextSettings ts = bufferList[0];
-            if (ts.single) // Single line
+            bufferTimer += Time.unscaledDeltaTime;
+
+            if (bufferTimer > bufferWaitTime && bufferList.Count > 0)
             {
-                UpdateTextContents(ts.line, ts.text, ts.replace);
-                inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update));
-                bufferList.RemoveAt(0);
+                bufferTimer = 0;
+                if (bufferList.Count > maxBufferSize) bufferList = bufferList.GetRange(0, maxBufferSize); // Trim buffer list
+                TextSettings ts = bufferList[0];
+                if (ts.single) // Single line
+                {
+                    UpdateTextContents(ts.line, ts.text, ts.replace);
+                    inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update));
+                    bufferList.RemoveAt(0);
+                }
+                else // Multiple lines
+                {
+                    UpdateTextContents(ts.lines, ts.texts, ts.replace, ts.fill);
+                    inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill));
+                    bufferList.RemoveAt(0);
+                }
             }
-            else // Multiple lines
+        }
+        else // No buffer
+        {
+            foreach (TextSettings ts in bufferList)
             {
-                UpdateTextContents(ts.lines, ts.texts, ts.replace, ts.fill);
-                inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill));
-                bufferList.RemoveAt(0);
+                if (ts.single) // Single line
+                {
+                    UpdateTextContents(ts.line, ts.text, ts.replace);
+                    inst.StartCoroutine(ReplaceAllLines(ts.line, ts.text, ts.replace, ts.update));
+                }
+                else // Multiple lines
+                {
+                    UpdateTextContents(ts.lines, ts.texts, ts.replace, ts.fill);
+                    inst.StartCoroutine(ReplaceAllLines(ts.lines, ts.texts, ts.replace, ts.update, ts.fill));
+                }
             }
+            bufferList.Clear();
         }
     }
 
