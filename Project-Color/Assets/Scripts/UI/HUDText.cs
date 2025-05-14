@@ -180,34 +180,34 @@ public class HUDText : MonoBehaviour
 
     // SetText overloads:
     // Only line and text
-    public static void SetText(int line, string text) { bufferList.Add(new TextSettings(line, text)); }
+    public static void SetText(int line, string text) { if (!stopUpdates) bufferList.Add(new TextSettings(line, text)); }
     // Replacement method
-    public static void SetText(int line, string text, HUDTextReplace replace) { bufferList.Add(new TextSettings(line, text, replace)); }
+    public static void SetText(int line, string text, HUDTextReplace replace) { if (!stopUpdates) bufferList.Add(new TextSettings(line, text, replace)); }
     // Update method
-    public static void SetText(int line, string text, HUDTextUpdate update) { bufferList.Add(new TextSettings(line, text, default, update)); }
+    public static void SetText(int line, string text, HUDTextUpdate update) { if (!stopUpdates) bufferList.Add(new TextSettings(line, text, default, update)); }
     // Replacement and update methods
-    public static void SetText(int line, string text, HUDTextReplace replace, HUDTextUpdate update) { bufferList.Add(new TextSettings(line, text, replace, update)); }
+    public static void SetText(int line, string text, HUDTextReplace replace, HUDTextUpdate update) { if (!stopUpdates) bufferList.Add(new TextSettings(line, text, replace, update)); }
 
     // SetText Multiple overloads:
     // Only lines and texts
-    public static void SetText(int[] lines, string[] texts) { bufferList.Add(new TextSettings(lines, texts)); }
+    public static void SetText(int[] lines, string[] texts) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts)); }
     // Replacement method
-    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace) { bufferList.Add(new TextSettings(lines, texts, replace)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, replace)); }
     // Update method
-    public static void SetText(int[] lines, string[] texts, HUDTextUpdate update) { bufferList.Add(new TextSettings(lines, texts, default, update)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextUpdate update) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, default, update)); }
     // Fill method
-    public static void SetText(int[] lines, string[] texts, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, default, default, fill)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, default, default, fill)); }
     // Replacement and update methods
-    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update) { bufferList.Add(new TextSettings(lines, texts, replace, update)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, replace, update)); }
     // Replacement and fill methods
-    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, replace, default, fill)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, replace, default, fill)); }
     // Update and fill methods
-    public static void SetText(int[] lines, string[] texts, HUDTextUpdate update, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, default, update, fill)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, default, update, fill)); }
     // All available methods (replace, update and fill)
-    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { bufferList.Add(new TextSettings(lines, texts, replace, update, fill)); }
+    public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, replace, update, fill)); }
 
     // Move single line down
-    public static void MoveTextDown(int line, int moveSpaces = 1) { bufferList.Add(new TextSettings(new[] { line, line + moveSpaces }, new[] { "", textContents[line] })); }
+    public static void MoveTextDown(int line, int moveSpaces = 1) { if (!stopUpdates) bufferList.Add(new TextSettings(new[] { line, line + moveSpaces }, new[] { "", textContents[line] })); }
     // Move multiple lines down
     public static void MoveTextDown(int[] lines, int moveSpaces = 1)
     {

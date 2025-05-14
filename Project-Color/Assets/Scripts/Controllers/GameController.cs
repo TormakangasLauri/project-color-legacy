@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour
     public static void EndLevel()
     {
         HUDText.SetText(new[]{0}, new[]{"Level complete !!!"}, HUDTextFill.Fill);
+        HUDText.stopUpdates = true;
         inst.StartCoroutine(End());
         IEnumerator End()
         {
@@ -41,6 +42,7 @@ public class GameController : MonoBehaviour
                 Time.timeScale = Mathf.Max(0, timer/2);
                 return timer <= 0;
             });
+            HUDText.stopUpdates = false;
             StartLevel(0);
             Time.timeScale = 1;
         }
