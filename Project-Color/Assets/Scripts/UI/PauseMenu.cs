@@ -46,6 +46,9 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0;
         GameController.paused = true;
 
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+
         HUDText.SaveAllText();
         HUDText.SetText(new[]{0,5}, new[]{"Paused"}, HUDTextReplace.Clear, HUDTextFill.Fill);
     }
@@ -55,6 +58,9 @@ public class PauseMenu : MonoBehaviour
         menu.SetActive(false);
         Time.timeScale = 1;
         GameController.paused = false;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         HUDText.RetrieveAllText();
     }

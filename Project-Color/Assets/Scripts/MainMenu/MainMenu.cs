@@ -37,6 +37,12 @@ public class MainMenu : MonoBehaviour
         HUDText.SetText(lines, menuTexts);
     }
 
+    private void Start()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
     private void Update()
     {
         Vector2 mousePos = Input.mousePosition;
