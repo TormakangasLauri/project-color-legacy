@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using AASave;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    // TODO: Add GameController related things
+    private static SaveSystem saveSystem;
+
+    public static int currentLevelIndex;
 
     public static bool paused;
 
@@ -13,9 +16,10 @@ public class GameController : MonoBehaviour
 
     private void Awake() { inst = this; }
 
-    private void Start()
+    private void OnValidate()
     {
-        
+        saveSystem = GetComponent<SaveSystem>();
+        currentLevelIndex = SceneManager.GetActiveScene().buildIndex;
     }
 
     private void Update()
@@ -26,10 +30,13 @@ public class GameController : MonoBehaviour
     public static void StartLevel(int level)
     {
         SceneManager.LoadScene(level);
+        currentLevelIndex = level;
     }
 
     public static void EndLevel()
     {
+        GameData.SaveLevelData(currentLevelIndex, true);
+        GameData.SaveAllDataToFile(saveSystem);
         HUDText.SetText(new[]{0}, new[]{"Level complete !!!"}, HUDTextFill.Fill);
         HUDText.stopUpdates = true;
         inst.StartCoroutine(End());
