@@ -9,7 +9,6 @@ public class MainMenu : MonoBehaviour
     public Scene level;
     public Camera cam;
     public string[] menuTexts;
-    private string[] highlightedMenuTexts;
 
     private RectTransform rectT;
     private List<Transform> textLines = new List<Transform>();
@@ -24,12 +23,10 @@ public class MainMenu : MonoBehaviour
             textLines.Add(textTransform);
 
         string[] menuTextContents = menuTexts; // Save text contents and move them to the new array
-        highlightedMenuTexts = new string[menuTexts.Length];
         if (menuTexts == null || menuTexts.Length != textLines.Count) menuTexts = new string[textLines.Count];
         for (int i = 0; i < menuTexts.Length; i++)
         {
             menuTexts[i] = menuTextContents[i];
-            highlightedMenuTexts[i] = "> " + menuTexts[i];
         }
 
         int[] lines = new int[textLines.Count];
@@ -41,46 +38,15 @@ public class MainMenu : MonoBehaviour
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+        HUDText.SetInteractableLines(new[]{0}, true);
     }
 
     private void Update()
     {
-        Vector2 mousePos = Input.mousePosition;
-        int targetLine = 0;
+        int targetLine = HUDText.GetHoveredLine();
+        HUDText.UpdateInteractableText(menuTexts);
 
-        if (mousePos.x < rectT.sizeDelta.x * 0.3f)
-        {
-            for (int i = 1; i < textLines.Count; i++)
-                if (RectTransformUtility.RectangleContainsScreenPoint(HUDText.textLines[i].GetComponent<RectTransform>(), mousePos, cam))
-                {
-                    targetLine = i;
-                    break;
-                }
-        }
-
-        // Check if any text needs updating and update them accordingly
-        List<int> linesToSet = new List<int>();
-        List<string> textsToSet = new List<string>();
-        for (int i = 1; i < textLines.Count; i++)
-        {
-            if (HUDText.textContents[i].Length > 0)
-            {
-                if (i == targetLine && HUDText.textContents[i] != highlightedMenuTexts[i])
-                {
-                    linesToSet.Add(i);
-                    textsToSet.Add(highlightedMenuTexts[i]);
-                }
-                else if (i != targetLine && HUDText.textContents[i] != menuTexts[i])
-                {
-                    linesToSet.Add(i);
-                    textsToSet.Add(menuTexts[i]);
-                }
-            }
-        }
-        if (linesToSet.Count > 0) HUDText.SetText(linesToSet.ToArray(), textsToSet.ToArray(), HUDTextUpdate.Single);
-        lastLine = targetLine;
-
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && targetLine != -1)
         {
             switch (menuTexts[targetLine])
             {
@@ -88,7 +54,6 @@ public class MainMenu : MonoBehaviour
                 case "Levels": Levels(); break;
                 case "test": Debug.Log("test"); break;
             }
-
         }
     }
 

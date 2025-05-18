@@ -12,6 +12,22 @@ public class PauseMenu : MonoBehaviour
     private float timer = 0;
     private bool menuOpen = false;
 
+    private int[] lines;
+    public string[] texts;
+
+    private void OnValidate()
+    {
+        string[] textContents = texts; // Save text contents and move them to the new array
+        if (texts == null || texts.Length != HUDText.textLines.Count) texts = new string[HUDText.textLines.Count];
+        for (int i = 0; i < texts.Length; i++)
+        {
+            texts[i] = textContents[i];
+        }
+
+        lines = new int[HUDText.textLines.Count];
+        for (int i = 0; i < texts.Length; i++) lines[i] = i;
+    }
+
     private void Start()
     {
         menu.SetActive(false); // Close pause menu at the start
@@ -20,6 +36,20 @@ public class PauseMenu : MonoBehaviour
     private void Update()
     {
         timer -= Time.unscaledDeltaTime;
+        if (GameController.paused)
+        {
+            HUDText.UpdateInteractableText(texts);
+
+            int targetLine = HUDText.GetHoveredLine();
+            if (Input.GetMouseButtonUp(0) && targetLine != -1)
+            {
+                switch (texts[targetLine])
+                {
+                    case "Resume": ClosePauseMenu(); break;
+                    case "Main_menu": GameController.StartLevel(0); break;
+                }
+            }
+        }
     }
 
     public void TogglePauseMenu(InputAction.CallbackContext action)
@@ -28,12 +58,10 @@ public class PauseMenu : MonoBehaviour
         {
             if (menuOpen && timer < 0)
             {
-                menuOpen = false;
                 ClosePauseMenu();
             }
             else if (!menuOpen)
             {
-                menuOpen = true;
                 timer = menuCooldown;
                 OpenPauseMenu();
             }
@@ -42,6 +70,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OpenPauseMenu()
     {
+        menuOpen = true;
         menu.SetActive(true);
         Time.timeScale = 0;
         GameController.paused = true;
@@ -50,11 +79,13 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
 
         HUDText.SaveAllText();
-        HUDText.SetText(new[]{0,5}, new[]{"Paused"}, HUDTextReplace.Clear, HUDTextFill.Fill);
+        HUDText.SetInteractableLines(new[]{0}, true); // Exclude first line
+        HUDText.SetText(lines, texts, HUDTextReplace.Clear);
     }
 
     private void ClosePauseMenu()
     {
+        menuOpen = false;
         menu.SetActive(false);
         Time.timeScale = 1;
         GameController.paused = false;

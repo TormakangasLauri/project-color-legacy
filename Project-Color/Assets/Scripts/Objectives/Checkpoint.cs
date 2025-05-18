@@ -5,6 +5,13 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     public int index;
+    public Vector3 spawnPosition;
+
+    private void Start()
+    {
+        Physics.Raycast(transform.position, Vector3.down, out var hit, 10, LayerMask.GetMask("Terrain"));
+        spawnPosition = hit.point;
+    }
 
     private void OnTriggerEnter(Collider other)
     {

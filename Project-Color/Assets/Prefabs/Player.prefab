@@ -887,6 +887,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: {fileID: 4740685350306384471}
   menuCooldown: 0.2
+  texts:
+  - Paused
+  - 
+  - 
+  - 
+  - 
+  - 
+  - Resume
+  - Main_menu
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
 --- !u!114 &1208434641
 MonoBehaviour:
   m_ObjectHideFlags: 0

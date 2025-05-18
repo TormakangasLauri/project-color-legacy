@@ -15,6 +15,10 @@ public enum HUDTextFill { Single, Fill }
 
 public class HUDText : MonoBehaviour
 {
+    [Tooltip("Camera to use for interacting with the text")]
+    public Camera camera;
+    private static Camera cam;
+
     public float fontSize = 1;
     public float yOffset = 0;
     public float xOffset = 0;
@@ -31,6 +35,9 @@ public class HUDText : MonoBehaviour
     private float bufferTimer = 0;
 
     public static bool stopUpdates = false;
+    private static int[] interactableLines;
+    private static int hoveredLine;
+    private static int lastHoveredLine;
 
     class TextSettings
     {
@@ -65,9 +72,12 @@ public class HUDText : MonoBehaviour
         }
     }
 
+    private static RectTransform screenRectT;
+
     private static List<TextSettings> bufferList = new List<TextSettings>();
 
     public static List<TextLine> textLines = new List<TextLine>();
+    private static List<RectTransform> lineRects = new List<RectTransform>();
     public static List<string> textContents = new List<string>();
     public static List<string> savedText = new List<string>();
 
@@ -92,15 +102,19 @@ public class HUDText : MonoBehaviour
     void UpdateTextContainer()
     {
         textLines.Clear();
+        lineRects.Clear();
         textContents.Clear();
         savedText.Clear();
+
+        cam = camera;
 
         float fullHeight = 1080;
         float fullWidth = 1920;
         if (transform.parent && transform.parent.GetComponent<RectTransform>())
         {
-            fullHeight = transform.parent.GetComponent<RectTransform>().rect.height;
-            fullWidth = transform.parent.GetComponent<RectTransform>().rect.width;
+            screenRectT = transform.parent.GetComponent<RectTransform>();
+            fullHeight = screenRectT.rect.height;
+            fullWidth = screenRectT.rect.width;
         }
         int lines = transform.childCount;
         float height = fullHeight + heightOffset;
@@ -127,6 +141,7 @@ public class HUDText : MonoBehaviour
                     textMesh.text += i.ToString();
 
             textLines.Add(textLine);
+            lineRects.Add(rectTransform);
             textContents.Add(textMesh.text);
             savedText.Add("");
 
@@ -365,4 +380,63 @@ public class HUDText : MonoBehaviour
         SetText(lines, savedTexts, HUDTextReplace.Keep);
     }
 
+    /// <param name="lines">Target specified lines</param>
+    /// <param name="invertSelection">If true, make all but the selected lines interactable</param>
+    public static void SetInteractableLines(int[] lines, bool invertSelection = false)
+    {
+        if (!invertSelection) interactableLines = lines; // Normal
+        else // Inverted
+        {
+            List<int> invertedList = new List<int>();
+            for (int i = 0; i < textLines.Count; i++)
+                if (!lines.Contains(i)) invertedList.Add(i);
+            interactableLines = invertedList.ToArray();
+        }
+    }
+
+    public static int GetHoveredLine()
+    {
+        Vector2 mousePos = Input.mousePosition;
+
+        if (mousePos.x < screenRectT.sizeDelta.x * 0.3f)
+        {
+            for (int i = 0; i < textLines.Count; i++)
+                if (RectTransformUtility.RectangleContainsScreenPoint(lineRects[i], mousePos, cam))
+                {
+                    hoveredLine = i;
+                    return i;
+                }
+        }
+        return -1; // No target line
+    }
+
+    public static void UpdateInteractableText(string[] text, string hoverPrefix = "> ", string hoverSuffix = "") // Check if any text needs updating and update them accordingly
+    {
+        string[] hoveredText = new string[text.Length]; // Set hovered texts
+        for (int i = 0; i < text.Length; i++)
+            hoveredText[i] = hoverPrefix + text[i] + hoverSuffix;
+
+        GetHoveredLine();
+
+        List<int> linesToSet = new List<int>();
+        List<string> textsToSet = new List<string>();
+        for (int i = 0; i < textLines.Count; i++)
+        {
+            if (textContents[i].Length > 0 && interactableLines.Contains(i))
+            {
+                if (i == hoveredLine && textContents[i] != hoveredText[i])
+                {
+                    linesToSet.Add(i);
+                    textsToSet.Add(hoveredText[i]);
+                }
+                else if (i != hoveredLine && textContents[i] != text[i])
+                {
+                    linesToSet.Add(i);
+                    textsToSet.Add(text[i]);
+                }
+            }
+        }
+        if (linesToSet.Count > 0) SetText(linesToSet.ToArray(), textsToSet.ToArray(), HUDTextUpdate.Single);
+        lastHoveredLine = hoveredLine;
+    }
 }
