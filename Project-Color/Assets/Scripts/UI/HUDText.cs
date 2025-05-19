@@ -7,7 +7,9 @@ using Unity.VisualScripting;
 using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 
 public enum HUDTextReplace { Keep, Clear }
 public enum HUDTextUpdate { All, Above, Single }
@@ -38,6 +40,8 @@ public class HUDText : MonoBehaviour
     private static int[] interactableLines;
     private static int hoveredLine;
     private static int lastHoveredLine;
+
+    private static bool textSet = false;
 
     class TextSettings
     {
@@ -89,21 +93,18 @@ public class HUDText : MonoBehaviour
         inst = this;
     }
 
-    private void Awake()
-    {
-        UpdateTextContainer();
-    }
-
     private void Start()
     {
-        UpdateTextContainer();
+        RetrieveAllImmediate();
     }
 
     void UpdateTextContainer()
     {
         textLines.Clear();
         lineRects.Clear();
+        List<string> oldContents = textContents;
         textContents.Clear();
+        List<string> oldSaved = savedText;
         savedText.Clear();
 
         cam = camera;
@@ -134,11 +135,12 @@ public class HUDText : MonoBehaviour
             TextMeshProUGUI textMesh = textLineTransform.GetComponent<TextMeshProUGUI>();
             textMesh.fontSize = lineHeight * fontSize;
             textMesh.text = "";
-            if (i < 10)
-                for (int j = 0; j < 10; j++)
-                    textMesh.text += i.ToString();
-            else for (int j = 0; j < 5; j++)
-                    textMesh.text += i.ToString();
+            
+            //if (i < 10)
+            //    for (int j = 0; j < 10; j++)
+            //        textMesh.text += i.ToString();
+            //else for (int j = 0; j < 5; j++)
+            //        textMesh.text += i.ToString();
 
             textLines.Add(textLine);
             lineRects.Add(rectTransform);
@@ -147,6 +149,9 @@ public class HUDText : MonoBehaviour
 
             i++;
         }
+
+        textContents = oldContents;
+        savedText = oldSaved;
     }
 
     private void Update()
@@ -220,6 +225,33 @@ public class HUDText : MonoBehaviour
     public static void SetText(int[] lines, string[] texts, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, default, update, fill)); }
     // All available methods (replace, update and fill)
     public static void SetText(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) bufferList.Add(new TextSettings(lines, texts, replace, update, fill)); }
+
+    // SetTextImmediate overloads
+    public static void SetTextImmediate(int line, string text) { if (!stopUpdates) inst.ReplaceAllImmediate(line, text); }
+    // Replacement method
+    public static void SetTextImmediate(int line, string text, HUDTextReplace replace) { if (!stopUpdates) inst.ReplaceAllImmediate(line, text, replace); }
+    // Update method
+    public static void SetTextImmediate(int line, string text, HUDTextUpdate update) { if (!stopUpdates) inst.ReplaceAllImmediate(line, text, default, update); }
+    // Replacement and update methods
+    public static void SetTextImmediate(int line, string text, HUDTextReplace replace, HUDTextUpdate update) { if (!stopUpdates) inst.ReplaceAllImmediate(line, text, replace, update); }
+
+    // SetTextImmediate Multiple overloads:
+    // Only lines and texts
+    public static void SetTextImmediate(int[] lines, string[] texts) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts); }
+    // Replacement method
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextReplace replace) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, replace); }
+    // Update method
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextUpdate update) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, default, update); }
+    // Fill method
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextFill fill) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, default, default, fill); }
+    // Replacement and update methods
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, replace, update); }
+    // Replacement and fill methods
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextReplace replace, HUDTextFill fill) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, replace, default, fill); }
+    // Update and fill methods
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, default, update, fill); }
+    // All available methods (replace, update and fill)
+    public static void SetTextImmediate(int[] lines, string[] texts, HUDTextReplace replace, HUDTextUpdate update, HUDTextFill fill) { if (!stopUpdates) inst.ReplaceAllImmediate(lines, texts, replace, update, fill); }
 
     // Move single line down
     public static void MoveTextDown(int line, int moveSpaces = 1) { if (!stopUpdates) bufferList.Add(new TextSettings(new[] { line, line + moveSpaces }, new[] { "", textContents[line] })); }
@@ -314,12 +346,65 @@ public class HUDText : MonoBehaviour
         }
     }
 
+    void ReplaceAllImmediate(int line, string text, HUDTextReplace replace = default, HUDTextUpdate update = default)
+    {
+        UpdateTextContents(line, text, replace);
+        for (int i = 0; i < textLines.Count; i++)
+        {
+            if (line == i)
+            {
+                textLines[i].SetImmediate(text);
+                if (update == HUDTextUpdate.Single || update == HUDTextUpdate.Above) break; // Break out of the loop if update method is not all
+            }
+            else if (update == HUDTextUpdate.All || update == HUDTextUpdate.Above && replace == HUDTextReplace.Clear) // Keep replacing if update method is all or above
+                textLines[i].SetImmediate("");
+        }
+    }
+
+    void ReplaceAllImmediate(int[] lines, string[] texts, HUDTextReplace replace = default, HUDTextUpdate update = default, HUDTextFill fill = default)
+    {
+        int textIndex = 0;
+        bool fillSet = false;
+        string fillText = null;
+        for (int i = 0; i < textLines.Count; i++)
+        {
+            if (lines.Contains(i))
+            {
+                if (!fillSet) fillText = texts[textIndex]; // If fill is not on, set a new fill text
+
+                textLines[i].SetImmediate(fillText); // Use the existing fill text for replacing on set indexes
+                if ((update == HUDTextUpdate.Single || update == HUDTextUpdate.Above) && lines.Length == i + 1 && i % 2 == 1) break; // If update method is not all and this is the last item in lines, break
+
+                if (fillSet || fill == HUDTextFill.Single) // If fill is on or fill is not used (default), turn it off and increment fill index to use the next text in the parameter array
+                {
+                    textIndex++;
+                    fillSet = false;
+                }
+                else fillSet = true; // Otherwise turn fill on
+            }
+            else
+            {
+                if (fillSet) textLines[i].SetImmediate(fillText); // If fill is on, use fill text set above
+                else if (update == HUDTextUpdate.All || update == HUDTextUpdate.Above && replace == HUDTextReplace.Clear) // Keep replacing if update method is all or above
+                    textLines[i].SetImmediate("");
+            }
+        }
+    }
+
     void UpdateTextContents(int line, string text, HUDTextReplace replace = default)
     {
         for (int i = 0; i < textLines.Count; i++)
         {
-            if (line == i) textLines[i].textContent = text; // Update the specified line
-            else if (replace == HUDTextReplace.Clear) textLines[i].textContent = ""; // If replace method is clear, update other lines to be empty
+            if (line == i)
+            {
+                textLines[i].textContent = text; // Update the specified line
+                textContents[i] = text;
+            }
+            else if (replace == HUDTextReplace.Clear)
+            {
+                textLines[i].textContent = ""; // If replace method is clear, update other lines to be empty
+                textContents[i] = "";
+            }
         }
     }
 
@@ -335,6 +420,7 @@ public class HUDText : MonoBehaviour
                 if (!fillSet) fillText = texts[textIndex]; // If fill is not on, set a new fill text
 
                 textLines[i].textContent = fillText; // Use the existing fill text to update specified indexes
+                textContents[i] = fillText;
 
                 if (fillSet || fill == HUDTextFill.Single) // If fill is on or fill is not used (default), turn it off and increment fill index to use the next text in the parameter array
                 {
@@ -343,8 +429,16 @@ public class HUDText : MonoBehaviour
                 }
                 else fillSet = true; // Otherwise turn fill on
             }
-            else if (fillSet) textLines[i].textContent = fillText; // If fill is on, use fillText set above
-            else if (replace == HUDTextReplace.Clear) textLines[i].textContent = ""; // If replace method is clear, update other lines to be empty
+            else if (fillSet)
+            {
+                textLines[i].textContent = fillText; // If fill is on, use fillText set above
+                textContents[i] = fillText;
+            }
+            else if (replace == HUDTextReplace.Clear)
+            {
+                textLines[i].textContent = ""; // If replace method is clear, update other lines to be empty
+                textContents[i] = "";
+            }
         }
     }
 
@@ -358,15 +452,19 @@ public class HUDText : MonoBehaviour
         }
     }
 
-    public static void SaveLine(int line) { textLines[line].SaveLine(); }
-
-    public static void RetrieveLine(int line) { SetText(line, savedText[line], HUDTextUpdate.Single); }
+    public static void SaveLine(int line)
+    {
+        textLines[line].SaveLine();
+        savedText[line] = textContents[line];
+    }
 
     public static void SaveAllText()
     {
         for (int i = 0; i < textLines.Count; i++)
             SaveLine(i);
     }
+
+    public static void RetrieveLine(int line) { SetText(line, savedText[line], HUDTextUpdate.Single); }
 
     public static void RetrieveAllText()
     {
@@ -378,6 +476,20 @@ public class HUDText : MonoBehaviour
             savedTexts[i] = textLines[i].savedText;
         }
         SetText(lines, savedTexts, HUDTextReplace.Keep);
+    }
+
+    public static void RetrieveLineImmediate(int line) { SetTextImmediate(line, savedText[line], HUDTextUpdate.Single); }
+
+    public static void RetrieveAllImmediate()
+    {
+        int[] lines = new int[textLines.Count];
+        string[] savedTexts = new string[textLines.Count];
+        for (int i = 0; i < textLines.Count; i++)
+        {
+            lines[i] = i;
+            savedTexts[i] = textLines[i].savedText;
+        }
+        SetTextImmediate(lines, savedTexts, HUDTextReplace.Keep);
     }
 
     /// <param name="lines">Target specified lines</param>

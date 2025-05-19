@@ -76,6 +76,11 @@ public class TextLine : MonoBehaviour
         textMesh.text = textMesh.text.TrimEnd(' '); // Remove unwanted emtpy spaces from the end
     }
 
+    public void SetImmediate(string text)
+    {
+        textMesh.text = text;
+    }
+
     public IEnumerator ClearLine() // Clear text (replace characters with an empty space)
     {
         float elapsedTime = 0;

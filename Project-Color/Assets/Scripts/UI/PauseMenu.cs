@@ -46,7 +46,12 @@ public class PauseMenu : MonoBehaviour
                 switch (texts[targetLine])
                 {
                     case "Resume": ClosePauseMenu(); break;
-                    case "Main_menu": GameController.StartLevel(0); break;
+                    case "Main_menu":
+                    {
+                        ClosePauseMenu();
+                        GameController.StartLevel(0);
+                        break;
+                    }
                 }
             }
         }

@@ -34,6 +34,7 @@ public class GameController : MonoBehaviour
 
     public static void StartLevel(int level)
     {
+        HUDText.SaveAllText();
         SceneManager.LoadScene(level);
     }
     
