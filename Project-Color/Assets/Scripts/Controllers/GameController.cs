@@ -41,6 +41,7 @@ public class GameController : MonoBehaviour
     {
         GameData.SaveLevelData(levelIndex, currentCheckpoint, true);
         GameData.SaveAllDataToFile(saveSystem);
+
         HUDText.SetText(new[]{0}, new[]{"Level complete !!!"}, HUDTextFill.Fill);
         HUDText.stopUpdates = true;
         StartCoroutine(End());
