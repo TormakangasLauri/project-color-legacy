@@ -9,12 +9,12 @@ public class TextLine : MonoBehaviour
     HUDText hudtext;
 
     public int line;
-    public string textContent;
+    public string textContent = "";
     public string savedText = "";
 
     private float timeSinceSet;
 
-    private void Start()
+    private void Awake()
     {
         textMesh = GetComponent<TextMeshProUGUI>();
         hudtext = GetComponentInParent<HUDText>();
@@ -78,6 +78,7 @@ public class TextLine : MonoBehaviour
 
     public void SetImmediate(string text)
     {
+        if (text == null) text = textContent;
         textMesh.text = text;
     }
 
@@ -89,6 +90,7 @@ public class TextLine : MonoBehaviour
         yield return new WaitUntil(() =>
         {
             char[] updatedText = textMesh.text.ToCharArray();
+            
             int newIndex = (int)(elapsedTime / (1 / hudtext.changeCharsPerSec));
             for (int i = lastIndex + 1; i <= newIndex; i++) // Go through all new characters in the existing text
                 if (i < updatedText.Length) updatedText[i] = ' ';

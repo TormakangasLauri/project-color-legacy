@@ -82,30 +82,41 @@ public class HUDText : MonoBehaviour
 
     public static List<TextLine> textLines = new List<TextLine>();
     private static List<RectTransform> lineRects = new List<RectTransform>();
-    public static List<string> textContents = new List<string>();
-    public static List<string> savedText = new List<string>();
+    public static string[] textContents = new string[15];
+    public static string[] savedText = new string[15];
 
     static HUDText inst;
 
     private void OnValidate()
     {
-        UpdateTextContainer();
         inst = this;
+        UpdateTextContainer();
     }
 
     private void Start()
     {
-        RetrieveAllImmediate();
+        inst = this;
+        UpdateTextContainer();
+        for (int i = 0; i < textLines.Count; i++)
+        {
+            textLines[i].textContent = textContents[i];
+            textLines[i].savedText = savedText[i];
+        }
+
+        if (textSet)
+        {
+            RetrieveAllImmediate();
+            SetText(new[] { 0 }, new[] { "" }, HUDTextFill.Fill); // "Clear" everything
+        }
+        textSet = true;
     }
 
     void UpdateTextContainer()
     {
         textLines.Clear();
         lineRects.Clear();
-        List<string> oldContents = textContents;
-        textContents.Clear();
-        List<string> oldSaved = savedText;
-        savedText.Clear();
+        string[] oldContents = textContents;
+        string[] oldSaved = savedText;
 
         cam = camera;
 
@@ -144,8 +155,6 @@ public class HUDText : MonoBehaviour
 
             textLines.Add(textLine);
             lineRects.Add(rectTransform);
-            textContents.Add(textMesh.text);
-            savedText.Add("");
 
             i++;
         }
@@ -448,8 +457,13 @@ public class HUDText : MonoBehaviour
         IEnumerator Clear()
         {
             for (int i = 0; i < textLines.Count; i++)
-                yield return textLines[i].ClearLine();
+                yield return textLines[i].ReplaceAndWait("");
         }
+    }
+
+    public static void ClearAllImmediate()
+    {
+        SetTextImmediate(0, "", HUDTextReplace.Clear);
     }
 
     public static void SaveLine(int line)
@@ -489,7 +503,7 @@ public class HUDText : MonoBehaviour
             lines[i] = i;
             savedTexts[i] = textLines[i].savedText;
         }
-        SetTextImmediate(lines, savedTexts, HUDTextReplace.Keep);
+        SetTextImmediate(lines, savedTexts, HUDTextReplace.Clear);
     }
 
     /// <param name="lines">Target specified lines</param>

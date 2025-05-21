@@ -2653,6 +2653,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ceacef413f6a4e64782a4ed07f3375d3, type: 3}
+--- !u!1 &415327453 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6633474010351379273, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+  m_PrefabInstance: {fileID: 766009907}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &420034733
 GameObject:
   m_ObjectHideFlags: 0
@@ -5143,6 +5148,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 449485626603314248, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: deathMenu
+      value: 
+      objectReference: {fileID: 415327453}
     - target: {fileID: 697395267578424878, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
       propertyPath: m_SizeDelta.x
       value: 1920
@@ -5158,6 +5167,26 @@ PrefabInstance:
     - target: {fileID: 2803827423708081130, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3221106809325913450, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: texts.Array.size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3221106809325913450, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: texts.Array.data[2]
+      value: :(
+      objectReference: {fileID: 0}
+    - target: {fileID: 3221106809325913450, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: texts.Array.data[3]
+      value: You died
+      objectReference: {fileID: 0}
+    - target: {fileID: 3221106809325913450, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: texts.Array.data[7]
+      value: Continue
+      objectReference: {fileID: 0}
+    - target: {fileID: 3221106809325913450, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
+      propertyPath: texts.Array.data[8]
+      value: Main_menu
       objectReference: {fileID: 0}
     - target: {fileID: 4350473451886392443, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
       propertyPath: m_SizeDelta.x
