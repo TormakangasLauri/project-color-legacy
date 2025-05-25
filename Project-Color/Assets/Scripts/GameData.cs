@@ -74,6 +74,8 @@ public class GameData
         saveSystem.subFolderName = $"SaveSlot{saveSlot}";
         for (int i = 0; i < levels; i++)
         {
+            levelData[i] = new Level(i, 0);
+
             levelData[i].level = saveSystem.Load($"{i}level").AsInt();
             levelData[i].checkpoint = saveSystem.Load($"{i}checkpoint").AsInt();
             levelData[i].completed = saveSystem.Load($"{i}completed").AsBool();
