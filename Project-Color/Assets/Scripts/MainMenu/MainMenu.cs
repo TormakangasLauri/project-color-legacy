@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using AASave;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,7 @@ public class MainMenu : MonoBehaviour
 {
     public Scene level;
     public Camera cam;
+    public SaveSystem saveSystem;
     public string[] menuTexts;
 
     private RectTransform rectT;
@@ -39,6 +41,9 @@ public class MainMenu : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         HUDText.SetInteractableLines(new[]{0}, true);
+
+        GameData.saveSystem = saveSystem;
+        GameData.LoadData(1);
     }
 
     private void Update()

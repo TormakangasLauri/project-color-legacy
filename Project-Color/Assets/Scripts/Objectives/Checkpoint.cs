@@ -18,6 +18,7 @@ public class Checkpoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GetComponentInParent<GameController>().currentCheckpoint = index;
+            GameData.levelData[GameData.currentLevel].checkpoint = index;
         }
     }
 }

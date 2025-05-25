@@ -14,7 +14,51 @@ public class GameController : MonoBehaviour
 
     public static GameController inst;
 
-    private void Awake() { inst = this; }
+    public class Level
+    {
+        public int level;
+        public int checkpoint;
+        public bool completed;
+
+        public Level(int level, int checkpoint, bool completed = false)
+        {
+            this.level = level;
+            this.checkpoint = checkpoint;
+            this.completed = completed;
+        }
+
+        public class Player
+        {
+            public int health;
+            public Vector3 position;
+            public Quaternion rotation;
+        }
+        public Player player = new Player();
+
+        public class Enemy
+        {
+            public int health;
+            public Vector3 position;
+            public Quaternion rotation;
+        }
+        public List<Enemy> enemies = new List<Enemy>();
+    }
+    public static List<Level> levels = new List<Level>();
+
+    private void Awake()
+    {
+        inst = this;
+        saveSystem = GetComponent<SaveSystem>();
+        levelIndex = SceneManager.GetActiveScene().buildIndex - 1; // First level index = 0
+        if (GameData.levelData[levelIndex] == null) GameData.levelData[levelIndex] = new (levelIndex, 0);
+        GameData.levelData[levelIndex].level = levelIndex;
+        GameData.currentLevel = levelIndex;
+
+        if (GameObject.FindWithTag("Player"))
+        {
+
+        }
+    }
 
     private void OnValidate()
     {
@@ -29,7 +73,7 @@ public class GameController : MonoBehaviour
 
     public void SaveLevel()
     {
-        GameData.SaveLevelData(levelIndex, currentCheckpoint);
+        GameData.SaveAllData(1);
     }
 
     public static void StartLevel(int level)
@@ -40,8 +84,9 @@ public class GameController : MonoBehaviour
     
     public void EndLevel()
     {
-        GameData.SaveLevelData(levelIndex, currentCheckpoint, true);
-        GameData.SaveAllDataToFile(saveSystem);
+        GameData.levelData[levelIndex - 1].completed = true;
+        GameData.SaveAllData(1);
+        //GameData.SaveAllDataToFile(saveSystem, levelIndex);
 
         HUDText.SetText(new[]{0}, new[]{"Level complete !!!"}, HUDTextFill.Fill);
         HUDText.stopUpdates = true;
@@ -63,6 +108,6 @@ public class GameController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        GameData.SaveAllDataToFile(saveSystem);
+        GameData.SaveAllData(1);
     }
 }

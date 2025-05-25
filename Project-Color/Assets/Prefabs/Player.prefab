@@ -1875,7 +1875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  deathMenu: {fileID: 0}
+  deathMenu: {fileID: 6633474010351379273}
 --- !u!114 &1204033842
 MonoBehaviour:
   m_ObjectHideFlags: 0
