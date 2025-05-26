@@ -112,6 +112,8 @@ public class PlayerMovement : MonoBehaviour
 
         originalBodyScale = body.transform.localScale;
         originalHeadHeight = head.transform.localPosition.y;
+
+        head.transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
 
     private void Update()

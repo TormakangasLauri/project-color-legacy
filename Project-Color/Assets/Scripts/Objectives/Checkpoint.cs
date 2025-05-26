@@ -7,7 +7,7 @@ public class Checkpoint : MonoBehaviour
     public int index;
     public Vector3 spawnPosition;
 
-    private void Start()
+    private void Awake()
     {
         Physics.Raycast(transform.position, Vector3.down, out var hit, 10, LayerMask.GetMask("Terrain"));
         spawnPosition = hit.point;
@@ -19,6 +19,7 @@ public class Checkpoint : MonoBehaviour
         {
             GetComponentInParent<GameController>().currentCheckpoint = index;
             GameData.levelData[GameData.currentLevel].checkpoint = index;
+            GameData.SaveAllData();
         }
     }
 }

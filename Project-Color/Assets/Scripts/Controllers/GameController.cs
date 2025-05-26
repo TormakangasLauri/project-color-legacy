@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using AASave;
+using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    public GameObject playerObject;
+
     public int levelIndex;
     public int currentCheckpoint;
 
-    private static SaveSystem saveSystem;
     public static bool paused;
 
     public static GameController inst;
@@ -45,25 +48,48 @@ public class GameController : MonoBehaviour
     }
     public static List<Level> levels = new List<Level>();
 
+    private Dictionary<int, Checkpoint> checkpoints = new Dictionary<int, Checkpoint>();
+    
     private void Awake()
     {
         inst = this;
-        saveSystem = GetComponent<SaveSystem>();
         levelIndex = SceneManager.GetActiveScene().buildIndex - 1; // First level index = 0
+
+        if (GameData.saveSystem == null)
+        {
+            SaveSystem saveSystem = gameObject.AddComponent<SaveSystem>();
+            saveSystem.SetSubFolderOption(true);
+            GameData.saveSystem = saveSystem;
+        }
+        GameData.LoadData();
+
         if (GameData.levelData[levelIndex] == null) GameData.levelData[levelIndex] = new (levelIndex, 0);
-        GameData.levelData[levelIndex].level = levelIndex;
+        else GameData.levelData[levelIndex].level = levelIndex;
         GameData.currentLevel = levelIndex;
 
-        if (GameObject.FindWithTag("Player"))
-        {
+        foreach (Transform t in transform)
+            checkpoints.Add(t.GetComponent<Checkpoint>().index, t.GetComponent<Checkpoint>());
+    }
 
+    private void Start()
+    {
+        currentCheckpoint = GameData.levelData[GameData.currentLevel].checkpoint;
+        int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
+        if (!GameObject.FindWithTag("PlayerRoot"))
+        {
+            Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
+        }
+        else
+        {
+            GameObject player = GameObject.FindWithTag("PlayerRoot");
+            player.transform.position = checkpoints[checkpoint].spawnPosition;
+            player.transform.rotation = checkpoints[checkpoint].transform.rotation;
         }
     }
 
     private void OnValidate()
     {
-        saveSystem = GetComponent<SaveSystem>();
-        levelIndex = SceneManager.GetActiveScene().buildIndex;
+        levelIndex = SceneManager.GetActiveScene().buildIndex - 1;
     }
 
     private void Update()

@@ -42,10 +42,10 @@ public class GameData
         public List<Enemy> enemies = new List<Enemy>();
     }
 
-    public static Level[] levelData = new Level[levels];
+    public static Level[] levelData = new Level[3] {new(0, 0), new(0,0), new(0,0)};
     private static Vector3[] levelSaveData = new Vector3[levels];
 
-    public static void SaveAllData(int saveSlot)
+    public static void SaveAllData(int saveSlot = 1)
     {
         saveSystem.subFolderName = $"SaveSlot{saveSlot}";
         for (int i = 0; i < levels; i++)
@@ -69,7 +69,7 @@ public class GameData
         }
     }
 
-    public static void LoadData(int saveSlot)
+    public static void LoadData(int saveSlot = 1)
     {
         saveSystem.subFolderName = $"SaveSlot{saveSlot}";
         for (int i = 0; i < levels; i++)
