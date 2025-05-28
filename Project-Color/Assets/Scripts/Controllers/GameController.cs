@@ -79,7 +79,7 @@ public class GameController : MonoBehaviour
         {
             Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
         }
-        else
+        else if (currentCheckpoint != 0)
         {
             GameObject player = GameObject.FindWithTag("PlayerRoot");
             player.transform.position = checkpoints[checkpoint].spawnPosition;

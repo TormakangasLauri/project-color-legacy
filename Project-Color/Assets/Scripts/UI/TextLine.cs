@@ -49,8 +49,9 @@ public class TextLine : MonoBehaviour
 
     IEnumerator ReplaceLine(string text = null) // Clear text and set new after a wait
     {
-        if (text == null) text = textContent;
-        StartCoroutine(ClearLine());
+        if (text == null && textContent != null) text = textContent;
+        else if (textContent == null) text = "";
+            StartCoroutine(ClearLine());
         yield return new WaitForSecondsRealtime((1 / hudtext.changeCharsPerSec) * hudtext.waitForCharactersOnSwap);
         StartCoroutine(SetLine(text));
     }

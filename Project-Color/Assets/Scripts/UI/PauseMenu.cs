@@ -15,6 +15,12 @@ public class PauseMenu : MonoBehaviour
     private int[] lines = new int[15];
     public string[] texts = new string[15];
 
+    private void Awake()
+    {
+        for (int i = 0; i < lines.Length; i++)
+            lines[i] = i;
+    }
+
     private void Start()
     {
         menu.SetActive(false); // Close pause menu at the start
@@ -68,7 +74,7 @@ public class PauseMenu : MonoBehaviour
         GameController.paused = true;
 
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
 
         HUDText.SaveAllText();
         HUDText.SetInteractableLines(new[]{0}, true); // Exclude first line
