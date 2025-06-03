@@ -49,7 +49,12 @@ public class GameController : MonoBehaviour
     public static List<Level> levels = new List<Level>();
 
     private Dictionary<int, Checkpoint> checkpoints = new Dictionary<int, Checkpoint>();
-    
+
+    private void OnValidate()
+    {
+        levelIndex = SceneManager.GetActiveScene().buildIndex - 1;
+    }
+
     private void Awake()
     {
         inst = this;
@@ -85,11 +90,6 @@ public class GameController : MonoBehaviour
             player.transform.position = checkpoints[checkpoint].spawnPosition;
             player.transform.rotation = checkpoints[checkpoint].transform.rotation;
         }
-    }
-
-    private void OnValidate()
-    {
-        levelIndex = SceneManager.GetActiveScene().buildIndex - 1;
     }
 
     private void Update()

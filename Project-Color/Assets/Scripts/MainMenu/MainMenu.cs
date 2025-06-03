@@ -12,15 +12,14 @@ public class MainMenu : MonoBehaviour
     public SaveSystem saveSystem;
     public string[] menuTexts;
 
-    private RectTransform rectT;
     private List<Transform> textLines = new List<Transform>();
-    private Transform lastTransform;
-    private int lastLine;
 
-    private void OnValidate()
+
+    private bool updateText = true;
+
+    private void Start()
     {
         textLines.Clear();
-        rectT = GetComponent<RectTransform>();
         foreach (Transform textTransform in GetComponentInChildren<HUDText>().transform)
             textLines.Add(textTransform);
 
@@ -34,10 +33,7 @@ public class MainMenu : MonoBehaviour
         int[] lines = new int[textLines.Count];
         for (int i = 0; i < menuTexts.Length; i++) lines[i] = i;
         HUDText.SetText(lines, menuTexts);
-    }
 
-    private void Start()
-    {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         HUDText.SetInteractableLines(new[]{0}, true);
@@ -49,7 +45,7 @@ public class MainMenu : MonoBehaviour
     private void Update()
     {
         int targetLine = HUDText.GetHoveredLine();
-        HUDText.UpdateInteractableText(menuTexts);
+        if (updateText) HUDText.UpdateInteractableText(menuTexts);
 
         if (Input.GetMouseButtonUp(0) && targetLine != -1)
         {
@@ -65,7 +61,14 @@ public class MainMenu : MonoBehaviour
     public void Play()
     {
         Debug.Log("Play");
-        GameController.StartLevel(1);
+        updateText = false;
+        HUDText.ClearAllText();
+        StartCoroutine(Wait());
+        IEnumerator Wait()
+        {
+            yield return new WaitForSecondsRealtime(1);
+            GameController.StartLevel(1);
+        }
     }
 
     public void Levels()

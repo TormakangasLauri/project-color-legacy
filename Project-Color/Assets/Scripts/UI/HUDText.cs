@@ -453,12 +453,13 @@ public class HUDText : MonoBehaviour
 
     public static void ClearAllText()
     {
-        inst.StartCoroutine(Clear());
-        IEnumerator Clear()
-        {
-            for (int i = 0; i < textLines.Count; i++)
-                yield return textLines[i].ReplaceAndWait("");
-        }
+        SetText(new[]{0}, new[]{""});
+        //inst.StartCoroutine(Clear());
+        //IEnumerator Clear()
+        //{
+        //    for (int i = 0; i < textLines.Count; i++)
+        //        yield return textLines[i].ReplaceAndWait("");
+        //}
     }
 
     public static void ClearAllImmediate()
