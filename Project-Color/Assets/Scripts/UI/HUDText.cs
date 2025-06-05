@@ -453,7 +453,7 @@ public class HUDText : MonoBehaviour
 
     public static void ClearAllText()
     {
-        SetText(new[]{0}, new[]{""});
+        SetText(new[]{0}, new[]{""}, HUDTextFill.Fill);
         //inst.StartCoroutine(Clear());
         //IEnumerator Clear()
         //{

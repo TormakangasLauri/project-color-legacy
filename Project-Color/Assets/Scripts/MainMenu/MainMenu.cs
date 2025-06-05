@@ -67,7 +67,8 @@ public class MainMenu : MonoBehaviour
         IEnumerator Wait()
         {
             yield return new WaitForSecondsRealtime(1);
-            GameController.StartLevel(1);
+            //GameController.StartLevel(1);
+            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().Load(1);
         }
     }
 

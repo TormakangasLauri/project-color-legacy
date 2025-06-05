@@ -41,8 +41,9 @@ public class PauseMenu : MonoBehaviour
                     case "Resume": ClosePauseMenu(); break;
                     case "Main_menu":
                     {
-                        ClosePauseMenu();
-                        GameController.StartLevel(0);
+                        //ClosePauseMenu();
+                        //GameController.StartLevel(0);
+                        GameObject.Find("LevelLoader").GetComponent<LevelLoader>().Load(0);
                         break;
                     }
                 }

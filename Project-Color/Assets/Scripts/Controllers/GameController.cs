@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -89,6 +90,20 @@ public class GameController : MonoBehaviour
             GameObject player = GameObject.FindWithTag("PlayerRoot");
             player.transform.position = checkpoints[checkpoint].spawnPosition;
             player.transform.rotation = checkpoints[checkpoint].transform.rotation;
+        }
+
+        //StartCoroutine(Fade());
+        IEnumerator Fade()
+        {
+            Image image = GameObject.Find("Fade").GetComponent<Image>();
+            float i = 1;
+            yield return new WaitForSecondsRealtime(1);
+            yield return new WaitUntil(() =>
+            {
+                i -= Time.unscaledDeltaTime;
+                image.color = new Color(0,0,0,i);
+                return i <= 0;
+            });
         }
     }
 
