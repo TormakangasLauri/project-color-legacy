@@ -75,36 +75,27 @@ public class GameController : MonoBehaviour
 
         foreach (Transform t in transform)
             checkpoints.Add(t.GetComponent<Checkpoint>().index, t.GetComponent<Checkpoint>());
+
+        int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
+        if (GameObject.FindWithTag("PlayerRoot")) Destroy(GameObject.FindWithTag("PlayerRoot")); // Destroy player if it already exists
+        Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
     }
 
     private void Start()
     {
         currentCheckpoint = GameData.levelData[GameData.currentLevel].checkpoint;
         int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
-        if (!GameObject.FindWithTag("PlayerRoot"))
-        {
-            Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
-        }
-        else if (currentCheckpoint != 0)
-        {
-            GameObject player = GameObject.FindWithTag("PlayerRoot");
-            player.transform.position = checkpoints[checkpoint].spawnPosition;
-            player.transform.rotation = checkpoints[checkpoint].transform.rotation;
-        }
+        //if (!GameObject.FindWithTag("PlayerRoot"))
+        //{
+        //    Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
+        //}
+        //else if (currentCheckpoint != 0)
+        //{
+        //    GameObject player = GameObject.FindWithTag("PlayerRoot");
+        //    player.transform.position = checkpoints[checkpoint].spawnPosition;
+        //    player.transform.rotation = checkpoints[checkpoint].transform.rotation;
+        //}
 
-        //StartCoroutine(Fade());
-        IEnumerator Fade()
-        {
-            Image image = GameObject.Find("Fade").GetComponent<Image>();
-            float i = 1;
-            yield return new WaitForSecondsRealtime(1);
-            yield return new WaitUntil(() =>
-            {
-                i -= Time.unscaledDeltaTime;
-                image.color = new Color(0,0,0,i);
-                return i <= 0;
-            });
-        }
     }
 
     private void Update()

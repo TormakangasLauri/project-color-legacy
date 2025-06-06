@@ -22,7 +22,8 @@ public class LevelLoader : MonoBehaviour
 
     IEnumerator LoadAsync(int level)
     {
-        if (SceneManager.GetActiveScene().buildIndex != 0) // Fade to black in normal levels
+        int lastScene = SceneManager.GetActiveScene().buildIndex;
+        if (lastScene != 0) // Fade to black in normal levels
         {
             float i = 0;
             yield return new WaitUntil(() =>
@@ -34,9 +35,13 @@ public class LevelLoader : MonoBehaviour
         }
         else cg.alpha = 1;
 
-            AsyncOperation operation = SceneManager.LoadSceneAsync(level);
+        PaintTarget.ClearAllPaint();
+        PaintController.ClearAllPaintObjects();
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(level);
 
         yield return new WaitUntil(() => { return operation.isDone; });
+
         yield return new WaitForSecondsRealtime(0.5f);
 
         if (SceneManager.GetActiveScene().buildIndex != 0) // Fade from black in normal levels
