@@ -74,7 +74,7 @@ public class TextLine : MonoBehaviour
             elapsedTime += Time.unscaledDeltaTime;
             return lastIndex >= text.Length;
         });
-        textMesh.text = textMesh.text.TrimEnd(' '); // Remove unwanted emtpy spaces from the end
+        textMesh.text = textMesh.text.TrimEnd(' '); // Remove unwanted empty spaces from the end
     }
 
     public void SetImmediate(string text)

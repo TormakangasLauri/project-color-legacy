@@ -23,7 +23,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
-        menu.SetActive(false); // Close pause menu at the start
+        ClosePauseMenu(false); // Close pause menu at the start
     }
 
     private void Update()
@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour
             HUDText.UpdateInteractableText(texts);
 
             int targetLine = HUDText.GetHoveredLine();
+            
             if (Input.GetMouseButtonUp(0) && targetLine != -1)
             {
                 switch (texts[targetLine])
@@ -84,7 +85,7 @@ public class PauseMenu : MonoBehaviour
         HUDText.SetText(lines, texts, HUDTextReplace.Clear);
     }
 
-    private void ClosePauseMenu()
+    private void ClosePauseMenu(bool retrieveText = true)
     {
         menuOpen = false;
         menu.SetActive(false);
@@ -94,6 +95,6 @@ public class PauseMenu : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        HUDText.RetrieveAllText();
+        if (retrieveText) HUDText.RetrieveAllText();
     }
 }

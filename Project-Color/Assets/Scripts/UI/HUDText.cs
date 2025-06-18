@@ -526,11 +526,13 @@ public class HUDText : MonoBehaviour
         Vector2 mousePos = Input.mousePosition;
 
         for (int i = 0; i < textLines.Count; i++)
-            if (RectTransformUtility.RectangleContainsScreenPoint(lineRects[i], mousePos, cam))
+            //if (RectTransformUtility.RectangleContainsScreenPoint(lineRects[i], mousePos, cam))
+        //for (int i = textLines.Count - 1; i >= 0; i--)
+            if (-mousePos.y + Screen.height >= i * Screen.height / textLines.Count && -mousePos.y + Screen.height < (i + 1) * Screen.height / textLines.Count)
             {
-                if (mousePos.x < textLines[i].GetComponent<TextMeshProUGUI>().fontSize * textContents[i].Length * 0.4)
+                if (mousePos.x < Screen.width/3 /*textLines[i].GetComponent<TextMeshProUGUI>().fontSize * textContents[i].Length * 0.4*/)
                     return i;
-                break;
+                return -1;
             }
         return -1; // No target line
     }
@@ -542,7 +544,7 @@ public class HUDText : MonoBehaviour
             hoveredText[i] = hoverPrefix + text[i] + hoverSuffix;
 
         hoveredLine = GetHoveredLine();
-
+        
         List<int> linesToSet = new List<int>();
         List<string> textsToSet = new List<string>();
         for (int i = 0; i < textLines.Count; i++)
