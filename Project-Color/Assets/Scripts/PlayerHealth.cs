@@ -84,7 +84,7 @@ public class PlayerHealth : Health
                         case "Main_menu":
                         {
                             Time.timeScale = 1;
-                            GameController.StartLevel(0);
+                            GameController.levelLoader.Load(0);
                             break;
                         }
                     }

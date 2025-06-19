@@ -714,6 +714,14 @@ PrefabInstance:
       propertyPath: subFolderName
       value: Save Slot 2
       objectReference: {fileID: 0}
+    - target: {fileID: 645973471, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 645973471, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.53
+      objectReference: {fileID: 0}
     - target: {fileID: 1302738677871118280, guid: 94471bec5d516cb44bf96d9cfc7469ca, type: 3}
       propertyPath: m_Name
       value: GameController

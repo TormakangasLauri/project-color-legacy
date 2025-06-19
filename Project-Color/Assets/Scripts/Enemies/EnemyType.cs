@@ -32,16 +32,11 @@ public abstract class EnemyType : MonoBehaviour
 
     public bool deactivateOnStart = true;
 
-    private void Awake()
-    {
-        // target = GameObject.Find("Player 2");
-        target = GameObject.FindWithTag("PlayerRoot");
-    }
-
     void Start()
     {
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         rb = GetComponent<Rigidbody>();
+        target = GameController.player;
 
         switch (type)
         {

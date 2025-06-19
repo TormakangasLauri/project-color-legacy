@@ -10,12 +10,16 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public GameObject playerObject;
+    public static GameObject playerRoot;
+    public static GameObject player;
 
     public int levelIndex;
     public int currentCheckpoint;
 
     public static bool paused;
 
+    public static SaveSystem saveSystem;
+    public static LevelLoader levelLoader;
     public static GameController inst;
 
     public class Level
@@ -78,7 +82,9 @@ public class GameController : MonoBehaviour
 
         int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
         if (GameObject.FindWithTag("PlayerRoot")) Destroy(GameObject.FindWithTag("PlayerRoot")); // Destroy player if it already exists
-        Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
+        GameObject pr = Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
+        playerRoot = pr;
+        player = pr.transform.GetChild(0).GetChild(0).gameObject;
     }
 
     private void Start()
@@ -108,17 +114,12 @@ public class GameController : MonoBehaviour
         GameData.SaveAllData(1);
     }
 
-    public static void StartLevel(int level)
-    {
-        HUDText.SaveAllText();
-        SceneManager.LoadScene(level);
-    }
+    public static void LoadLevel(int level) { levelLoader.Load(level); }
     
     public void EndLevel()
     {
-        GameData.levelData[levelIndex - 1].completed = true;
+        GameData.levelData[levelIndex].completed = true;
         GameData.SaveAllData(1);
-        //GameData.SaveAllDataToFile(saveSystem, levelIndex);
 
         HUDText.SetText(new[]{0}, new[]{"Level complete !!!"}, HUDTextFill.Fill);
         HUDText.stopUpdates = true;
@@ -133,7 +134,7 @@ public class GameController : MonoBehaviour
                 return timer <= 0;
             });
             HUDText.stopUpdates = false;
-            StartLevel(0);
+            LoadLevel(0);
             Time.timeScale = 1;
         }
     }

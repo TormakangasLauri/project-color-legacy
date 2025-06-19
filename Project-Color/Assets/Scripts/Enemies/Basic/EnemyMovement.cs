@@ -52,7 +52,7 @@ public class EnemyMovement : BaseEnemyMovement
     {
         if (gameObject.activeSelf && _enemyType.timeActive > 0.1 && path.corners.Length >= 2)
         {
-            Vector3 targetPos = target.transform.position;
+            Vector3 targetPos = GameController.player.transform.position;
             Vector3 cornerPos = path.corners[1];
             Vector3 pos = transform.position;
             Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
@@ -77,7 +77,7 @@ public class EnemyMovement : BaseEnemyMovement
         }
 
         RaycastHit hit;
-        Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
+        Physics.Raycast(GameController.player.transform.position, Vector3.down, out hit, 100, terrainLayer);
 
         // State change check
         if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - transform.localScale.y / 2))
@@ -93,7 +93,7 @@ public class EnemyMovement : BaseEnemyMovement
 
     private void LOSMovement()
     {
-        Vector3 targetPos = target.transform.position;
+        Vector3 targetPos = GameController.player.transform.position;
         Vector3 pos = transform.position;
         Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
         Vector3 movement = directionToTarget * (speed * 10);
@@ -121,7 +121,7 @@ public class EnemyMovement : BaseEnemyMovement
 
         // State change check
         RaycastHit hit;
-        Physics.Raycast(target.transform.position, Vector3.down, out hit, 100, terrainLayer);
+        Physics.Raycast(GameController.player.transform.position, Vector3.down, out hit, 100, terrainLayer);
         RaycastHit enemyHit;
         Physics.Raycast(transform.position, Vector3.down, out enemyHit, 100, terrainLayer);
         if ((path.corners.Length > 2 || !LOSToTarget) && hit.point.y + 0.1 >= enemyHit.point.y && grounded)

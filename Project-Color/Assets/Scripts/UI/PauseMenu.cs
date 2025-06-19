@@ -44,14 +44,14 @@ public class PauseMenu : MonoBehaviour
                     {
                         //ClosePauseMenu();
                         //GameController.StartLevel(0);
-                        GameObject.Find("LevelLoader").GetComponent<LevelLoader>().Load(0);
+                        GameController.LoadLevel(0);
                         break;
                     }
                 }
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.M)) GameObject.Find("LevelLoader").GetComponent<LevelLoader>().Load(0);
+        if (Input.GetKeyDown(KeyCode.M)) GameController.LoadLevel(0);
     }
 
     public void TogglePauseMenu(InputAction.CallbackContext action)

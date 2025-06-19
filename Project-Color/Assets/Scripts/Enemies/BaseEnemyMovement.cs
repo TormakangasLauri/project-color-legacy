@@ -36,7 +36,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     private void Update()
     {
         GroundCheck();
-        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
+        LOSToTarget = !Physics.Linecast(transform.position, GameController.player.transform.position, terrainLayer);
 
         path = _enemyType.path;
     }

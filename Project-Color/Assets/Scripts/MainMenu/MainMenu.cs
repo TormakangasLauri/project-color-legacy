@@ -7,15 +7,36 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public Scene level;
-    public Camera cam;
+    public GameObject saveSystemObject;
+    public GameObject levelLoaderObject;
+
     public SaveSystem saveSystem;
     public string[] menuTexts;
+    public string[] levelsTexts;
 
     private List<Transform> textLines = new List<Transform>();
 
-
     private bool updateText = false;
+    private static bool firstLoad = true;
+
+    enum MenuScreen { main, levels }
+    MenuScreen menuScreen;
+
+    private void Awake()
+    {
+        if (firstLoad)
+        {
+            firstLoad = false;
+
+            GameObject s = Instantiate(saveSystemObject);
+            saveSystem = s.GetComponent<SaveSystem>();
+            GameController.saveSystem = saveSystem;
+            GameData.saveSystem = saveSystem;
+
+            GameObject l = Instantiate(levelLoaderObject);
+            GameController.levelLoader = l.GetComponent<LevelLoader>();
+        }
+    }
 
     private void Start()
     {
@@ -43,7 +64,6 @@ public class MainMenu : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             HUDText.SetInteractableLines(new[]{0}, true);
 
-            GameData.saveSystem = saveSystem;
             GameData.LoadData(1);
 
             updateText = true;
@@ -54,37 +74,85 @@ public class MainMenu : MonoBehaviour
     {
         if (updateText)
         {
-            int targetLine = HUDText.GetHoveredLine();
-            HUDText.UpdateInteractableText(menuTexts);
-
-            if (Input.GetMouseButtonUp(0) && targetLine != -1)
+            if (menuScreen == MenuScreen.main) // Main menu
             {
-                switch (menuTexts[targetLine])
+                int targetLine = HUDText.GetHoveredLine();
+                HUDText.UpdateInteractableText(menuTexts);
+
+                if (Input.GetMouseButtonUp(0) && targetLine != -1)
                 {
-                    case "Play": Play(); Cursor.visible = false; Cursor.lockState = CursorLockMode.Locked; break;
-                    case "Levels": Levels(); break;
-                    case "test": Debug.Log("test"); break;
+                    switch (menuTexts[targetLine])
+                    {
+                        case "Play": Play(); Cursor.visible = false; Cursor.lockState = CursorLockMode.Locked; break;
+                        case "Levels": ChangeMenu(MenuScreen.levels); break; // Change to levels menu
+                        case "test": Debug.Log("test"); break;
+                    }
                 }
+            }
+            else if (menuScreen == MenuScreen.levels) // Levels menu
+            {
+                int targetLine = HUDText.GetHoveredLine();
+                HUDText.UpdateInteractableText(levelsTexts);
+
+                if (Input.GetMouseButtonUp(0) && targetLine != -1)
+                {
+                    switch (levelsTexts[targetLine])
+                    {
+                        case "Back to main menu": ChangeMenu(MenuScreen.main); break; // Change to main menu
+                        case "Level 1": StartLevel(1); break;
+                        case "Level 2": StartLevel(2); break;
+                        case "Level 3": StartLevel(3); break;
+                    }
+                }
+
             }
         }
     }
 
-    public void Play()
+    void Play()
     {
         Debug.Log("Play");
         updateText = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         HUDText.ClearAllText();
         StartCoroutine(Wait());
         IEnumerator Wait()
         {
             yield return new WaitForSecondsRealtime(1);
-            //GameController.StartLevel(1);
-            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().Load(1);
+            GameController.LoadLevel(1);
         }
     }
 
-    public void Levels()
+    void StartLevel(int level)
     {
-        Debug.Log("Levels");
+        updateText = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        HUDText.ClearAllText();
+        StartCoroutine(Wait());
+        IEnumerator Wait()
+        {
+            yield return new WaitForSecondsRealtime(1);
+            GameController.LoadLevel(level);
+        }
+    }
+
+    void ChangeMenu(MenuScreen changeTo)
+    {
+        StartCoroutine(Wait());
+        IEnumerator Wait()
+        {
+            updateText = false;
+            int[] lines = new int[textLines.Count];
+            for (int i = 0; i < menuTexts.Length; i++) lines[i] = i;
+            switch (changeTo) {
+                case MenuScreen.main: HUDText.SetText(lines, menuTexts); break;
+                case MenuScreen.levels: HUDText.SetText(lines, levelsTexts); break;
+            }
+            menuScreen = changeTo;
+            yield return new WaitForSecondsRealtime(1);
+            updateText = true;
+        }
     }
 }

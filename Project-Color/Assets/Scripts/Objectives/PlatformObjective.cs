@@ -21,7 +21,7 @@ public class PlatformObjective : Objective
 
     private void Update()
     {
-        distance = (int)Vector3.Distance(player.transform.position, endTrigger.transform.position);
+        distance = (int)Vector3.Distance(GameController.player.transform.position, endTrigger.transform.position);
     }
 
     protected override IEnumerator ObjectiveRequirement()
