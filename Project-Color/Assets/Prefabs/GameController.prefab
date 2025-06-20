@@ -110,7 +110,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObject: {fileID: 5792234534002109460, guid: 7da5ae8833d4d2f41b901201bcf67ac0, type: 3}
-  levelIndex: 2
+  saveSystemObject: {fileID: 4205434424138341463, guid: 59b5e6ed0dc89304f9c91e18081b50dc, type: 3}
+  levelLoaderObject: {fileID: 5413275526078846085, guid: 4596b50961ab82f4fafbf779b3f07057, type: 3}
+  levelIndex: 1
   currentCheckpoint: 0
 --- !u!114 &8828409690634108385
 MonoBehaviour:

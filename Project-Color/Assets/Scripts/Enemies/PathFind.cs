@@ -10,16 +10,14 @@ using UnityEngine.UIElements;
 public class PathFind : MonoBehaviour
 {
     private NavMeshAgent agent;
-    private GameObject target;
     private LayerMask terrainLayer;
-    private EnemyType ET;
+    private EnemyType enemyType;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        ET = GetComponentInParent<EnemyType>();
+        enemyType = GetComponentInParent<EnemyType>();
         terrainLayer = LayerMask.GetMask("Terrain");
-        target = ET.target;
     }
 
     void Update()
@@ -27,14 +25,14 @@ public class PathFind : MonoBehaviour
         transform.localPosition = Vector3.zero;
         
         RaycastHit hit;
-        Physics.Raycast(target.transform.position + Vector3.up, Vector3.down, out hit, 100, terrainLayer);
+        Physics.Raycast(enemyType.target.transform.position + Vector3.up, Vector3.down, out hit, 100, terrainLayer);
         
         NavMeshPath path = new NavMeshPath();
         agent.enabled = true;
         try { agent.CalculatePath(hit.point, path); }
         catch {  }
         agent.enabled = false;
-        ET.path = path;
+        enemyType.path = path;
 
         // Path visualization in scene view
         Vector3[] cl = path.corners;

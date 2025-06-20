@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlatformObjective : Objective
 {
     private Collider endTrigger;
-    private GameObject player;
     public int distance;
     
     void Start()
@@ -15,8 +14,6 @@ public class PlatformObjective : Objective
         endTrigger.enabled = false;
 
         type = ObjectiveType.platform;
-
-        player = GameObject.FindWithTag("Player");
     }
 
     private void Update()
@@ -29,7 +26,7 @@ public class PlatformObjective : Objective
         Debug.Log("Platform objective started");
 
         endTrigger.enabled = true;
-        yield return new WaitUntil(() => endTrigger.bounds.Contains(player.transform.position));
+        yield return new WaitUntil(() => endTrigger.bounds.Contains(GameController.player.transform.position));
 
         Debug.Log("Platform objective complete");
     }

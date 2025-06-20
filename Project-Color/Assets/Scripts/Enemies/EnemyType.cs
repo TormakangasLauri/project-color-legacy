@@ -58,6 +58,8 @@ public abstract class EnemyType : MonoBehaviour
     private void Update()
     {
         if (active) timeActive += Time.deltaTime;
+
+        if (target == null) target = GameController.player;
     }
 
     protected virtual void DeactivateOnStart()

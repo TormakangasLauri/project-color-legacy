@@ -6,10 +6,6 @@ using UnityEngine;
 
 public class SniperAttack : EnemyAttack
 {
-    public GameObject target;
-
-    private EnemyController enemyController;
-    
     public GameObject bullet;
     public GameObject bulletTrail;
     public Transform shootPoint;
@@ -20,9 +16,7 @@ public class SniperAttack : EnemyAttack
 
     private void Start()
     {
-        target = enemyType.target;
         cooldownTimer = attackCooldown;
-        target = enemyType.target;
     }
 
     protected override void Update()
@@ -30,7 +24,7 @@ public class SniperAttack : EnemyAttack
         base.Update();
 
         Vector3 position = transform.position;
-        Vector3 tPosition = target.transform.position + Vector3.up;
+        Vector3 tPosition = target.transform.position;
         LOSToTarget = !Physics.Raycast(position, tPosition - position, Vector3.Distance(tPosition, position), LayerMask.GetMask("Terrain"));
 
         if (!LOSToTarget || moving) StartCooldown();
@@ -50,7 +44,7 @@ public class SniperAttack : EnemyAttack
 
     private void Shoot()
     {
-        Vector3 targetDirection = ((target.transform.position + Vector3.up) - shootPoint.position).normalized;
+        Vector3 targetDirection = (target.transform.position - shootPoint.position).normalized;
         GameObject newBullet = Instantiate(bullet, shootPoint.position, Quaternion.LookRotation(targetDirection), GetComponentInParent<Transform>());
         newBullet.GetComponent<Rigidbody>().velocity = targetDirection * bulletSpeed;
         newBullet.GetComponent<Bullet>().direction = targetDirection;
@@ -64,7 +58,7 @@ public class SniperAttack : EnemyAttack
 
         IEnumerator Shoot()
         {
-            Vector3 targetDirection = ((target.transform.position + Vector3.up) - shootPoint.position).normalized;
+            Vector3 targetDirection = (target.transform.position - shootPoint.position).normalized;
             yield return new WaitForSeconds(0.1f);
 
             RaycastHit[] allHits = Physics.RaycastAll(shootPoint.position, targetDirection, 1000, ~0, QueryTriggerInteraction.Ignore);
@@ -99,7 +93,7 @@ public class SniperAttack : EnemyAttack
 
     private IEnumerator BulletTrail(int hit)
     {
-        Vector3 targetDir = (target.transform.position + Vector3.up) - shootPoint.position;
+        Vector3 targetDir = target.transform.position - shootPoint.position;
         GameObject trail = Instantiate(bulletTrail, shootPoint.position + targetDir / 2, Quaternion.LookRotation(targetDir));
         trail.transform.Rotate(new Vector3(90,0,0));
         trail.transform.localScale = new Vector3(0.05f, targetDir.magnitude / 2, 0.05f);

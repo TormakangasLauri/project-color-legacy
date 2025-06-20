@@ -22,7 +22,7 @@ public class BasicAttack : EnemyAttack
         {
             attacking = true;
 
-            Vector3 targetDirection = ((enemyType.target.transform.position + Vector3.up) - transform.position).normalized;
+            Vector3 targetDirection = (target.transform.position - transform.position).normalized;
             //attackPivot.rotation = Quaternion.Euler(Vector3.Angle(targetDirection, transform.forward), 0, 0); // Turn attack hitbox towards the target
             rb.AddForce(targetDirection * hLeapForce + Vector3.up * vLeapForce, ForceMode.Impulse);
             StartCoroutine(WaitForHit());

@@ -316,7 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  speed: 2
+  speed: 4
   stopDistance: 0
   LOSToTarget: 0
   grounded: 0

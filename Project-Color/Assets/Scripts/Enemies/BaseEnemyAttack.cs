@@ -8,6 +8,8 @@ public class EnemyAttack : MonoBehaviour
     protected EnemyType enemyType;
     protected Rigidbody rb;
 
+    protected GameObject target;
+
     public float damage = 1;
     public float attackCooldown = 1;
     public float cooldownTimer = 0;
@@ -23,6 +25,7 @@ public class EnemyAttack : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (target == null) target = enemyType.target;
         cooldownTimer -= Time.deltaTime;
         if (cooldownTimer <= 0) onCooldown = false;
     }

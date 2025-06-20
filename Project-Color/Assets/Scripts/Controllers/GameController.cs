@@ -1,17 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using AASave;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public GameObject playerObject;
     public static GameObject playerRoot;
     public static GameObject player;
+
+    public GameObject saveSystemObject;
+    public GameObject levelLoaderObject;
 
     public int levelIndex;
     public int currentCheckpoint;
@@ -62,6 +62,17 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
+        if (!GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)"))
+        {
+            GameObject s = Instantiate(saveSystemObject);
+            saveSystem = s.GetComponent<SaveSystem>();
+            GameController.saveSystem = saveSystem;
+            GameData.saveSystem = saveSystem;
+
+            GameObject l = Instantiate(levelLoaderObject);
+            GameController.levelLoader = l.GetComponent<LevelLoader>();
+        }
+
         inst = this;
         levelIndex = SceneManager.GetActiveScene().buildIndex - 1; // First level index = 0
 
@@ -78,10 +89,14 @@ public class GameController : MonoBehaviour
         GameData.currentLevel = levelIndex;
 
         foreach (Transform t in transform)
-            checkpoints.Add(t.GetComponent<Checkpoint>().index, t.GetComponent<Checkpoint>());
+        {
+            Checkpoint c = t.GetComponent<Checkpoint>();
+            c.SetSpawnPosition();
+            checkpoints.Add(c.index, c);
+        }
 
         int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
-        if (GameObject.FindWithTag("PlayerRoot")) Destroy(GameObject.FindWithTag("PlayerRoot")); // Destroy player if it already exists
+        if (GameObject.FindWithTag("PlayerRoot")) DestroyImmediate(GameObject.FindWithTag("PlayerRoot")); // Destroy player if it already exists
         GameObject pr = Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
         playerRoot = pr;
         player = pr.transform.GetChild(0).GetChild(0).gameObject;

@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
 
     private void Awake()
     {
-        if (firstLoad)
+        if (firstLoad && !GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)"))
         {
             firstLoad = false;
 
@@ -151,7 +151,7 @@ public class MainMenu : MonoBehaviour
                 case MenuScreen.levels: HUDText.SetText(lines, levelsTexts); break;
             }
             menuScreen = changeTo;
-            yield return new WaitForSecondsRealtime(1);
+            yield return new WaitForSecondsRealtime(0.1f);
             updateText = true;
         }
     }

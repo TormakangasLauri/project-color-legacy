@@ -58,7 +58,7 @@ public class PlayerHealth : Health
         StartCoroutine(Death());
         IEnumerator Death()
         {
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
             deathMenu.SetActive(true);
             HUDText.ClearAllImmediate();
             yield return new WaitForSecondsRealtime(1);

@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject menu;
+    [SerializeField] private GameObject keybindInfo;
     public float menuCooldown = 0.2f;
     private float timer = 0;
     private bool menuOpen = false;
@@ -52,6 +53,7 @@ public class PauseMenu : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.M)) GameController.LoadLevel(0);
+        if (Input.GetKeyDown(KeyCode.H)) keybindInfo.SetActive(!keybindInfo.activeSelf);
     }
 
     public void TogglePauseMenu(InputAction.CallbackContext action)

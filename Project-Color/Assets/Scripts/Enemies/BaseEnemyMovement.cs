@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -35,8 +34,10 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     
     private void Update()
     {
+        target = _enemyType.target;
+
         GroundCheck();
-        LOSToTarget = !Physics.Linecast(transform.position, GameController.player.transform.position, terrainLayer);
+        LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
         path = _enemyType.path;
     }

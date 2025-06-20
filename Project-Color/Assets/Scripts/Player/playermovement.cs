@@ -489,7 +489,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (walled)
         { 
-            dirToWall = (wallColList[0].ClosestPoint(transform.position) - transform.position).normalized;
+            dirToWall = wallColList.Count > 0 ? (wallColList[0].ClosestPoint(transform.position) - transform.position).normalized : Vector3.zero;
             if (dirToWall == Vector3.zero) // Failed to get the closest point on the wall
             {
                 RaycastHit hit = new RaycastHit();
