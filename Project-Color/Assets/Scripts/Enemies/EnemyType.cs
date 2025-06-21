@@ -29,6 +29,7 @@ public abstract class EnemyType : MonoBehaviour
 
     public bool active = false;
     public float timeActive = 0;
+    public float timeScale = 1;
 
     public bool deactivateOnStart = true;
 
@@ -58,8 +59,10 @@ public abstract class EnemyType : MonoBehaviour
     private void Update()
     {
         if (active) timeActive += Time.deltaTime;
-
         if (target == null) target = GameController.player;
+
+        if (timeScale == 0) rb.isKinematic = true;
+        else rb.isKinematic = false;
     }
 
     protected virtual void DeactivateOnStart()

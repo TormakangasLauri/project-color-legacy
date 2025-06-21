@@ -31,6 +31,10 @@ public class EnemyMovement : BaseEnemyMovement
 
         // Gravity
         if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
+
+        // Timescale
+        rb.velocity *= _enemyType.timeScale;
+        rb.angularVelocity *= _enemyType.timeScale;
     }
 
     private void Inactive()
@@ -38,7 +42,7 @@ public class EnemyMovement : BaseEnemyMovement
         if (_enemyType.active) StartCoroutine(StateToNav());
         IEnumerator StateToNav()
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.1f * _enemyType.timeScale);
             currentState = states.navmesh;
         }
     }
@@ -60,19 +64,19 @@ public class EnemyMovement : BaseEnemyMovement
             float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
             // Rotate to face the player
-            rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+            if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
             // Moving when not in stopping distance of the target
             if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
             // Slow down enemy when in stopping distance
-            else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+            else if (rb.velocity.magnitude > 0.5 * _enemyType.timeScale) rb.AddForce(-rb.velocity * 2);
             // Speed limit
-            if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+            if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movement);
             // Move away from the target when too close
             if (distOnXZ < 2)
             {
                 rb.AddForce(-movement / 3);
-                if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+                if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(movement);
             }
         }
 
@@ -100,7 +104,7 @@ public class EnemyMovement : BaseEnemyMovement
         float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
         // Rotate to face the player
-        rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
         // Moving when not in stopping distance of the target
         if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
@@ -108,15 +112,15 @@ public class EnemyMovement : BaseEnemyMovement
         else
         {
             if (stopDistance < 3f) _enemyAttack.Attack(); // Make only the closest enemies attack
-            if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+            if (rb.velocity.magnitude > 0.5 * _enemyType.timeScale) rb.AddForce(-rb.velocity * 2);
         }
         // Speed limit
-        if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+        if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movement);
         // Move away from the target when too close
         if (distOnXZ < 2)
         {
             rb.AddForce(-movement / 3);
-            if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+            if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(movement);
         }
 
         // State change check

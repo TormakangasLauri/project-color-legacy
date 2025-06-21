@@ -33,7 +33,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621487367663589408}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -136,6 +136,7 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
+  timeScale: 1
   deactivateOnStart: 1
   hangPointPrefab: {fileID: 9108745315837387002, guid: 1fbcad01d0757f043b94b9cb32753899, type: 3}
   ropeJointPrefab: {fileID: 8467754817347641331, guid: 57c9f3ca9370073488a421498052b76b, type: 3}

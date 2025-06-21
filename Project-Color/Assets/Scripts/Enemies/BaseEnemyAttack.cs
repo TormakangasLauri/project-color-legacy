@@ -26,8 +26,9 @@ public class EnemyAttack : MonoBehaviour
     protected virtual void Update()
     {
         if (target == null) target = enemyType.target;
-        cooldownTimer -= Time.deltaTime;
+        cooldownTimer -= Time.deltaTime * enemyType.timeScale;
         if (cooldownTimer <= 0) onCooldown = false;
+        if (enemyType.timeScale == 0) onCooldown = true; // Prevent attacks when paused
     }
 
     protected virtual void StartCooldown(float cooldown = -1)
