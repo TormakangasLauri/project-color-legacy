@@ -66,11 +66,10 @@ public class GameController : MonoBehaviour
         {
             GameObject s = Instantiate(saveSystemObject);
             saveSystem = s.GetComponent<SaveSystem>();
-            GameController.saveSystem = saveSystem;
             GameData.saveSystem = saveSystem;
 
             GameObject l = Instantiate(levelLoaderObject);
-            GameController.levelLoader = l.GetComponent<LevelLoader>();
+            levelLoader = l.GetComponent<LevelLoader>();
         }
 
         inst = this;

@@ -54,10 +54,10 @@ public class SniperMovement : BaseEnemyMovement
             Vector3 movement = directionToTarget * (speed * 10);
 
             // Rotate to face the player
-            rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+            if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
             rb.AddForce(movement);
-            if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+            if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movement);
         }
 
         // State change check
@@ -84,7 +84,7 @@ public class SniperMovement : BaseEnemyMovement
         Vector3 movement = directionToNextCorner * (speed * 10);
 
         // Rotate to face the player
-        rb.MoveRotation(Quaternion.LookRotation(directionToNextCorner));
+        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToNextCorner));
 
         rb.AddForce(movement);
         if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
@@ -105,7 +105,7 @@ public class SniperMovement : BaseEnemyMovement
         Vector3 pos = transform.position;
         Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
         // Rotate to face the player
-        rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
         // State change check
         if ((targetPos - pos).magnitude < maxDistToTarget && targetPos.y > pos.y - 1 && LOSToTarget)

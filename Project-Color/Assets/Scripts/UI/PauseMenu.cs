@@ -76,7 +76,8 @@ public class PauseMenu : MonoBehaviour
     {
         menuOpen = true;
         menu.SetActive(true);
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
+        TimeController.Pause();
         GameController.paused = true;
 
         Cursor.visible = true;
@@ -91,7 +92,8 @@ public class PauseMenu : MonoBehaviour
     {
         menuOpen = false;
         menu.SetActive(false);
-        Time.timeScale = 1;
+        //Time.timeScale = 1;
+        TimeController.Unpause();
         GameController.paused = false;
 
         Cursor.visible = false;

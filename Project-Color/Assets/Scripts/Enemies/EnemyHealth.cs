@@ -22,7 +22,7 @@ public class EnemyHealth : Health
     protected override void OnDamaged()
     {
         if (healthBar != null) healthBar.UpdateHealthBar(healthAmount, maxHealth);
-        StartCoroutine(FlashColor());
+        //StartCoroutine(FlashColor()); // This somehow doesn't work and gives an error about the enemy being "inactive" which is not true
     }
 
     IEnumerator FlashColor()
@@ -45,7 +45,7 @@ public class EnemyHealth : Health
 
     public void Knockback(Vector3 kb, ForceMode fm)
     {
-        rb.AddForce(kb * KBmult, fm);
+        if (rb != null) rb.AddForce(kb * KBmult, fm);
     }
 
     protected override void OnHealed()

@@ -31,10 +31,6 @@ public class EnemyMovement : BaseEnemyMovement
 
         // Gravity
         if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
-
-        // Timescale
-        rb.velocity *= _enemyType.timeScale;
-        rb.angularVelocity *= _enemyType.timeScale;
     }
 
     private void Inactive()

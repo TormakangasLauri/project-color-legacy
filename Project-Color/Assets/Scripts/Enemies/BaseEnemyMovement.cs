@@ -16,6 +16,9 @@ public abstract class BaseEnemyMovement : MonoBehaviour
     public float speed;
     public float stopDistance;
 
+    private Vector3 velocityBeforePause = Vector3.positiveInfinity;
+    private bool velocityStored = false;
+
     protected LayerMask terrainLayer;
     
     public bool LOSToTarget;
@@ -40,6 +43,19 @@ public abstract class BaseEnemyMovement : MonoBehaviour
         LOSToTarget = !Physics.Linecast(transform.position, target.transform.position, terrainLayer);
 
         path = _enemyType.path;
+
+        if (TimeController.paused && !velocityStored) // On pause
+        {
+            velocityBeforePause = rb.velocity; // Store velocity if not already
+            velocityStored = true;
+            rb.isKinematic = true;
+        }
+        else if (!TimeController.paused && velocityStored) // On unpause
+        {
+            rb.velocity = velocityBeforePause; // Return the stored velocity
+            velocityStored = false;
+            rb.isKinematic = false;
+        }
     }
     
     private void GroundCheck()

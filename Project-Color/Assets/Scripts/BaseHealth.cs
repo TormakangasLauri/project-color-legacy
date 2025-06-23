@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
     public float maxHealth = 100;
     protected float healthAmount;
 
-    protected Rigidbody rb;
+    public Rigidbody rb;
 
     void Awake()
     {
@@ -33,7 +33,7 @@ public class Health : MonoBehaviour
         OnHealed();
     }
 
-    private void Knockback(Vector3 kb)
+    protected virtual void Knockback(Vector3 kb)
     {
         if (rb != null) rb.AddForce(kb, ForceMode.Impulse);
     }

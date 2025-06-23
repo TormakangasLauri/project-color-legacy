@@ -33,7 +33,7 @@ public class BasicAttack : EnemyAttack
                 yield return new WaitUntil(() => // Wait for the target to be in the attack hitbox
                 {
                     transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(targetDirection, Vector3.up));
-                    timer -= Time.deltaTime;
+                    timer -= Time.deltaTime * enemyType.timeScale;
                     return timer <= 0 || targetInHitbox != null;
                 });
                 if (targetInHitbox != null) // Target hit
