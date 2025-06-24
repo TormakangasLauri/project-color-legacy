@@ -29,7 +29,7 @@ public class CameraEffects : MonoBehaviour
 
     void Update()
     {
-        if (GameController.paused)
+        if (TimeController.paused)
         {
             EffecsEnabled(true);
             timer1 -= Time.unscaledDeltaTime;

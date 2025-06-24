@@ -32,6 +32,7 @@ public class LevelLoader : MonoBehaviour
                 cg.alpha = i;
                 return i >= 1;
             });
+            GameController.playerRoot.GetComponentInChildren<PauseMenu>().ClosePauseMenu(false);
         }
         else cg.alpha = 1;
 

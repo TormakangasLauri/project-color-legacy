@@ -605,6 +605,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  rb: {fileID: 0}
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
   healthBar: {fileID: 0}

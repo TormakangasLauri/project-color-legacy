@@ -118,9 +118,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (GameController.paused) return;
+        if (TimeController.paused)
+        {
+            rb.isKinematic = true;
+            return;
+        }else rb.isKinematic = false;
 
-        GroundCheck();
+            GroundCheck();
         Walled();
         SlopeCheck();
         if (crouching || sliding) RoofCheck();

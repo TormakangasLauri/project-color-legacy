@@ -58,7 +58,7 @@ public class HulkMovement : BaseEnemyMovement
             float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
             // Rotate to face the player
-            rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+            if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
             // Moving when not in stopping distance of the target
             if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
@@ -98,7 +98,7 @@ public class HulkMovement : BaseEnemyMovement
         float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
         // Rotate to face the player
-        rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
         // Moving when not in stopping distance of the target
         if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);

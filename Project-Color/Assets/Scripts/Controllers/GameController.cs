@@ -16,8 +16,6 @@ public class GameController : MonoBehaviour
     public int levelIndex;
     public int currentCheckpoint;
 
-    public static bool paused;
-
     public static SaveSystem saveSystem;
     public static LevelLoader levelLoader;
     public static GameController inst;
@@ -105,17 +103,6 @@ public class GameController : MonoBehaviour
     {
         currentCheckpoint = GameData.levelData[GameData.currentLevel].checkpoint;
         int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
-        //if (!GameObject.FindWithTag("PlayerRoot"))
-        //{
-        //    Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
-        //}
-        //else if (currentCheckpoint != 0)
-        //{
-        //    GameObject player = GameObject.FindWithTag("PlayerRoot");
-        //    player.transform.position = checkpoints[checkpoint].spawnPosition;
-        //    player.transform.rotation = checkpoints[checkpoint].transform.rotation;
-        //}
-
     }
 
     private void Update()
