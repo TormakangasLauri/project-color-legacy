@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using static UnityEngine.InputSystem.Controls.AxisControl;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class PlayerAttack : MonoBehaviour
     public LayerMask enemyLayer;
     public List<GameObject> enemies;
 
-    private PlayerMovement PM;
+    private PlayerMove PM;
     private EnemyController enemyController;
     private SlamAreaCheck SAC;
     public AttackIndicator AI;
@@ -51,6 +52,9 @@ public class PlayerAttack : MonoBehaviour
     bool rmbHeld;
     float holdTimer;
 
+    bool particlesPaused = false;
+    bool[] particlePauseStates = new bool[] { false, false, false, false, false, false, false, false, false, false, false, false };
+
     public bool canAttack = true;
     bool attackFromRight = true;
     float sideSwitchTimer = 0;
@@ -81,14 +85,32 @@ public class PlayerAttack : MonoBehaviour
     {
         hitbox = GetComponent<Collider>();
         rb = gameObject.transform.parent.GetComponentInParent<Rigidbody>();
-        PM = gameObject.transform.parent.GetComponentInParent<PlayerMovement>();
+        PM = gameObject.transform.parent.GetComponentInParent<PlayerMove>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
     }
 
     private void Update()
     {
-        if (GameController.paused) return;
+        if (TimeController.paused)
+        {
+            canAttack = false;
+            if (!particlesPaused)
+            {
+                particlesPaused = true;
+                PauseParticles();
+            }
+            return;
+        }
+        else
+        {
+            canAttack = true;
+            if (particlesPaused)
+            {
+                particlesPaused = false;
+                ContinueParticles();
+            }
+        }
 
         if (lmbHeld || rmbHeld) holdTimer += Time.deltaTime;
         else holdTimer = 0;
@@ -326,6 +348,40 @@ public class PlayerAttack : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         yield return new WaitUntil(() => PM.grounded || PM.walled);
         bounceTrail.Stop();
+    }
+
+    void PauseParticles()
+    {
+        if (attackParticle1.isPlaying) { attackParticle1.Pause(); particlePauseStates[0] = true; }
+        if (attackParticle2.isPlaying) { attackParticle2.Pause(); particlePauseStates[1] = true; }
+        if (attackParticle3.isPlaying) { attackParticle3.Pause(); particlePauseStates[2] = true; }
+        if (attackParticle4.isPlaying) { attackParticle4.Pause(); particlePauseStates[3] = true; }
+        if (attackParticle5.isPlaying) { attackParticle5.Pause(); particlePauseStates[4] = true; }
+
+        if (slamParticle1.isPlaying) { slamParticle1.Pause(); particlePauseStates[5] = true; }
+        if (slamParticle2.isPlaying) { slamParticle2.Pause(); particlePauseStates[6] = true; }
+        if (slamParticle3.isPlaying) { slamParticle3.Pause(); particlePauseStates[7] = true; }
+        if (slamParticle4.isPlaying) { slamParticle4.Pause(); particlePauseStates[8] = true; }
+        //if (slamParticle5.isPlaying) { slamParticle5.Pause(); particlePauseStates[9] = true; }
+
+        if (bounceParticle.isPlaying) { bounceParticle.Pause(); particlePauseStates[10] = true; }
+        if (bounceTrail.isPlaying) { bounceTrail.Pause(); particlePauseStates[11] = true; }
+    }
+    
+    void ContinueParticles()
+    {
+        if (particlePauseStates[0]) attackParticle1.Play();
+        if (particlePauseStates[1]) attackParticle2.Play();
+        if (particlePauseStates[2]) attackParticle3.Play();
+        if (particlePauseStates[3]) attackParticle4.Play();
+        if (particlePauseStates[4]) attackParticle5.Play();
+        if (particlePauseStates[5]) slamParticle1.Play();
+        if (particlePauseStates[6]) slamParticle2.Play();
+        if (particlePauseStates[7]) slamParticle3.Play();
+        if (particlePauseStates[8]) slamParticle4.Play();
+        // if (particlePauseStates[9]) slamParticle5.Play();
+        if (particlePauseStates[10]) bounceParticle.Play();
+        if (particlePauseStates[11]) bounceTrail.Play();
     }
 
     void ChangeBrushColor()

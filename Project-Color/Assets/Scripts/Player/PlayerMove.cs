@@ -13,7 +13,7 @@ using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMove : MonoBehaviour
 {
     public InputActionReference move;
     public InputActionReference rightStick;
@@ -118,9 +118,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (GameController.paused) return;
+        if (TimeController.paused)
+        {
+            rb.isKinematic = true;
+            return;
+        }else rb.isKinematic = false;
 
-        GroundCheck();
+            GroundCheck();
         Walled();
         SlopeCheck();
         if (crouching || sliding) RoofCheck();

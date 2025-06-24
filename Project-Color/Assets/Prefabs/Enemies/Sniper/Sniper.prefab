@@ -428,7 +428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8245528752783580106}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -57.91807, y: 2.025, z: 76.38246}
+  m_LocalPosition: {x: 0, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -568,7 +568,6 @@ MonoBehaviour:
   cooldownTimer: 0
   attacking: 0
   onCooldown: 0
-  target: {fileID: 0}
   bullet: {fileID: 2390326941663130154, guid: 60f26884efba2b34fa5a9d271517506d, type: 3}
   bulletTrail: {fileID: 8057320020195629136, guid: 66b8842ebca1ad247a9a0038e6ebe49b, type: 3}
   shootPoint: {fileID: 3474883329285946529}
@@ -591,6 +590,7 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
+  timeScale: 1
   deactivateOnStart: 1
 --- !u!114 &129741967588987255
 MonoBehaviour:
@@ -605,6 +605,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  rb: {fileID: 0}
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
   healthBar: {fileID: 0}

@@ -132,7 +132,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -547,7 +547,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7073502008848142263}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: -500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -685,6 +685,7 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
+  timeScale: 1
   deactivateOnStart: 1
 --- !u!114 &9110505115261770114
 MonoBehaviour:
@@ -699,6 +700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  rb: {fileID: 7073502008848142261}
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
   healthBar: {fileID: 5458304785395442287}

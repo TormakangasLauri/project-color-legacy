@@ -71,6 +71,11 @@ namespace Controllers
 
         public static EnemyController inst;
 
+        private void OnValidate()
+        {
+            foreach (GameObject enemy in enemyPrefabs) enemy.SetActive(true);
+        }
+
         private void Awake()
         {
             inst = this;

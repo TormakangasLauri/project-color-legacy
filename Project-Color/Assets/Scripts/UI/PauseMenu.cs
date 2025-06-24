@@ -30,7 +30,7 @@ public class PauseMenu : MonoBehaviour
     private void Update()
     {
         timer -= Time.unscaledDeltaTime;
-        if (GameController.paused)
+        if (TimeController.paused)
         {
             HUDText.UpdateInteractableText(texts);
 
@@ -41,13 +41,7 @@ public class PauseMenu : MonoBehaviour
                 switch (texts[targetLine])
                 {
                     case "Resume": ClosePauseMenu(); break;
-                    case "Main_menu":
-                    {
-                        //ClosePauseMenu();
-                        //GameController.StartLevel(0);
-                        GameController.LoadLevel(0);
-                        break;
-                    }
+                    case "Main_menu": GameController.LoadLevel(0); break;
                 }
             }
         }
@@ -72,12 +66,12 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    private void OpenPauseMenu()
+    public void OpenPauseMenu()
     {
         menuOpen = true;
         menu.SetActive(true);
-        Time.timeScale = 0;
-        GameController.paused = true;
+
+        TimeController.Pause();
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -87,12 +81,12 @@ public class PauseMenu : MonoBehaviour
         HUDText.SetText(lines, texts, HUDTextReplace.Clear);
     }
 
-    private void ClosePauseMenu(bool retrieveText = true)
+    public void ClosePauseMenu(bool retrieveText = true)
     {
         menuOpen = false;
         menu.SetActive(false);
-        Time.timeScale = 1;
-        GameController.paused = false;
+
+        TimeController.Unpause();
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
