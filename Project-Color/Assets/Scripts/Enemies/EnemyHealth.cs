@@ -17,6 +17,7 @@ public class EnemyHealth : Health
         enemyRenderer = GetComponent<Renderer>();
         healthAmount = maxHealth;
         healthBar = GetComponentInChildren<FloatingHealthBar>();   // kommentoi tämä rivi jos health barit halutaan pois
+        healthBar.UpdateHealthBar(healthAmount, maxHealth);
     }
 
     protected override void OnDamaged()
