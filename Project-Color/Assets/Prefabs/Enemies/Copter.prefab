@@ -704,6 +704,7 @@ MonoBehaviour:
   killGroup: 0
   active: 0
   timeActive: 0
+  timeScale: 1
   deactivateOnStart: 1
 --- !u!114 &-8817107074033187882
 MonoBehaviour:
@@ -717,6 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb55ab34c7a95f140904fee0a081fa95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   speed: 5
   stopDistance: 0
   LOSToTarget: 0
@@ -734,6 +736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  rb: {fileID: 0}
   KBmult: 1
   damageFlash: {r: 0.45490196, g: 0.07058824, b: 0.105882354, a: 1}
   healthBar: {fileID: 5458304785395442287}
