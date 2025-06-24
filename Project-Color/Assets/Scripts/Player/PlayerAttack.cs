@@ -19,7 +19,7 @@ public class PlayerAttack : MonoBehaviour
     public LayerMask enemyLayer;
     public List<GameObject> enemies;
 
-    private PlayerMovement PM;
+    private PlayerMove PM;
     private EnemyController enemyController;
     private SlamAreaCheck SAC;
     public AttackIndicator AI;
@@ -85,7 +85,7 @@ public class PlayerAttack : MonoBehaviour
     {
         hitbox = GetComponent<Collider>();
         rb = gameObject.transform.parent.GetComponentInParent<Rigidbody>();
-        PM = gameObject.transform.parent.GetComponentInParent<PlayerMovement>();
+        PM = gameObject.transform.parent.GetComponentInParent<PlayerMove>();
         enemyController = GameObject.Find("GameController").GetComponent<EnemyController>();
         SAC = gameObject.transform.parent.transform.parent.GetComponentInChildren<SlamAreaCheck>();
     }
