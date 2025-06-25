@@ -36,10 +36,10 @@ public class LevelLoader : MonoBehaviour
         }
         else cg.alpha = 1;
 
-        PaintTarget.ClearAllPaint();
+        PaintTarget.ClearAllPaint(); // Clean everything
         PaintController.ClearAllPaintObjects();
 
-        AsyncOperation operation = SceneManager.LoadSceneAsync(level);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(level); // Start loading the scene
 
         yield return new WaitUntil(() => { return operation.isDone; });
 

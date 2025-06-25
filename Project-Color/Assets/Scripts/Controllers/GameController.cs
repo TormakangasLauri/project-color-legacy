@@ -16,6 +16,9 @@ public class GameController : MonoBehaviour
     public int levelIndex;
     public int currentCheckpoint;
 
+    [Header("Clear saved data from save file 1")]
+    public bool clearSavedData = false;
+
     public static SaveSystem saveSystem;
     public static LevelLoader levelLoader;
     public static GameController inst;
@@ -60,7 +63,7 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        if (!GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)"))
+        if (!GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)")) // Create save system and level loader if they don't already exist
         {
             GameObject s = Instantiate(saveSystemObject);
             saveSystem = s.GetComponent<SaveSystem>();
@@ -73,26 +76,32 @@ public class GameController : MonoBehaviour
         inst = this;
         levelIndex = SceneManager.GetActiveScene().buildIndex - 1; // First level index = 0
 
-        if (GameData.saveSystem == null)
+        if (GameData.saveSystem == null) // Set save system for GameData
         {
             SaveSystem saveSystem = gameObject.AddComponent<SaveSystem>();
             saveSystem.SetSubFolderOption(true);
             GameData.saveSystem = saveSystem;
+            if (clearSavedData) // Clear saved data if the option is enabled
+            {
+                clearSavedData = false;
+                GameData.DeleteSavedData();
+            }
         }
-        GameData.LoadData();
+        GameData.LoadData(); // Load game data
 
-        if (GameData.levelData[levelIndex] == null) GameData.levelData[levelIndex] = new (levelIndex, 0);
+        if (GameData.levelData[levelIndex] == null) GameData.levelData[levelIndex] = new (levelIndex, 0); // Initialize level data if it doesn't exist for current level
         else GameData.levelData[levelIndex].level = levelIndex;
         GameData.currentLevel = levelIndex;
 
-        foreach (Transform t in transform)
+        foreach (Transform t in transform) // Get all checkpoints and add them to the dictionary
         {
             Checkpoint c = t.GetComponent<Checkpoint>();
             c.SetSpawnPosition();
             checkpoints.Add(c.index, c);
         }
 
-        int checkpoint = GameData.levelData[GameData.currentLevel].checkpoint;
+        // Initialize player
+        int checkpoint = GameData.levelData[levelIndex].checkpoint;
         if (GameObject.FindWithTag("PlayerRoot")) DestroyImmediate(GameObject.FindWithTag("PlayerRoot")); // Destroy player if it already exists
         GameObject pr = Instantiate(playerObject, checkpoints[checkpoint].spawnPosition, checkpoints[checkpoint].transform.rotation);
         playerRoot = pr;

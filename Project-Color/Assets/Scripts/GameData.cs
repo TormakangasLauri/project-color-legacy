@@ -92,4 +92,28 @@ public class GameData
             }
         }
     }
+
+    public static void DeleteSavedData(int saveSlot = 1)
+    {
+        saveSystem.subFolderName = $"SaveSlot{saveSlot}";
+        for (int i = 0; i < levels; i++)
+        {
+            Level level = levelData[i];
+            saveSystem.Delete($"{i}level");
+            saveSystem.Delete($"{i}checkpoint");
+            saveSystem.Delete($"{i}completed");
+
+            saveSystem.Delete($"{i}playerhealth");
+            saveSystem.Delete($"{i}playerposition");
+            saveSystem.Delete($"{i}playerrotation");
+
+            for (int j = 0; j < level.enemies.Count; j++)
+            {
+                Level.Enemy enemy = level.enemies[j];
+                saveSystem.Delete($"{i}enemy{j}health");
+                saveSystem.Delete($"{i}enemy{j}position");
+                saveSystem.Delete($"{i}enemy{j}rotation");
+            }
+        }
+    }
 }

@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
 
     private void Awake()
     {
-        if (firstLoad && !GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)"))
+        if (firstLoad && !GameObject.Find("Save System(Clone)") && !GameObject.Find("LevelLoader(Clone)")) // Create save system and level loader if they don't already exist
         {
             firstLoad = false;
 
@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(Wait());
         IEnumerator Wait()
         {
-            yield return new WaitForSecondsRealtime(1);
+            yield return new WaitForSecondsRealtime(1); // Wait for a second to ensure everything is loaded properly
             Debug.Log("Main menu Start");
             textLines.Clear();
             foreach (Transform textTransform in GetComponentInChildren<HUDText>().transform)

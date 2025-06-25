@@ -11,14 +11,7 @@ public enum ObjectiveType { kill, platform, paint }
 
 public class Objectives : MonoBehaviour
 {
-    private static ObjectiveDisplay objectiveDisplay;
-    
     public static List<Objective> activeObjectives = new List<Objective>();
-
-    private void Start()
-    {
-        objectiveDisplay = GameObject.FindWithTag("PlayerRoot").transform.GetChild(6).GetChild(1).gameObject.GetComponent<ObjectiveDisplay>(); // Player > HUD > Objectives
-    }
 
     public static void NewObjective(Objective objective)
     {
