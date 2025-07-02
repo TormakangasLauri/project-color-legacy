@@ -922,12 +922,12 @@ MonoBehaviour:
   texts:
   - 
   - 
-  - :(
-  - You died
+  - ' :('
+  - ' You died'
   - 
   - 
   - 
-  - Continue
+  - Restart
   - Main_menu
   - 
   - 
@@ -2174,7 +2174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   rb: {fileID: 0}
-  deathMenu: {fileID: 6633474010351379273}
+  deathMenuObject: {fileID: 6633474010351379273}
+  deathMenu: {fileID: 3221106809325913450}
 --- !u!114 &1204033842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2719,7 +2720,7 @@ MonoBehaviour:
     H - Hide/show info
 
     P
-    -Pause/continue
+    - Pause/continue
 
     Tab - Pause menu'
   m_isRightToLeft: 0
