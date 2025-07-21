@@ -102,6 +102,9 @@ public class PlayerMove : MonoBehaviour
     private Vector3 originalBodyScale;
     private float originalHeadHeight;
 
+    private Vector3 velocityBeforePause = Vector3.positiveInfinity;
+    private bool velocityStored = false;
+
     private void Start()
     {
         Cursor.visible = false;
@@ -118,20 +121,32 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        if (TimeController.paused)
+        if (TimeController.paused) // On pause
         {
-            rb.isKinematic = true;
+            if (!velocityStored)
+            {
+                velocityBeforePause = rb.velocity; // Store velocity if not already
+                velocityStored = true;
+                rb.isKinematic = true;
+            }
             return;
-        }else rb.isKinematic = false;
+        }
+        else if (!TimeController.paused && velocityStored) // On unpause
+        {
+            rb.velocity = velocityBeforePause; // Return the stored velocity
+            velocityStored = false;
+            rb.isKinematic = false;
+        }
 
-            GroundCheck();
+        moveInputDirection = move.action.ReadValue<Vector2>();
+
+        GroundCheck();
         Walled();
         SlopeCheck();
         if (crouching || sliding) RoofCheck();
 
         CameraRotation();
 
-        moveInputDirection = move.action.ReadValue<Vector2>();
         // BigAssBall is real?!?!?!
 
         // Dash
