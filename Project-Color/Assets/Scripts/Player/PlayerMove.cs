@@ -168,10 +168,14 @@ public class PlayerMove : MonoBehaviour
         }
         else {
             // Not grounded
-            if (walled) {
-                if (pressingJump && !pressingCrouch && !slamming && timeSinceGrounded > 0.2) currentState = movementState.wallrun; // Wallrun
-                else currentState = movementState.air; // Air
-            }else currentState = movementState.air;
+
+            currentState = movementState.air; // Air
+
+            // MOVEMENT WITH WALLRUN
+            //if (walled) {
+            //    if (pressingJump && !pressingCrouch && !slamming && timeSinceGrounded > 0.2) currentState = movementState.wallrun; // Wallrun
+            //    else currentState = movementState.air; // Air
+            //}else currentState = movementState.air;
         }
 
         // Reset enterState when switching movement states
@@ -338,12 +342,15 @@ public class PlayerMove : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
     
-    void WallJump()
+    void WallJump(Vector3 velocityBeforeWall)
     {
         Vector3 velocity = rb.velocity;
         
         // Walljumping makes the player jump away from the wall regardless of directional movement inputs
-        rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
+        //rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
+
+        Vector3 projectedVel = Vector3.ProjectOnPlane(velocityBeforeWall, dirToWall);
+        rb.velocity = new Vector3(projectedVel.x * 1.1f, projectedVel.y < 0 ? projectedVel.y / 2 : projectedVel.y, projectedVel.z * 1.1f) - dirToWall * 15 + Vector3.up * jumpForce;
     }
     
     /* Inputs
@@ -368,7 +375,7 @@ public class PlayerMove : MonoBehaviour
         else if (action.canceled)
         {
             pressingJump = false;
-            if (currentState == movementState.wallrun) WallJump();
+            if (currentState == movementState.wallrun) WallJump(Vector3.zero);
             wallRunning = false;
         }
         
@@ -376,11 +383,14 @@ public class PlayerMove : MonoBehaviour
         {
             waitingToJump = true;
             float i = landingGracePeriod;
+            Vector3 velocityBeforeWall = rb.velocity;
             yield return new WaitUntil(() =>
             {
-                if (grounded) Jump();
+                if (grounded) { Jump(); return true; }
+                else if (walled) { WallJump(velocityBeforeWall); return true; }
+                velocityBeforeWall = rb.velocity;
                 i -= Time.deltaTime;
-                return i <= 0 || grounded;
+                return i <= 0;
             });
             waitingToJump = false;
         }

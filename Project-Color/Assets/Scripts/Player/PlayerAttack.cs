@@ -223,7 +223,11 @@ public class PlayerAttack : MonoBehaviour
     private IEnumerator Slam()
     {
         PM.slamming = true;
-        yield return new WaitUntil(delegate { return PM.grounded; });
+        yield return new WaitUntil(delegate
+        {
+            rb.AddForce(Vector3.down * PM.gravity * 1.5f);
+            return PM.grounded;
+        });
 
         foreach (GameObject enemy in SAC.enemies)
         {
