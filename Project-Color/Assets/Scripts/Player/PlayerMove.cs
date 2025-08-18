@@ -32,6 +32,7 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody rb;
     private GameObject body;
     private GameObject head;
+    private GameObject cameraObject;
 
     [Header("Movement")]
     public float acceleration = 70;
@@ -79,6 +80,13 @@ public class PlayerMove : MonoBehaviour
 
     [Header("Camera")]
     public float mouseSensitivity = 2f;
+    public float FOVChangeMult = 1;
+    public float FOVChangeSpeed = 1f;
+    public bool useHeadBobbing = true;
+    public float amplitude = 0.015f;
+    public float yAmplitude = 0.7f;
+    public float xAmplitude = 1f;
+    public float frequency = 0.5f;
     private float headVerticalRotation;
     private float headHorizontalRotation;
 
@@ -112,6 +120,7 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         body = transform.GetChild(0).gameObject;
         head = transform.GetChild(1).gameObject;
+        cameraObject = head.transform.GetChild(0).gameObject;
 
         originalBodyScale = body.transform.localScale;
         originalHeadHeight = head.transform.localPosition.y;
@@ -146,6 +155,7 @@ public class PlayerMove : MonoBehaviour
         if (crouching || sliding) RoofCheck();
 
         CameraRotation();
+        CameraMovement();
 
         // BigAssBall is real?!?!?!
 
@@ -474,9 +484,43 @@ public class PlayerMove : MonoBehaviour
         headHorizontalRotation += input.x;
         transform.rotation = Quaternion.Euler(0f, headHorizontalRotation, 0f);
     }
-    
+
+    void CameraMovement()
+    {
+        Camera cam = cameraObject.GetComponent<Camera>();
+
+        float speed = rb.velocity.magnitude;
+        Vector3 projectedVel = Vector3.Project(rb.velocity, head.transform.forward);
+
+        float angle = Vector3.Angle(rb.velocity, head.transform.forward);
+        float angleMult = angle < 90 ? (90 - angle) / 90 : (90 - angle) / 180; // Forwards 1, sideways 0, backwards -0.5
+
+        // FOV change
+        //if (speed > maxSpeed) cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 90 + Mathf.Pow((speed - maxSpeed), 1.5f) * angleMult * 0.2f, ref speed, FOVChangeSpeed * 6 * Time.deltaTime);
+        //else cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 90, ref speed, FOVChangeSpeed * Time.deltaTime);
+
+        // Head bobbing
+        if (useHeadBobbing && currentState == movementState.ground && speed > 1) // Head bobbing
+        {
+            float speedMult = speed / maxSpeed;
+            Vector3 pos = Vector3.zero;
+            pos.y = Mathf.Abs(Mathf.Sin(Time.time * frequency * Mathf.PI * speedMult) * yAmplitude * 2) - yAmplitude / 2;
+            pos.x = (2 * Mathf.Abs(2 * (Time.time / 2 * frequency * speedMult - Mathf.Floor(Time.time / 2 * frequency * speedMult + 0.5f))) - 1) * xAmplitude;
+
+            cameraObject.transform.localPosition = pos;
+            //cameraObject.transform.localPosition = Vector3.Lerp(cameraObject.transform.localPosition, pos, Time.deltaTime);
+
+            //pos.y += Mathf.Sin(Time.time * frequency * speedMult) * amplitude;
+            //pos.x += Mathf.Cos(Time.time * frequency * speedMult / 2) * amplitude * 2;
+
+            //cameraObject.transform.localPosition -= pos;
+        }
+        else if (cameraObject.transform.localPosition != Vector3.zero) // Reset camera position
+            cameraObject.transform.localPosition = Vector3.Lerp(cameraObject.transform.localPosition, Vector3.zero, 5 * Time.deltaTime);
+    }
+
     // ENVIROMENT CHECKS
-    
+
     void GroundCheck()
     {
         if (Physics.OverlapBox(groundCheck.transform.position, groundCheck.transform.localScale, Quaternion.identity, terrainLayer).Length > 0)
