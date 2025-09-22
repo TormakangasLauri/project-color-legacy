@@ -155,7 +155,7 @@ public class PlayerMove : MonoBehaviour
         if (crouching || sliding) RoofCheck();
 
         CameraRotation();
-        CameraMovement();
+        //CameraMovement();
 
         // BigAssBall is real?!?!?!
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
+using static UnityEditor.PlayerSettings;
 
 public class EnemyMovement : BaseEnemyMovement
 { 
@@ -50,9 +51,9 @@ public class EnemyMovement : BaseEnemyMovement
 
     private void NavMeshMovement()
     {
-        if (gameObject.activeSelf && _enemyType.timeActive > 0.1 && path.corners.Length >= 2)
+        if (gameObject.activeSelf && _enemyType.timeActive > 0.1 && path.corners.Length > 2)
         {
-            Vector3 targetPos = target.transform.position;
+            /*Vector3 targetPos = target.transform.position;
             Vector3 cornerPos = path.corners[1];
             Vector3 pos = transform.position;
             Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
@@ -73,7 +74,9 @@ public class EnemyMovement : BaseEnemyMovement
             {
                 rb.AddForce(-movement / 3);
                 if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(movement);
-            }
+            }*/
+
+            Move(path.corners[1]);
         }
 
         RaycastHit hit;
@@ -93,7 +96,7 @@ public class EnemyMovement : BaseEnemyMovement
 
     private void LOSMovement()
     {
-        Vector3 targetPos = target.transform.position;
+        /*Vector3 targetPos = target.transform.position;
         Vector3 pos = transform.position;
         Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
         Vector3 movement = directionToTarget * (speed * 10);
@@ -117,7 +120,14 @@ public class EnemyMovement : BaseEnemyMovement
         {
             rb.AddForce(-movement / 3);
             if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(movement);
-        }
+        }*/
+
+        Vector3 pos = transform.position;
+        Vector3 targetPos = target.transform.position;
+        float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
+
+        if (distOnXZ > stopDistance + 0.5) Move(targetPos, true);
+        else if (distOnXZ < 1.5) Move(targetPos, true, -0.4f);
 
         // State change check
         RaycastHit hit;

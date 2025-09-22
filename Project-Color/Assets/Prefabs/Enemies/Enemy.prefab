@@ -132,7 +132,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.8
+  m_Value: 0.1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -629,7 +629,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7073502008848142263}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 329909de42bb01542a89394498a06045, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
@@ -665,7 +665,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  speed: 5
+  speed: 30
   stopDistance: 0
   LOSToTarget: 0
   grounded: 0
