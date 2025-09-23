@@ -48,16 +48,18 @@ public class SniperMovement : BaseEnemyMovement
     {
         if (path.corners.Length >= 2)
         {
-            Vector3 cornerPos = path.corners[1];
-            Vector3 pos = transform.position;
-            Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
-            Vector3 movement = directionToTarget * (speed * 10);
+            //Vector3 cornerPos = path.corners[1];
+            //Vector3 pos = transform.position;
+            //Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
+            //Vector3 movement = directionToTarget * (speed * 10);
 
-            // Rotate to face the player
-            if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+            //// Rotate to face the player
+            //if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
-            rb.AddForce(movement);
-            if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movement);
+            //rb.AddForce(movement);
+            //if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movement);
+
+            Move(path.corners[1]);
         }
 
         // State change check
@@ -77,17 +79,19 @@ public class SniperMovement : BaseEnemyMovement
         Vector3 targetPos = target.transform.position;
         Vector3 pos = transform.position;
 
-        Vector3 directionToNextCorner;
-        if (path.corners.Length >= 2) directionToNextCorner = new Vector3(path.corners[1].x - pos.x, 0, path.corners[1].z - pos.z).normalized;
-        else directionToNextCorner = new Vector3(pos.x - targetPos.x, 0, pos.z - targetPos.z).normalized;
+        //Vector3 directionToNextCorner;
+        //if (path.corners.Length >= 2) directionToNextCorner = new Vector3(path.corners[1].x - pos.x, 0, path.corners[1].z - pos.z).normalized;
+        //else directionToNextCorner = new Vector3(pos.x - targetPos.x, 0, pos.z - targetPos.z).normalized;
 
-        Vector3 movement = directionToNextCorner * (speed * 10);
+        //Vector3 movement = directionToNextCorner * (speed * 10);
 
-        // Rotate to face the player
-        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToNextCorner));
+        //// Rotate to face the player
+        //if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToNextCorner));
 
-        rb.AddForce(movement);
-        if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+        //rb.AddForce(movement);
+        //if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+
+        Move(path.corners[1]);
 
         // State change check
         float distToTarget = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
@@ -103,9 +107,11 @@ public class SniperMovement : BaseEnemyMovement
 
         Vector3 targetPos = target.transform.position;
         Vector3 pos = transform.position;
-        Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
-        // Rotate to face the player
-        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+        //Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
+        //// Rotate to face the player
+        //if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+
+        if (_enemyType.timeScale != 0) Rotate();
 
         // State change check
         if ((targetPos - pos).magnitude < maxDistToTarget && targetPos.y > pos.y - 1 && LOSToTarget)

@@ -50,28 +50,30 @@ public class HulkMovement : BaseEnemyMovement
     {
         if (gameObject.activeSelf && _enemyType.timeActive > 0.1 && path.corners.Length >= 2)
         {
-            Vector3 targetPos = target.transform.position;
-            Vector3 cornerPos = path.corners[1];
-            Vector3 pos = transform.position;
-            Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
-            Vector3 movement = directionToTarget * (speed * 10);
-            float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
+            //Vector3 targetPos = target.transform.position;
+            //Vector3 cornerPos = path.corners[1];
+            //Vector3 pos = transform.position;
+            //Vector3 directionToTarget = new Vector3(cornerPos.x - pos.x, 0, cornerPos.z - pos.z).normalized;
+            //Vector3 movement = directionToTarget * (speed * 10);
+            //float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
-            // Rotate to face the player
-            if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+            //// Rotate to face the player
+            //if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
 
-            // Moving when not in stopping distance of the target
-            if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
-            // Slow down enemy when in stopping distance
-            else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
-            // Speed limit
-            if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
-            // Move away from the target when too close
-            if (distOnXZ < 2)
-            {
-                rb.AddForce(-movement / 3);
-                if (rb.velocity.magnitude > speed) rb.AddForce(movement);
-            }
+            //// Moving when not in stopping distance of the target
+            //if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
+            //// Slow down enemy when in stopping distance
+            //else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+            //// Speed limit
+            //if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+            //// Move away from the target when too close
+            //if (distOnXZ < 2)
+            //{
+            //    rb.AddForce(-movement / 3);
+            //    if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+            //}
+
+            Move(path.corners[1]);
         }
 
         RaycastHit hit;
@@ -91,27 +93,35 @@ public class HulkMovement : BaseEnemyMovement
 
     private void LOSMovement()
     {
-        Vector3 targetPos = target.transform.position;
+        //Vector3 targetPos = target.transform.position;
+        //Vector3 pos = transform.position;
+        //Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
+        //Vector3 movement = directionToTarget * (speed * 10);
+        //float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
+
+        //// Rotate to face the player
+        //if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+
+        //// Moving when not in stopping distance of the target
+        //if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
+        //// Slow down enemy when in stopping distance
+        //else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
+        //// Speed limit
+        //if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
+        //// Move away from the target when too close
+        //if (distOnXZ < 2)
+        //{
+        //    rb.AddForce(-movement / 3);
+        //    if (rb.velocity.magnitude > speed) rb.AddForce(movement);
+        //}
+
         Vector3 pos = transform.position;
-        Vector3 directionToTarget = new Vector3(targetPos.x - pos.x, 0, targetPos.z - pos.z).normalized;
-        Vector3 movement = directionToTarget * (speed * 10);
+        Vector3 targetPos = target.transform.position;
         float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
-        // Rotate to face the player
-        if (_enemyType.timeScale != 0) rb.MoveRotation(Quaternion.LookRotation(directionToTarget));
+        if (distOnXZ > stopDistance + 0.5) Move(targetPos, true);
 
-        // Moving when not in stopping distance of the target
-        if (distOnXZ > stopDistance + stopDistance / 2) rb.AddForce(movement);
-        // Slow down enemy when in stopping distance
-        else if (rb.velocity.magnitude > 0.5) rb.AddForce(-rb.velocity * 2);
-        // Speed limit
-        if (rb.velocity.magnitude > speed) rb.AddForce(-movement);
-        // Move away from the target when too close
-        if (distOnXZ < 2)
-        {
-            rb.AddForce(-movement / 3);
-            if (rb.velocity.magnitude > speed) rb.AddForce(movement);
-        }
+        Rotate();
 
         // State change check
         RaycastHit hit;

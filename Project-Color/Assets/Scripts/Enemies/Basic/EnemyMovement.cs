@@ -85,13 +85,8 @@ public class EnemyMovement : BaseEnemyMovement
         // State change check
         if (LOSToTarget && (path.corners.Length <= 2 || hit.point.y <= transform.position.y - transform.localScale.y / 2))
         {
-            StartCoroutine(NavMeshToLOS());
+            currentState = states.los;
         }
-    }
-    IEnumerator NavMeshToLOS()
-    {
-        yield return new WaitForSeconds(0.5f);
-        currentState = states.los;
     }
 
     private void LOSMovement()
@@ -127,7 +122,9 @@ public class EnemyMovement : BaseEnemyMovement
         float distOnXZ = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(targetPos.x, 0, targetPos.z));
 
         if (distOnXZ > stopDistance + 0.5) Move(targetPos, true);
-        else if (distOnXZ < 1.5) Move(targetPos, true, -0.4f);
+        else if (distOnXZ < 2) Move(targetPos, true, -0.6f);
+
+        Rotate(); // Rotate to face the target (player)
 
         // State change check
         RaycastHit hit;
