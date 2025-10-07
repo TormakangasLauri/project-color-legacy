@@ -28,7 +28,7 @@ public class HulkMovement : BaseEnemyMovement
         }
 
         // Gravity
-        if (rb.velocity.y < 0) rb.AddForce(Vector3.down * 20);
+        if (rb.linearVelocity.y < 0) rb.AddForce(Vector3.down * 20);
     }
 
     private void Inactive()

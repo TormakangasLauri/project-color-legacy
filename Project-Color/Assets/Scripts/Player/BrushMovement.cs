@@ -51,7 +51,7 @@ public class BrushMovement : MonoBehaviour
             Vector3 dir = (point - transform.position).normalized;
             Vector3 pos = transform.position;
 
-            rb.velocity = dir * currentSpeed;
+            rb.linearVelocity = dir * currentSpeed;
 
             // Decrease speed when close enough to the target point
             float dist = Vector3.Distance(pos, point);
@@ -77,7 +77,7 @@ public class BrushMovement : MonoBehaviour
             Vector3 pos = transform.position;
             Vector3 dir = (playerPos - transform.position).normalized;
 
-            rb.velocity = dir * currentSpeed;
+            rb.linearVelocity = dir * currentSpeed;
 
             // Increase speed when starting to return to the player
             float dist = Vector3.Distance(pos, turnPoint);
@@ -105,7 +105,7 @@ public class BrushMovement : MonoBehaviour
         if (other.gameObject.layer == LayerMask.GetMask("Enemy") && !enemiesHit.Contains(other.gameObject) && other.GetComponent<EnemyHealth>())
         {
             enemiesHit.Add(other.gameObject);
-            Vector3 kb = rb.velocity.normalized * knockback;
+            Vector3 kb = rb.linearVelocity.normalized * knockback;
             EnemyHealth EH = other.gameObject.GetComponent<EnemyHealth>();
             
             EH.Damage(damage);

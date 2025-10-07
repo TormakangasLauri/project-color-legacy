@@ -73,7 +73,7 @@ public abstract class EnemyType : MonoBehaviour
 
     public void Activate(int group = -1) // Activate
     {
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         killGroup = group;
         
         EnemyController.all.MoveToActive(gameObject);
@@ -87,7 +87,7 @@ public abstract class EnemyType : MonoBehaviour
     public void Activate(Vector3 position, int group = -1) // Activate and move to the specified position
     {
         transform.position = position;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         killGroup = group;
         
         EnemyController.all.MoveToActive(gameObject);

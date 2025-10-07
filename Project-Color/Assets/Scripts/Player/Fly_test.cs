@@ -31,10 +31,10 @@ public class Fly_test : MonoBehaviour
         // Movement
         if (Input.GetKey(KeyCode.LeftShift)) speed = 2 * baseSpeed;
         else speed = baseSpeed;
-        rb.velocity = transform.rotation * new Vector3(moveDirection.x * speed, rb.velocity.y, moveDirection.y * speed);
-        if (Input.GetKey(KeyCode.Space)) rb.velocity = new Vector3(rb.velocity.x, speed, rb.velocity.z);
-        else if (Input.GetKey(KeyCode.LeftControl)) rb.velocity = new Vector3(rb.velocity.x, -speed, rb.velocity.z);
-        else rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        rb.linearVelocity = transform.rotation * new Vector3(moveDirection.x * speed, rb.linearVelocity.y, moveDirection.y * speed);
+        if (Input.GetKey(KeyCode.Space)) rb.linearVelocity = new Vector3(rb.linearVelocity.x, speed, rb.linearVelocity.z);
+        else if (Input.GetKey(KeyCode.LeftControl)) rb.linearVelocity = new Vector3(rb.linearVelocity.x, -speed, rb.linearVelocity.z);
+        else rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         
         // Camera
         float inputY = Input.GetAxis("Mouse Y") * mouseSensitivity;

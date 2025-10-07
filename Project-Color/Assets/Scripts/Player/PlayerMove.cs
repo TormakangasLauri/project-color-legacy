@@ -134,7 +134,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (!velocityStored)
             {
-                velocityBeforePause = rb.velocity; // Store velocity if not already
+                velocityBeforePause = rb.linearVelocity; // Store velocity if not already
                 velocityStored = true;
                 rb.isKinematic = true;
             }
@@ -142,7 +142,7 @@ public class PlayerMove : MonoBehaviour
         }
         else if (!TimeController.paused && velocityStored) // On unpause
         {
-            rb.velocity = velocityBeforePause; // Return the stored velocity
+            rb.linearVelocity = velocityBeforePause; // Return the stored velocity
             velocityStored = false;
             rb.isKinematic = false;
         }
@@ -169,7 +169,7 @@ public class PlayerMove : MonoBehaviour
         // Define movement state
         if (grounded) {
             // Grounded
-            if (pressingCrouch && rb.velocity.magnitude > maxCrouchSpeed * 1.5) currentState = movementState.slide; // Slide
+            if (pressingCrouch && rb.linearVelocity.magnitude > maxCrouchSpeed * 1.5) currentState = movementState.slide; // Slide
             else if (pressingCrouch){
                 crouching = true;
                 currentState = movementState.ground;
@@ -229,7 +229,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 movementDirection = Vector3.ProjectOnPlane(flatMovementDirection, groundHit.normal);
 
         // Velocity on x and z-axes projected onto the ground
-        Vector3 velocityAlongGround = Vector3.ProjectOnPlane(new Vector3(rb.velocity.x, 0, rb.velocity.z), groundHit.normal);
+        Vector3 velocityAlongGround = Vector3.ProjectOnPlane(new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z), groundHit.normal);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongGround, movementDirection);
         
         // Adjust movement direction to avoid getting stuck to walls
@@ -262,10 +262,10 @@ public class PlayerMove : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
+            airMovementDirection = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).normalized;
         }
 
-        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 velocityAlongXZ = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
         float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
@@ -293,11 +293,11 @@ public class PlayerMove : MonoBehaviour
         {
             enterState = false;
             // Wallrundirection 1 = right and -1 = left
-            wallRunDirection = Vector3.Angle(rb.velocity, rightFromWall) < 90 ? 1 : -1;
+            wallRunDirection = Vector3.Angle(rb.linearVelocity, rightFromWall) < 90 ? 1 : -1;
         }
         
-        if (rb.velocity.magnitude < maxSpeed) rb.AddForce(rightFromWall * acceleration * wallRunDirection);
-        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        if (rb.linearVelocity.magnitude < maxSpeed) rb.AddForce(rightFromWall * acceleration * wallRunDirection);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
     }
 
     void SlideMovement() // Base for this is literally copied from AirMovement and this uses some variables meant for air movement
@@ -305,11 +305,11 @@ public class PlayerMove : MonoBehaviour
         if (enterState)
         {
             enterState = false;
-            airMovementDirection = new Vector3(rb.velocity.x, 0, rb.velocity.z).normalized;
+            airMovementDirection = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).normalized;
             rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, groundHit.normal).normalized * slideForce, ForceMode.Impulse);
         }
 
-        Vector3 velocityAlongXZ = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 velocityAlongXZ = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         Vector3 inputDirection = transform.rotation * new Vector3(moveInputDirection.x, 0, moveInputDirection.y);
         float velocityMovementDirAngle = Vector3.Angle(velocityAlongXZ, airMovementDirection);
         float inputMovementAngle = Vector3.Angle(inputDirection, airMovementDirection);
@@ -324,7 +324,7 @@ public class PlayerMove : MonoBehaviour
             if (velocityAlongXZ.magnitude >= 1) airMovementDirection = Vector3.Lerp(velocityAlongXZ.normalized, inputDirection, slideTurnSpeed * Time.fixedDeltaTime);
             else airMovementDirection = inputDirection;
 
-            if (groundHit.normal != Vector3.up && rb.velocity.magnitude < maxSlideSpeed) rb.AddForce(-Vector3.ProjectOnPlane(Vector3.up, groundHit.normal).normalized * slideAcc);
+            if (groundHit.normal != Vector3.up && rb.linearVelocity.magnitude < maxSlideSpeed) rb.AddForce(-Vector3.ProjectOnPlane(Vector3.up, groundHit.normal).normalized * slideAcc);
             rb.AddForce(Vector3.ProjectOnPlane(airMovementDirection, velocityAlongXZ) * inputDirection.magnitude * airAcc);
         }
         else rb.AddForce(-velocityAlongXZ.normalized * airDeceleration * Mathf.Clamp01((velocityAlongXZ.magnitude - maxSpeed) / maxSpeed + 1) * 0.05f);
@@ -348,19 +348,19 @@ public class PlayerMove : MonoBehaviour
     
     void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
     
     void WallJump(Vector3 velocityBeforeWall)
     {
-        Vector3 velocity = rb.velocity;
+        Vector3 velocity = rb.linearVelocity;
         
         // Walljumping makes the player jump away from the wall regardless of directional movement inputs
         //rb.velocity = new Vector3(velocity.x, 0, velocity.z) * 1.1f - dirToWall * 8 + Vector3.up * jumpForce * 0.6f;
 
         Vector3 projectedVel = Vector3.ProjectOnPlane(velocityBeforeWall, dirToWall);
-        rb.velocity = new Vector3(projectedVel.x * 1.1f, projectedVel.y < 0 ? projectedVel.y / 2 : projectedVel.y, projectedVel.z * 1.1f) - dirToWall * 15 + Vector3.up * jumpForce;
+        rb.linearVelocity = new Vector3(projectedVel.x * 1.1f, projectedVel.y < 0 ? projectedVel.y / 2 : projectedVel.y, projectedVel.z * 1.1f) - dirToWall * 15 + Vector3.up * jumpForce;
     }
     
     /* Inputs
@@ -393,12 +393,12 @@ public class PlayerMove : MonoBehaviour
         {
             waitingToJump = true;
             float i = landingGracePeriod;
-            Vector3 velocityBeforeWall = rb.velocity;
+            Vector3 velocityBeforeWall = rb.linearVelocity;
             yield return new WaitUntil(() =>
             {
                 if (grounded) { Jump(); return true; }
                 else if (walled) { WallJump(velocityBeforeWall); return true; }
-                velocityBeforeWall = rb.velocity;
+                velocityBeforeWall = rb.linearVelocity;
                 i -= Time.deltaTime;
                 return i <= 0;
             });
@@ -445,7 +445,7 @@ public class PlayerMove : MonoBehaviour
 
         Vector3 startPos = transform.position;
         Vector3 dashDirection = head.transform.rotation * Vector3.forward;
-        float startVelocity = rb.velocity.magnitude;
+        float startVelocity = rb.linearVelocity.magnitude;
         
         rb.AddForce(dashDirection * (dashDistance * 10), ForceMode.Impulse);
 
@@ -453,9 +453,9 @@ public class PlayerMove : MonoBehaviour
         yield return new WaitUntil(delegate
         {
             // Slow down when reaching max dash distance or touching terrain
-            if (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled) rb.velocity *= 0.9f;
+            if (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled) rb.linearVelocity *= 0.9f;
             // Return when slowing down and velocity is the same as before dashing
-            return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.velocity.magnitude < startVelocity;
+            return (Vector3.Distance(transform.position, startPos) > dashDistance || grounded || walled || underTerrain) && rb.linearVelocity.magnitude < startVelocity;
         });
         
         rb.useGravity = true;
@@ -489,10 +489,10 @@ public class PlayerMove : MonoBehaviour
     {
         Camera cam = cameraObject.GetComponent<Camera>();
 
-        float speed = rb.velocity.magnitude;
-        Vector3 projectedVel = Vector3.Project(rb.velocity, head.transform.forward);
+        float speed = rb.linearVelocity.magnitude;
+        Vector3 projectedVel = Vector3.Project(rb.linearVelocity, head.transform.forward);
 
-        float angle = Vector3.Angle(rb.velocity, head.transform.forward);
+        float angle = Vector3.Angle(rb.linearVelocity, head.transform.forward);
         float angleMult = angle < 90 ? (90 - angle) / 90 : (90 - angle) / 180; // Forwards 1, sideways 0, backwards -0.5
 
         // FOV change

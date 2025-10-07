@@ -48,13 +48,13 @@ public abstract class BaseEnemyMovement : MonoBehaviour
 
         if (TimeController.paused && !velocityStored) // On pause
         {
-            velocityBeforePause = rb.velocity; // Store velocity if not already
+            velocityBeforePause = rb.linearVelocity; // Store velocity if not already
             velocityStored = true;
             rb.isKinematic = true;
         }
         else if (!TimeController.paused && velocityStored) // On unpause
         {
-            rb.velocity = velocityBeforePause; // Return the stored velocity
+            rb.linearVelocity = velocityBeforePause; // Return the stored velocity
             velocityStored = false;
             rb.isKinematic = false;
         }
@@ -104,7 +104,7 @@ public abstract class BaseEnemyMovement : MonoBehaviour
 
             // Move
             rb.AddForce(movementForce);
-            if (rb.velocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movementForce); // Speed limit
+            if (rb.linearVelocity.magnitude > speed * _enemyType.timeScale) rb.AddForce(-movementForce); // Speed limit
         }
     }
 

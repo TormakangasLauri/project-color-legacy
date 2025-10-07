@@ -46,14 +46,14 @@ public class HangingMovement : BaseEnemyMovement
     {
         _cleaning.Clean(_hanging.targetPaintGroup); // Clean paint when not moving
 
-        if (rb.velocity.magnitude > 1) currentState = states.move;
+        if (rb.linearVelocity.magnitude > 1) currentState = states.move;
     }
 
     void Move()
     {
         _cleaning.StopCleaning(); // Stop cleaning when moving
 
-        if (rb.velocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
+        if (rb.linearVelocity.magnitude <= 1 && Vector3.Distance(transform.position, _hanging.targetPoint) < 2) currentState = states.idle;
     }
 
     void Escape()

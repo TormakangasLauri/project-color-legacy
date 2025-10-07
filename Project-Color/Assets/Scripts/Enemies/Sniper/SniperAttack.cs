@@ -46,7 +46,7 @@ public class SniperAttack : EnemyAttack
     {
         Vector3 targetDirection = (target.transform.position - shootPoint.position).normalized;
         GameObject newBullet = Instantiate(bullet, shootPoint.position, Quaternion.LookRotation(targetDirection), GetComponentInParent<Transform>());
-        newBullet.GetComponent<Rigidbody>().velocity = targetDirection * bulletSpeed;
+        newBullet.GetComponent<Rigidbody>().linearVelocity = targetDirection * bulletSpeed;
         newBullet.GetComponent<Bullet>().direction = targetDirection;
         newBullet.GetComponent<Bullet>().shooter = gameObject;
     }

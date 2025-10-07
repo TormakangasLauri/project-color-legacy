@@ -261,7 +261,7 @@ public class PlayerAttack : MonoBehaviour
         if (enemyHit.collider != null)
         {
             StartCoroutine(PlayBounceTrail());
-            rb.velocity = new Vector3(rb.velocity.x / 2, 0, rb.velocity.z / 2);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x / 2, 0, rb.linearVelocity.z / 2);
 
             // Add force to player when hitting an enemy
             Vector3 dir = -cam.forward;
@@ -292,7 +292,7 @@ public class PlayerAttack : MonoBehaviour
         {
             PlayBounceParticle();
             StartCoroutine(PlayBounceTrail());
-            rb.velocity = new Vector3(rb.velocity.x / 2, 0, rb.velocity.z / 2);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x / 2, 0, rb.linearVelocity.z / 2);
             
             // Add force to player when hitting terrain
             Vector3 dir = -cam.forward;

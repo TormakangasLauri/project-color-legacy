@@ -86,7 +86,7 @@ public class CameraPickingTest : MonoBehaviour {
 					Vector3 gotopos=ray.origin+ray.direction*objectDistance;//position where the "3D cursor" is
 					Vector3 gofrompos=heldObject.transform.position;
 					Vector3 forcevector=gotopos-gofrompos;
-					Vector3 speedcompensation=-heldObject.velocity*0.1f;//speed (to compensate it)
+					Vector3 speedcompensation=-heldObject.linearVelocity*0.1f;//speed (to compensate it)
 					float mz=Input.GetAxis("Mouse ScrollWheel");
 
 					heldObject.AddForce(forcevector+speedcompensation,ForceMode.VelocityChange);//attracting the object to the cursor
