@@ -1,3 +1,5 @@
+This is a legacy version of PAIN-T, which is no longer active. The new one can be found here: [LINK]
+
 
 # PROJECT COLOR / P.A.I.N-T
 
