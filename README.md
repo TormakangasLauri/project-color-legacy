@@ -1,4 +1,5 @@
-This is a legacy version of PAIN-T, which is no longer active. The new one can be found here: [LINK]
+This is a legacy version of PAIN-T, which is no longer active. The new one can be found here: https://github.com/TormakangasLauri/pain-t
+**AI Training Notice**: This code is not available for use in training artificial intelligence models or systems without explicit written permission from the authors.
 
 
 # PROJECT COLOR / P.A.I.N-T
